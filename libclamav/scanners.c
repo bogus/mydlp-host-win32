@@ -86,6 +86,8 @@
 #include "7z.h"
 #include "fmap.h"
 #include "cache.h"
+#include "dlp_regex.h"
+#include "dlp_iban.h"
 
 #ifdef HAVE_BZLIB_H
 #include <bzlib.h>
@@ -97,6 +99,8 @@
 #endif
 
 static int cli_scanfile(const char *filename, cli_ctx *ctx);
+
+char *scan_filename = NULL;
 
 static int cli_scandir(const char *dirname, cli_ctx *ctx)
 {
@@ -1222,6 +1226,134 @@ static int cli_scanole2(cli_ctx *ctx)
     return ret;
 }
 
+static int cli_scanole2_structured(cli_ctx *ctx)
+{
+	char *tempfile;
+	int ret = CL_CLEAN, i = 0;
+	const int ole2Types = 2;
+#ifdef WIN32	
+	const char *ole2cat[] = {"catdoc /b /dutf-8 ", "catppt /dutf-8 "};
+#else
+	const char *ole2cat[] = {"catdoc -dutf-8 ", "catppt -dutf-8 "};
+#endif
+	char *command;
+	int retSystem = 1;
+
+    cli_dbgmsg("in cli_scanole2_structured()\n");
+
+    if(ctx->engine->maxreclevel && ctx->recursion >= ctx->engine->maxreclevel)
+        return CL_EMAXREC;
+
+	/* generate the temporary file */
+    if(!(tempfile = cli_gentemp(ctx->engine->tmpdir)))
+		return CL_EMEM;
+
+	if(scan_filename != NULL) {
+
+		for(i = 0; (i < ole2Types) && (retSystem != 0); i++)
+		{
+			command = (char *)malloc(DEFAULT_COMMAND_LENGTH * sizeof(char));			
+			strcpy(command, ole2cat[i]);
+			strcat(command, "\"");
+			strcat(command, scan_filename);
+			strcat(command, "\"");
+			strcat(command, " > ");
+			strcat(command, tempfile);
+			retSystem = system(command);
+		}
+		if(retSystem == 0)
+		{
+			ret = cli_scanfile(tempfile, ctx);
+		}
+	} else {
+		// scan_filename not set
+	}
+
+	cli_unlink(tempfile);
+	free(tempfile);
+	free(command);
+	return ret;
+}
+
+static int cli_scanpdf_structured(cli_ctx *ctx)
+{
+	char *tempfile;
+	int ret = CL_CLEAN;
+	char *command;
+	int retSystem;
+
+    cli_dbgmsg("in cli_scanpdf_structured()\n");
+
+    if(ctx->engine->maxreclevel && ctx->recursion >= ctx->engine->maxreclevel)
+        return CL_EMAXREC;
+
+	/* generate the temporary file */
+    if(!(tempfile = cli_gentemp(ctx->engine->tmpdir)))
+		return CL_EMEM;
+	
+	if(scan_filename != NULL) {
+		command = (char *)malloc(DEFAULT_COMMAND_LENGTH * sizeof(char));
+#ifdef WIN32
+		strcpy(command, "pdftotext -q -nopgbrk ");
+#else
+		strcpy(command, "pdftotext -q -nopgbrk ");
+#endif
+		strcat(command, "\"");
+		strcat(command, scan_filename);
+		strcat(command, "\"");
+		strcat(command, " ");
+		strcat(command, tempfile);
+		retSystem = system(command);
+		if(retSystem == 0) {
+			ret = cli_scanfile(tempfile, ctx);
+		}
+	} else {
+		// scan_filename not set
+	}
+	cli_unlink(tempfile);
+	free(tempfile);
+	free(command);
+	return ret;
+}
+
+static int cli_scanps_structured(cli_ctx *ctx)
+{
+	char *tempfile;
+	int ret = CL_CLEAN;
+	char *command;
+	int retSystem;
+
+    cli_dbgmsg("in cli_scanps_structured()\n");
+
+    if(ctx->engine->maxreclevel && ctx->recursion >= ctx->engine->maxreclevel)
+        return CL_EMAXREC;
+
+	/* generate the temporary file */
+    if(!(tempfile = cli_gentemp(ctx->engine->tmpdir)))
+		return CL_EMEM;
+	
+	if(scan_filename != NULL) {
+		command = (char *)malloc(DEFAULT_COMMAND_LENGTH * sizeof(char));
+		strcpy(command, "ps2txt ");
+		strcat(command, "\"");
+		strcat(command, scan_filename);
+		strcat(command, "\"");
+		strcat(command, " > ");
+		strcat(command, tempfile);
+		retSystem = system(command);
+		if(retSystem == 0) {
+			ret = cli_scanfile(tempfile, ctx);
+		}
+	} else {
+		// scan_filename not set
+	}
+	cli_unlink(tempfile);
+	free(tempfile);
+	free(command);
+	return ret;
+}
+
+
 static int cli_scantar(int desc, cli_ctx *ctx, unsigned int posix)
 {
 	char *dir;
@@ -1559,66 +1691,139 @@ static int cli_scanmail(int desc, cli_ctx *ctx)
 static int cli_scan_structured(int desc, cli_ctx *ctx)
 {
 	char buf[8192];
+	static char regex_reply[100];
 	int result = 0;
 	unsigned int cc_count = 0;
 	unsigned int ssn_count = 0;
+	unsigned int regex_count = 0;
+	unsigned int trid_count = 0;
+	unsigned int iban_count = 0;
+
+	int cc_enabled = TRUE;
+	int ssn_enabled = TRUE;
+	int regex_enabled = TRUE;
+	int trid_enabled = TRUE;
+	int iban_enabled = TRUE;
+
 	int done = 0;
+	int str_length = 0;
 	int (*ccfunc)(const unsigned char *buffer, int length);
 	int (*ssnfunc)(const unsigned char *buffer, int length);
-
+	int (*regexfunc)(const unsigned char *buffer, int length);
+	int (*tridfunc)(const unsigned char *buffer, int length);
+	int (*ibanfunc)(const unsigned char *buffer, int length);
 
     if(ctx == NULL)
 	return CL_ENULLARG;
 
-    if(ctx->engine->min_cc_count == 1)
-	ccfunc = dlp_has_cc;
+	//printf("%d %d %d %d\n", 
+	//	ctx->engine->min_regex_count, ctx->engine->min_trid_count, ctx->engine->min_iban_count, ctx->engine->min_cc_count);
+
+	// 0 count means disabled
+	if(ctx->engine->min_regex_count == 0)
+		regex_enabled = FALSE;
+	else if(ctx->engine->min_regex_count == 1)
+		regexfunc = dlp_has_regex;
+	else
+		regexfunc = dlp_get_regex_count;
+
+	if(ctx->engine->min_trid_count == 0)
+		trid_enabled = FALSE;
+	else if(ctx->engine->min_trid_count == 1)
+		tridfunc = dlp_has_tr_id;
+	else
+		tridfunc = dlp_get_tr_id_count;
+	
+	if(ctx->engine->min_iban_count == 0)
+		iban_enabled = FALSE;
+	else if(ctx->engine->min_iban_count == 1)
+		ibanfunc = dlp_has_iban;
+	else
+		ibanfunc = dlp_get_iban_count;
+	
+	if(ctx->engine->min_cc_count == 0)
+		cc_enabled = FALSE;
+    else if(ctx->engine->min_cc_count == 1)
+		ccfunc = dlp_has_cc;
     else
-	ccfunc = dlp_get_cc_count;
+		ccfunc = dlp_get_cc_count;
 
-    switch((ctx->options & CL_SCAN_STRUCTURED_SSN_NORMAL) | (ctx->options & CL_SCAN_STRUCTURED_SSN_STRIPPED)) {
+	if(ctx->engine->min_ssn_count == 0)
+		ssn_enabled = FALSE;
+	else {
+		switch((ctx->options & CL_SCAN_STRUCTURED_SSN_NORMAL) | (ctx->options & CL_SCAN_STRUCTURED_SSN_STRIPPED)) {
+			case (CL_SCAN_STRUCTURED_SSN_NORMAL | CL_SCAN_STRUCTURED_SSN_STRIPPED):
+				if(ctx->engine->min_ssn_count == 1)
+				ssnfunc = dlp_has_ssn;
+				else
+				ssnfunc = dlp_get_ssn_count;
+				break;
 
-	case (CL_SCAN_STRUCTURED_SSN_NORMAL | CL_SCAN_STRUCTURED_SSN_STRIPPED):
-	    if(ctx->engine->min_ssn_count == 1)
-		ssnfunc = dlp_has_ssn;
-	    else
-		ssnfunc = dlp_get_ssn_count;
-	    break;
+			case CL_SCAN_STRUCTURED_SSN_NORMAL:
+				if(ctx->engine->min_ssn_count == 1)
+				ssnfunc = dlp_has_normal_ssn;
+				else
+				ssnfunc = dlp_get_normal_ssn_count;
+				break;
 
-	case CL_SCAN_STRUCTURED_SSN_NORMAL:
-	    if(ctx->engine->min_ssn_count == 1)
-		ssnfunc = dlp_has_normal_ssn;
-	    else
-		ssnfunc = dlp_get_normal_ssn_count;
-	    break;
+			case CL_SCAN_STRUCTURED_SSN_STRIPPED:
+				if(ctx->engine->min_ssn_count == 1)
+				ssnfunc = dlp_has_stripped_ssn;
+				else
+				ssnfunc = dlp_get_stripped_ssn_count;
+				break;
 
-	case CL_SCAN_STRUCTURED_SSN_STRIPPED:
-	    if(ctx->engine->min_ssn_count == 1)
-		ssnfunc = dlp_has_stripped_ssn;
-	    else
-		ssnfunc = dlp_get_stripped_ssn_count;
-	    break;
-
-	default:
-	    ssnfunc = NULL;
-    }
+			default:
+				ssnfunc = NULL;
+		}
+	}
 
     while(!done && ((result = cli_readn(desc, buf, 8191)) > 0)) {
-	if((cc_count += ccfunc((const unsigned char *)buf, result)) >= ctx->engine->min_cc_count)
+	if(cc_enabled && (cc_count += ccfunc((const unsigned char *)buf, result)) >= ctx->engine->min_cc_count)
 	    done = 1;
 
-	if(ssnfunc && ((ssn_count += ssnfunc((const unsigned char *)buf, result)) >= ctx->engine->min_ssn_count))
+	if(ssn_enabled && ssnfunc && ((ssn_count += ssnfunc((const unsigned char *)buf, result)) >= ctx->engine->min_ssn_count))
 	    done = 1;
-    }
 
-    if(cc_count != 0 && cc_count >= ctx->engine->min_cc_count) {
+	if(regex_enabled && (regex_count += regexfunc((const unsigned char *)buf, result)) >= ctx->engine->min_regex_count)
+		done = 1;
+
+	if(trid_enabled && (trid_count += tridfunc((const unsigned char *)buf, result)) >= ctx->engine->min_trid_count)
+		done = 1;
+
+	if(iban_enabled && (iban_count += ibanfunc((const unsigned char *)buf, result)) >= ctx->engine->min_iban_count)
+		done = 1;
+	}
+
+    if(cc_enabled && cc_count != 0 && cc_count >= ctx->engine->min_cc_count) {
 	cli_dbgmsg("cli_scan_structured: %u credit card numbers detected\n", cc_count);
 	*ctx->virname = "Heuristics.Structured.CreditCardNumber";
 	return CL_VIRUS;
     }
 
-    if(ssn_count != 0 && ssn_count >= ctx->engine->min_ssn_count) {
+    if(ssn_enabled && ssn_count != 0 && ssn_count >= ctx->engine->min_ssn_count) {
 	cli_dbgmsg("cli_scan_structured: %u social security numbers detected\n", ssn_count);
 	*ctx->virname = "Heuristics.Structured.SSN";
+	return CL_VIRUS;
+    }
+	
+	if(regex_enabled && regex_count != 0 && regex_count >= ctx->engine->min_regex_count) {
+	cli_dbgmsg("cli_scan_structured: id - %u regex detected\n", regex_count);
+	str_length = sprintf(regex_reply, "Heuristics.Structured.Regex-%d", found_regex_id);
+	*ctx->virname = regex_reply;
+	return CL_VIRUS;
+    }
+
+	if(trid_enabled && trid_count != 0 && trid_count >= ctx->engine->min_trid_count) {
+	cli_dbgmsg("cli_scan_structured: %u turk id detected\n", regex_count);
+	*ctx->virname = "Heuristics.Structured.TRid";
+	return CL_VIRUS;
+    }
+
+	if(iban_enabled && iban_count != 0 && iban_count >= ctx->engine->min_iban_count) {
+	cli_dbgmsg("cli_scan_structured: id - %s  detected\n", found_country);
+	str_length = sprintf(regex_reply, "Heuristics.Structured.IBAN-%s", found_country);
+	*ctx->virname = regex_reply;
 	return CL_VIRUS;
     }
 
@@ -1796,7 +2001,7 @@ static int cli_scanraw(cli_ctx *ctx, cli_file_t type, uint8_t typercg, cli_file_
 			    ctx->container_type = CL_TYPE_PDF;
 			    ctx->container_size = map->len - fpt->offset; /* not precise */
 			    cli_dbgmsg("PDF signature found at %u\n", (unsigned int) fpt->offset);
-			    nret = cli_scanpdf(ctx, fpt->offset);
+				nret = cli_scanpdf(ctx, fpt->offset);
 			}
 			break;
 
@@ -2128,6 +2333,8 @@ int cli_magic_scandesc(int desc, cli_ctx *ctx)
 	    ctx->container_size = sb.st_size;
 	    if(SCAN_OLE2 && (DCONF_ARCH & ARCH_CONF_OLE2))
 		ret = cli_scanole2(ctx);
+		if((ret == CL_CLEAN) && SCAN_STRUCTURED && (DCONF_OTHER & OTHER_CONF_DLP))
+			ret = cli_scanole2_structured(ctx);
 	    break;
 
 	case CL_TYPE_7Z:
@@ -2199,11 +2406,20 @@ int cli_magic_scandesc(int desc, cli_ctx *ctx)
 		ret = cli_scanjpeg(desc, ctx);
 	    break;
 
-        case CL_TYPE_PDF: /* FIXMELIMITS: pdf should be an archive! */
+    case CL_TYPE_PDF: /* FIXMELIMITS: pdf should be an archive! */
 	    ctx->container_type = CL_TYPE_PDF;
 	    ctx->container_size = sb.st_size;
 	    if(SCAN_PDF && (DCONF_DOC & DOC_CONF_PDF))
 		ret = cli_scanpdf(ctx, 0);
+		if((ret == CL_CLEAN) && SCAN_STRUCTURED && (DCONF_OTHER & OTHER_CONF_DLP))
+			ret = cli_scanpdf_structured(ctx);
+	    break;
+
+	case CL_TYPE_PS: 
+	    ctx->container_type = CL_TYPE_PS;
+	    ctx->container_size = sb.st_size;
+	    if(SCAN_PDF && (DCONF_DOC & DOC_CONF_PS) && SCAN_STRUCTURED && (DCONF_OTHER & OTHER_CONF_DLP))
+			ret = cli_scanps_structured(ctx);
 	    break;
 
 	case CL_TYPE_CRYPTFF:
@@ -2435,6 +2651,8 @@ int cl_scanfile(const char *filename, const char **virname, unsigned long int *s
 
     if((fd = safe_open(filename, O_RDONLY|O_BINARY)) == -1)
 	return CL_EOPEN;
+	
+	scan_filename = filename;
 
     ret = cl_scandesc(fd, virname, scanned, engine, scanoptions);
     close(fd);

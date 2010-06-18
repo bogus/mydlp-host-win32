@@ -116,7 +116,6 @@ static int ssn_max_group[MAX_AREA+1] = { 0,
 */
 
 
-
 int dlp_is_valid_cc(const unsigned char *buffer, int length)
 {
     int mult = 0;
@@ -451,4 +450,95 @@ int dlp_has_normal_ssn(const unsigned char *buffer, int length)
                         length, 
                         SSN_FORMAT_HYPHENS, 
                         DETECT_MODE_DETECT);
+}
+
+int dlp_is_valid_tr_id(const unsigned char *buffer, int length)
+{
+    int sum1 = 0, sum2 = 0;
+    int i = 0;
+    int val = 0;
+    char cc_digits[11];
+	int tr_id_digits[11];
+    
+    if(buffer == NULL || length < 11)
+        return 0;
+    /* if the first digit is greater than 6 it isn't one of the major
+     * credit cards
+     * reference => http://www.beachnet.com/~hstiles/cardtype.html
+     */
+    if(!isdigit(buffer[0]) || buffer[0] == '0')
+        return 0;
+        
+    if(length > 11)
+        length = 11;
+
+    for(i = 0; i < length; i++)
+    {
+		if(isdigit(buffer[i])) {
+			tr_id_digits[i] = buffer[i] - '0';
+		} else
+			return 0;
+    }
+
+    if(length == 11) 
+    {
+		sum1 = (((tr_id_digits[0] + tr_id_digits[2] + tr_id_digits[4] + tr_id_digits[6] + tr_id_digits[8]) * 7) - 
+			(tr_id_digits[1] + tr_id_digits[3] + tr_id_digits[5] + tr_id_digits[7])) % 10;
+		for(i=0; i < length - 1; i++) {
+			sum2 += tr_id_digits[i];			
+		}
+		sum2 %= 10;
+
+		if((sum1 == tr_id_digits[9]) && (sum2 == tr_id_digits[10]))
+			return 1;
+    }
+
+    return 0;
+}
+
+static int contains_tr_id(const unsigned char *buffer, int length, int detmode)
+{
+    const unsigned char *idx;
+    const unsigned char *end;
+    int count = 0;
+    
+    if(buffer == NULL || length < 11)
+    {
+        return 0;         
+    }
+
+    end = buffer + length;
+    idx = buffer;
+    while(idx < end)
+    {
+        if(isdigit(*idx))
+        {
+            if((idx == buffer || !isdigit(idx[-1])) && dlp_is_valid_tr_id(idx, length - (idx - buffer)) == 1)
+            {
+                if(detmode == DETECT_MODE_DETECT)
+                    return 1;
+                else
+                {
+                    count++;
+                    /* if we got a valid match we should increment the idx ptr
+                     * to gain a little performance
+                     */
+                    idx += (length > 11?11:(length-1));
+                }
+            }
+        }
+        idx++;
+    }
+    
+    return count;
+}
+
+int dlp_has_tr_id(const unsigned char *buffer, int length)
+{
+    return contains_tr_id(buffer, length, DETECT_MODE_DETECT);
+}
+
+int dlp_get_tr_id_count(const unsigned char *buffer, int length)
+{
+    return contains_tr_id(buffer, length, DETECT_MODE_COUNT);
 }

@@ -1,7 +1,9 @@
 /*
  *  Copyright (C) 2007-2009 Sourcefire, Inc.
+ *  Copyright (C) 2010 Medra Teknoloji
  *
  *  Authors: Tomasz Kojm
+ *			 Burak Oguz
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License version 2 as
@@ -109,6 +111,7 @@ typedef enum {
 #define CL_SCAN_STRUCTURED_SSN_STRIPPED	0x20000
 #define CL_SCAN_PARTIAL_MESSAGE         0x40000
 #define CL_SCAN_HEURISTIC_PRECEDENCE    0x80000
+#define CL_SCAN_PS			0x100000
 
 #define CL_SCAN_INTERNAL_COLLECT_SHA    0x80000000 /* Enables hash output in sha-collect builds - for internal use only */
 
@@ -135,6 +138,9 @@ enum cl_engine_field {
     CL_ENGINE_MAX_FILES,	    /* uint32_t */
     CL_ENGINE_MIN_CC_COUNT,	    /* uint32_t */
     CL_ENGINE_MIN_SSN_COUNT,	    /* uint32_t */
+	CL_ENGINE_MIN_REGEX_COUNT,	    /* uint32_t */
+    CL_ENGINE_MIN_TRID_COUNT,	    /* uint32_t */
+	CL_ENGINE_MIN_IBAN_COUNT,	    /* uint32_t */
     CL_ENGINE_PUA_CATEGORIES,	    /* (char *) */
     CL_ENGINE_DB_OPTIONS,	    /* uint32_t */
     CL_ENGINE_DB_VERSION,	    /* uint32_t */
@@ -231,6 +237,16 @@ extern const char *cl_retver(void);
 /* others */
 extern int cli_rmdirs(const char *dirname);
 extern const char *cl_strerror(int clerror);
+
+/* dlp regex init */
+extern int cl_dlp_regex_init(unsigned int ids[], const unsigned char **regex_list, int length);
+
+/* dlp IBAN init */
+extern int cl_dlp_iban_init();
+
+/* dlp md5 db functions */
+extern char *cl_dlp_md5db_init(const unsigned char *md5_list);
+extern int cl_dlp_md5db_unlink(); 
 
 #ifdef __cplusplus
 }

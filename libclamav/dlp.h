@@ -133,4 +133,29 @@ int dlp_has_stripped_ssn(const unsigned char *buffer, int length);
  */
 int dlp_has_normal_ssn(const unsigned char *buffer, int length);
 
+/*
+ * will check if a Turkish identification number exists within the 
+ * first 11 bytes of the supplied buffer.  Validation supplied
+ * via the Luhn algorithm.
+ * Params:
+ *      buffer => data buffer to be validated.
+ *      length => length of supplied buffer.  Values greater than 16 are
+ *                truncated to 11.  Values less than 11 are rejected. 
+ * Returns:
+ *      1 on a find, 0 on a miss
+ */
+int dlp_is_valid_tr_id(const unsigned char *buffer, int length);
+
+/* Searches the supplied buffer for Turkish identification number #'s.  Bails out as soon as a 
+ * validated number is detected.
+ * Params:
+ *      buffer => data buffer to be analyzed.
+ *      length => length of buffer.
+ * Returns:
+ *      1 on detect, 0 on fail
+ */
+int dlp_has_tr_id(const unsigned char *buffer, int length);
+
+int dlp_get_tr_id_count(const unsigned char *buffer, int length);
+
 #endif  /* __DLP_H_ */

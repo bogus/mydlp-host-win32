@@ -201,6 +201,9 @@ struct cl_engine {
      */
     uint32_t min_cc_count;
     uint32_t min_ssn_count;
+	uint32_t min_regex_count;
+    uint32_t min_trid_count;
+	uint32_t min_iban_count;
 
     /* Roots table */
     struct cli_matcher **root;
@@ -274,6 +277,9 @@ struct cl_settings {
     uint32_t maxfiles;
     uint32_t min_cc_count;
     uint32_t min_ssn_count;
+	uint32_t min_regex_count;
+    uint32_t min_trid_count;
+	uint32_t min_iban_count;
     char *pua_cats;
 };
 
@@ -287,6 +293,7 @@ extern int have_rar;
 #define SCAN_MAIL	    (ctx->options & CL_SCAN_MAIL)
 #define SCAN_OLE2	    (ctx->options & CL_SCAN_OLE2)
 #define SCAN_PDF	    (ctx->options & CL_SCAN_PDF)
+#define SCAN_PS	    (ctx->options & CL_SCAN_PS)
 #define SCAN_HTML	    (ctx->options & CL_SCAN_HTML)
 #define SCAN_PE		    (ctx->options & CL_SCAN_PE)
 #define SCAN_ELF	    (ctx->options & CL_SCAN_ELF)

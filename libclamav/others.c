@@ -374,6 +374,15 @@ int cl_engine_set_num(struct cl_engine *engine, enum cl_engine_field field, long
 	case CL_ENGINE_MIN_SSN_COUNT:
 	    engine->min_ssn_count = num;
 	    break;
+	case CL_ENGINE_MIN_REGEX_COUNT:
+	    engine->min_regex_count = num;
+	    break;
+	case CL_ENGINE_MIN_TRID_COUNT:
+	    engine->min_trid_count = num;
+	    break;
+	case CL_ENGINE_MIN_IBAN_COUNT:
+	    engine->min_iban_count = num;
+	    break;
 	case CL_ENGINE_DB_OPTIONS:
 	case CL_ENGINE_DB_VERSION:
 	case CL_ENGINE_DB_TIME:
@@ -438,6 +447,12 @@ long long cl_engine_get_num(const struct cl_engine *engine, enum cl_engine_field
 	    return engine->min_cc_count;
 	case CL_ENGINE_MIN_SSN_COUNT:
 	    return engine->min_ssn_count;
+	case CL_ENGINE_MIN_REGEX_COUNT:
+	    return engine->min_regex_count;
+	case CL_ENGINE_MIN_TRID_COUNT:
+	    return engine->min_trid_count;
+	case CL_ENGINE_MIN_IBAN_COUNT:
+	    return engine->min_iban_count;
 	case CL_ENGINE_DB_VERSION:
 	    return engine->dbversion[0];
 	case CL_ENGINE_DB_TIME:
@@ -526,6 +541,9 @@ struct cl_settings *cl_engine_settings_copy(const struct cl_engine *engine)
     settings->maxfiles = engine->maxfiles;
     settings->min_cc_count = engine->min_cc_count;
     settings->min_ssn_count = engine->min_ssn_count;
+	settings->min_regex_count = engine->min_regex_count;
+    settings->min_trid_count = engine->min_trid_count;
+	settings->min_iban_count = engine->min_iban_count;
     settings->pua_cats = engine->pua_cats ? strdup(engine->pua_cats) : NULL;
 
     return settings;
@@ -543,8 +561,11 @@ int cl_engine_settings_apply(struct cl_engine *engine, const struct cl_settings 
     engine->maxfiles = settings->maxfiles;
     engine->min_cc_count = settings->min_cc_count;
     engine->min_ssn_count = settings->min_ssn_count;
+	engine->min_regex_count = settings->min_regex_count;
+    engine->min_trid_count = settings->min_trid_count;
+	engine->min_iban_count = settings->min_iban_count;
 
-    if(engine->tmpdir)
+	if(engine->tmpdir)
 	mpool_free(engine->mempool, engine->tmpdir);
     if(settings->tmpdir) {
 	engine->tmpdir = cli_mpool_strdup(engine->mempool, settings->tmpdir);

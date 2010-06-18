@@ -81,6 +81,7 @@ static const struct ftmap_s {
     { "CL_TYPE_TNEF",		CL_TYPE_TNEF		},
     { "CL_TYPE_CRYPTFF",	CL_TYPE_CRYPTFF		},
     { "CL_TYPE_PDF",		CL_TYPE_PDF		},
+	{ "CL_TYPE_PS",			CL_TYPE_PS		},
     { "CL_TYPE_UUENCODED",	CL_TYPE_UUENCODED	},
     { "CL_TYPE_HTML_UTF16",	CL_TYPE_HTML_UTF16	},
     { "CL_TYPE_SCRIPT",         CL_TYPE_SCRIPT          },

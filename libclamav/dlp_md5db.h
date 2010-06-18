@@ -1,7 +1,9 @@
-/*
- *  Copyright (C) 2007-2008 Sourcefire, Inc.
+/* 
+ *  Simple library to detect given regexes.
  *
- *  Authors: Tomasz Kojm
+ *  Copyright (C) 2010 Medra Teknoloji
+ *
+ *  Authors: Burak OGUZ <burak@medra.com.tr>
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License version 2 as
@@ -18,15 +20,12 @@
  *  MA 02110-1301, USA.
  */
 
-#ifndef __SCANNERS_H
-#define __SCANNERS_H
+#ifndef __DLP_MD5DB_H_
+#define __DLP_MD5DB_H_
 
 #include "clamav.h"
 #include "others.h"
 
-#define DEFAULT_COMMAND_LENGTH 1024
+char *tmp_filename = NULL;
 
-int cli_magic_scandesc(int desc, cli_ctx *ctx);
-int cli_found_possibly_unwanted(cli_ctx* ctx);
-
-#endif
+#endif  /* __DLP_MD5DB_H_ */
