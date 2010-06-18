@@ -1,0 +1,26 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 10.00
+# Visual C++ Express 2008
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "mydlp-sf", "mydlp-sf\mydlp-sf.vcproj", "{AFBB7C9B-D433-4C57-B982-901B67CE6993}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "mydlp-scanner-driver", "mydlp-scanner-driver\mydlp-scanner-driver.vcproj", "{415C9B5B-A800-49BE-9EA2-B7878060EB63}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Release|Win32 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{AFBB7C9B-D433-4C57-B982-901B67CE6993}.Debug|Win32.ActiveCfg = Debug|Win32
+		{AFBB7C9B-D433-4C57-B982-901B67CE6993}.Debug|Win32.Build.0 = Debug|Win32
+		{AFBB7C9B-D433-4C57-B982-901B67CE6993}.Release|Win32.ActiveCfg = Release|Win32
+		{AFBB7C9B-D433-4C57-B982-901B67CE6993}.Release|Win32.Build.0 = Release|Win32
+		{415C9B5B-A800-49BE-9EA2-B7878060EB63}.Debug|Win32.ActiveCfg = Debug|Win32
+		{415C9B5B-A800-49BE-9EA2-B7878060EB63}.Debug|Win32.Build.0 = Debug|Win32
+		{415C9B5B-A800-49BE-9EA2-B7878060EB63}.Release|Win32.ActiveCfg = Release|Win32
+		{415C9B5B-A800-49BE-9EA2-B7878060EB63}.Release|Win32.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

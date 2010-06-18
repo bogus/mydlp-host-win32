@@ -1,0 +1,11 @@
+*~
+mydlp-scanner-driver/mydlp-scanner-driver.vcproj.*
+Debug
+Release
+mydlp-sf/Debug
+mydlp-sf/Release
+mydlp-sf/mydlp-sf.vcproj.*
+mydlp-sf/fsmf/mydlpscanner.sys
+mydlp-sf/fsmf/build*
+mydlp-sf/fsmf/filter/obj*
+

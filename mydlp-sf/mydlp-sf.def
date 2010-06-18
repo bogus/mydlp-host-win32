@@ -1,0 +1,10 @@
+EXPORTS
+
+; API Exports
+Init
+AddRegex
+AddMD5s
+SearchSensitiveData
+GetLastResult
+Close
+

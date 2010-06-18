@@ -1,0 +1,13 @@
+TARGETNAME=mydlpscanner
+TARGETTYPE=DRIVER
+DRIVERTYPE=FS
+
+
+INCLUDES=$(INCLUDES);..\..\
+
+TARGETLIBS= $(TARGETLIBS) \
+            $(IFSKIT_LIB_PATH)\fltMgr.lib
+
+SOURCES=Scanner.c   \
+        Scanner.rc
+

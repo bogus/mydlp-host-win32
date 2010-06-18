@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<VisualStudioToolFile
+	Name="FSMF-Compile"
+	Version="8.00"
+	>
+	<Rules>
+		<CustomBuildRule
+			Name="MyDLP-FSMF"
+			CommandLine="C:\WinDDK\7600.16385.1\bin\setenv.bat C:\WinDDK\7600.16385.1\ chk x86 WXP no_oacr &amp;&amp; cd &quot;C:\workspace\mydlp-host-win32\mydlp-sf\mydlp-sf\fsmf&quot; &amp;&amp; build -ceZ"
+			Outputs="Scanner.sys"
+			FileExtensions="*.inf"
+			>
+			<Properties>
+			</Properties>
+		</CustomBuildRule>
+	</Rules>
+</VisualStudioToolFile>
