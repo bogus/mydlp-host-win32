@@ -1,4 +1,5 @@
 *~
+*.ncb
 mydlp-scanner-driver/mydlp-scanner-driver.vcproj.*
 Debug
 Release

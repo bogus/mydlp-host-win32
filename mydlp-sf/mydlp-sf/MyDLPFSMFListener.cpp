@@ -1,3 +1,23 @@
+/* 
+ *  Copyright (C) 2010 Medra Teknoloji
+ *
+ *  Authors: Burak OGUZ <burak@medra.com.tr>
+ *
+ *  This program is free software; you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License version 2 as
+ *  published by the Free Software Foundation.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program; if not, write to the Free Software
+ *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
+ *  MA 02110-1301, USA.
+ */
+
 #include "StdAfx.h"
 #include "MyDLPFSMFListener.h"
 
@@ -164,22 +184,23 @@ BOOL ScanFile (__in_bcount(BufferSize) PUCHAR Buffer, __in ULONG BufferSize,
 				+ System::IO::Path::GetExtension(gcnew System::String(FileName)))).ToPointer();
 			tempFileInfo->filename = (char *) malloc(sizeof(char) * tempFileName.length());
 			strcpy(tempFileInfo->filename, tempFileName.c_str());
-			fopen_s(&fp,tempFileInfo->filename, "w");
+			fopen_s(&fp,tempFileInfo->filename, "wb");
 			tempFileInfo->tmpfd = fp;
 			mMap.insert(MWchTmpPair(FileName, tempFileInfo));
 		} else {
-			fopen_s(&fp,tempFileInfo->filename, "a");
+			fopen_s(&fp,tempFileInfo->filename, "ab");
 			tempFileInfo->tmpfd = fp;
 		}
 		fwrite(Buffer, sizeof(UCHAR), BufferSize, tempFileInfo->tmpfd);
 		fflush(tempFileInfo->tmpfd);
 		fclose(tempFileInfo->tmpfd);
 		
-		mydlpsf::MyDLPSensitiveFileRecognition ^recObj =  mydlpsf::MyDLPSensFilePool::GetInstance()->AcquireObject();
+		printf("---- FileName: %S ---- \n", FileName);
 
+		mydlpsf::MyDLPSensitiveFileRecognition ^recObj =  mydlpsf::MyDLPSensFilePool::GetInstance()->AcquireObject();
 		int ret = recObj->SearchSensitiveData(gcnew System::String(tempFileInfo->filename));
-		printf("File: %S --- Result: %s\n",FileName, recObj->GetLastResult());
 		mydlpsf::MyDLPSensFilePool::GetInstance()->ReleaseObject(recObj);
+
 		if(ret == 1) {
 			return TRUE;
 		}	

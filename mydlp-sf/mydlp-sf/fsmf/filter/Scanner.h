@@ -145,6 +145,8 @@ ScannerInstanceSetup (
     __in FLT_FILESYSTEM_TYPE VolumeFilesystemType
     );
 
+#define OSR_MEMORY_SIZE 65536
+#define OSRMEMDRV_LEVEL_VERBOSE 1
 
 #endif /* __SCANNER_H__ */
 

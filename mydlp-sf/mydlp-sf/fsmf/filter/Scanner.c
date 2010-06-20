@@ -818,10 +818,11 @@ Return Value:
     PSCANNER_NOTIFICATION notification = NULL;
     PSCANNER_STREAM_HANDLE_CONTEXT context = NULL;
     ULONG replyLength;
-    BOOLEAN safe = TRUE;
-    PUCHAR buffer;
+    BOOLEAN safe = TRUE, scanBuffer = FALSE;
+    PUCHAR buffer, destBuffer;
 	USHORT phase = 1;
 	POBJECT_NAME_INFORMATION dosNameInfo;
+	ULONG writeLength, i;
 
     UNREFERENCED_PARAMETER( CompletionContext );
 
@@ -857,8 +858,7 @@ Return Value:
         //
         //  Pass the contents of the buffer to user mode.
         //
-
-        if (Data->Iopb->Parameters.Write.Length != 0) {
+		if (Data->Iopb->Parameters.Write.Length != 0) {
 
             //
             //  Get the users buffer address.  If there is a MDL defined, use
@@ -890,7 +890,14 @@ Return Value:
                 //
 
                 buffer  = Data->Iopb->Parameters.Write.WriteBuffer;
+
+				scanBuffer = TRUE;
             }
+		}
+
+		for(writeLength = 0; scanBuffer && writeLength < Data->Iopb->Parameters.Write.Length; 
+			writeLength += SCANNER_READ_BUFFER_SIZE)
+		{
 
             //
             //  In a production-level filter, we would actually let user mode scan the file directly.
@@ -909,7 +916,7 @@ Return Value:
                 leave;
             }
 
-            notification->BytesToScan = min( Data->Iopb->Parameters.Write.Length, SCANNER_READ_BUFFER_SIZE );
+			notification->BytesToScan = min( Data->Iopb->Parameters.Write.Length - writeLength, SCANNER_READ_BUFFER_SIZE );
 
             //
             //  The buffer can be a raw user buffer. Protect access to it
@@ -918,7 +925,7 @@ Return Value:
             try  {
 
                 RtlCopyMemory( &notification->Contents,
-                               buffer,
+							   buffer + writeLength,
                                notification->BytesToScan );
 
             } except( EXCEPTION_EXECUTE_HANDLER ) {
@@ -971,30 +978,31 @@ Return Value:
 
                DbgPrint( "!!! scanner.sys --- couldn't send message to user-mode to scan file, status 0x%X\n", status );
            }
-        }
+        
 
-        if (!safe) {
+			if (!safe) {
 
-            //
-            //  Block this write if not paging i/o (as a result of course, this scanner will not prevent memory mapped writes of contaminated
-            //  strings to the file, but only regular writes). The effect of getting ERROR_ACCESS_DENIED for many apps to delete the file they
-            //  are trying to write usually.
-            //  To handle memory mapped writes - we should be scanning at close time (which is when we can really establish that the file object
-            //  is not going to be used for any more writes)
-            //
+				//
+				//  Block this write if not paging i/o (as a result of course, this scanner will not prevent memory mapped writes of contaminated
+				//  strings to the file, but only regular writes). The effect of getting ERROR_ACCESS_DENIED for many apps to delete the file they
+				//  are trying to write usually.
+				//  To handle memory mapped writes - we should be scanning at close time (which is when we can really establish that the file object
+				//  is not going to be used for any more writes)
+				//
 
-            DbgPrint( "!!! scanner.sys -- foul language detected in write !!!\n" );
+				DbgPrint( "!!! scanner.sys -- foul language detected in write !!!\n" );
 
-            if (!FlagOn( Data->Iopb->IrpFlags, IRP_PAGING_IO )) {
+				if (!FlagOn( Data->Iopb->IrpFlags, IRP_PAGING_IO )) {
 
-                DbgPrint( "!!! scanner.sys -- blocking the write !!!\n" );
+					DbgPrint( "!!! scanner.sys -- blocking the write !!!\n" );
 
-                Data->IoStatus.Status = STATUS_ACCESS_DENIED;
-                Data->IoStatus.Information = 0;
-                returnStatus = FLT_PREOP_COMPLETE;
-            }
-        }
-
+					Data->IoStatus.Status = STATUS_ACCESS_DENIED;
+					Data->IoStatus.Information = 0;
+					returnStatus = FLT_PREOP_COMPLETE;
+					break;
+				}
+			}
+		}
     } finally {
 
         if (notification != NULL) {
@@ -1217,4 +1225,3 @@ Return Value:
 
     return status;
 }
-

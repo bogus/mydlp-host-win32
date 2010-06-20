@@ -1232,7 +1232,7 @@ static int cli_scanole2_structured(cli_ctx *ctx)
 	int ret = CL_CLEAN, i = 0;
 	const int ole2Types = 2;
 #ifdef WIN32	
-	const char *ole2cat[] = {"catdoc /b /dutf-8 ", "catppt /dutf-8 "};
+	const char *ole2cat[] = {"catdoc /dutf-8 ", "catppt /dutf-8 "};
 #else
 	const char *ole2cat[] = {"catdoc -dutf-8 ", "catppt -dutf-8 "};
 #endif
@@ -1249,7 +1249,6 @@ static int cli_scanole2_structured(cli_ctx *ctx)
 		return CL_EMEM;
 
 	if(scan_filename != NULL) {
-
 		for(i = 0; (i < ole2Types) && (retSystem != 0); i++)
 		{
 			command = (char *)malloc(DEFAULT_COMMAND_LENGTH * sizeof(char));			
@@ -1261,6 +1260,7 @@ static int cli_scanole2_structured(cli_ctx *ctx)
 			strcat(command, tempfile);
 			retSystem = system(command);
 		}
+		//printf("scan_filename = %s, ret = %d\n, tmpfile = %s", scan_filename, retSystem, tempfile);
 		if(retSystem == 0)
 		{
 			ret = cli_scanfile(tempfile, ctx);
