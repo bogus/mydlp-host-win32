@@ -69,20 +69,20 @@ namespace mydlpsf
 	
 	void MyDLPEventLogger::LogSensFile(String ^log)
 	{
-		eventLogger->sensFileMutex->WaitOne();
+		//eventLogger->sensFileMutex->WaitOne();
 
 		eventLogger->eventLogSensFile->WriteEntry(log);
 
-		eventLogger->sensFileMutex->ReleaseMutex();
+		//eventLogger->sensFileMutex->ReleaseMutex();
 	}
 
 	void MyDLPEventLogger::LogDevice(String ^log)
 	{
-		eventLogger->deviceMutex->WaitOne();
+		//eventLogger->deviceMutex->WaitOne();
 
 		eventLogger->eventLogDevice->WriteEntry(log);
 
-		eventLogger->deviceMutex->ReleaseMutex();
+		//eventLogger->deviceMutex->ReleaseMutex();
 	}
 
 	void MyDLPEventLogger::LogLib(String ^log)

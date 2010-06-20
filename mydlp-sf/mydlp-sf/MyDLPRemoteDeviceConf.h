@@ -38,23 +38,28 @@ using namespace System;
 namespace mydlpsf {
 	public ref class MyDLPRemoteDeviceConf
 	{
+	private:
+		static MyDLPRemoteDeviceConf ^deviceConf;
 	public:
 		MyDLPRemoteDeviceConf(void);
-		static Boolean checkUSB;
-        static Boolean disableUSB;
-        static Boolean logUSBDiscs;
-        static Boolean logUSBFileMovements;
-        static Boolean encryptUSBFileMovements;
+		
+		static MyDLPRemoteDeviceConf ^GetInstance();
+		static void SetInstance(MyDLPRemoteDeviceConf ^sensFileConf);
 
-        static Boolean checkLogical;
-        static Boolean disableLogical;
-        static Boolean disableCDDVDRW;
-        static Boolean logLogicalDiscs;
+		Boolean checkUSB;
+        Boolean disableUSB;
+        Boolean logUSBDiscs;
+        Boolean logUSBFileMovements;
+
+        Boolean checkLogical;
+        Boolean disableLogical;
+        Boolean disableCDDVDRW;
+        Boolean logLogicalDiscs;
         
-        static Boolean checkNIC;
-        static Boolean disableWirelessNIC;
-        static Boolean disableBluetoothNIC;
-        static Boolean disableWiredNIC;  
+        Boolean checkNIC;
+        Boolean disableWirelessNIC;
+        Boolean disableBluetoothNIC;
+        Boolean disableWiredNIC;  
 	};
 }
 

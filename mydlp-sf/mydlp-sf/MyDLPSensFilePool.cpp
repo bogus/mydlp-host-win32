@@ -53,11 +53,11 @@ namespace mydlpsf
 	void MyDLPSensFilePool::InitPool()
 	{
 		int i = 0;
-		array<System::UInt32> ^ids = gcnew array<System::UInt32>(MyDLPRemoteSensFileConf::regexVal->Count);
-		array<System::String ^> ^regex = gcnew array<System::String ^>(MyDLPRemoteSensFileConf::regexVal->Count);
+		array<System::UInt32> ^ids = gcnew array<System::UInt32>(mydlpsf::MyDLPRemoteSensFileConf::GetInstance()->regexVal->Count);
+		array<System::String ^> ^regex = gcnew array<System::String ^>(mydlpsf::MyDLPRemoteSensFileConf::GetInstance()->regexVal->Count);
 		MyDLPSensitiveFileRecognition ^sensFileObject;
 		
-		for each(MyDLPClamRegex ^clamRegex in MyDLPRemoteSensFileConf::regexVal)
+		for each(MyDLPClamRegex ^clamRegex in mydlpsf::MyDLPRemoteSensFileConf::GetInstance()->regexVal)
 		{
 			ids[i] = clamRegex->id;
 			regex[i] = clamRegex->regex;
@@ -69,7 +69,7 @@ namespace mydlpsf
 			sensFileObject = gcnew MyDLPSensitiveFileRecognition();
 			sensFileObject->Init();
 			sensFileObject->AddRegex(ids, regex, (int)regex->Length);
-			sensFileObject->AddMD5s(MyDLPRemoteSensFileConf::md5Val);
+			sensFileObject->AddMD5s(mydlpsf::MyDLPRemoteSensFileConf::GetInstance()->md5Val);
 			sensFileObject->AddIBAN();
 			sensFileObject->CompileClamEngine();
 			objQueue->Enqueue(sensFileObject);
@@ -79,13 +79,13 @@ namespace mydlpsf
 	void MyDLPSensFilePool::UpdatePool()
 	{
 		int i = 0;
-		array<System::UInt32> ^ids = gcnew array<System::UInt32>(MyDLPRemoteSensFileConf::regexVal->Count);
-		array<System::String ^> ^regex = gcnew array<System::String ^>(MyDLPRemoteSensFileConf::regexVal->Count);
+		array<System::UInt32> ^ids = gcnew array<System::UInt32>(mydlpsf::MyDLPRemoteSensFileConf::GetInstance()->regexVal->Count);
+		array<System::String ^> ^regex = gcnew array<System::String ^>(mydlpsf::MyDLPRemoteSensFileConf::GetInstance()->regexVal->Count);
 		MyDLPSensitiveFileRecognition ^sensFileObject;
 		
 		objectPool->objQueue = gcnew Queue(objectPool->poolSize);
 
-		for each(MyDLPClamRegex ^clamRegex in MyDLPRemoteSensFileConf::regexVal)
+		for each(MyDLPClamRegex ^clamRegex in mydlpsf::MyDLPRemoteSensFileConf::GetInstance()->regexVal)
 		{
 			ids[i] = clamRegex->id;
 			regex[i] = clamRegex->regex;
@@ -97,7 +97,7 @@ namespace mydlpsf
 			sensFileObject = gcnew MyDLPSensitiveFileRecognition();
 			sensFileObject->Init();
 			sensFileObject->AddRegex(ids, regex, (int)regex->Length);
-			sensFileObject->AddMD5s(MyDLPRemoteSensFileConf::md5Val);
+			sensFileObject->AddMD5s(mydlpsf::MyDLPRemoteSensFileConf::GetInstance()->md5Val);
 			sensFileObject->AddIBAN();
 			sensFileObject->CompileClamEngine();
 			objQueue->Enqueue(sensFileObject);

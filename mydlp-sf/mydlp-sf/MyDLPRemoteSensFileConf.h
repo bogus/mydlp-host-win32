@@ -35,41 +35,49 @@
 #include <iostream>
 #include "MyDLPClamRegex.h"
 
+#using <System.Xml.dll>
+
 using namespace System;
+using namespace System::Xml;
+using namespace System::Xml::Schema;
+using namespace System::Xml::Serialization;
 
 namespace mydlpsf {
 
 	public ref class MyDLPRemoteSensFileConf
 	{
+	private:
+		static MyDLPRemoteSensFileConf ^sensFileConf;
+
 	public:
 		MyDLPRemoteSensFileConf(void);
-
-		static System::Collections::Generic::List<MyDLPClamRegex ^> ^regexVal = 
-			gcnew System::Collections::Generic::List<MyDLPClamRegex ^>();
-        static String^ md5Val = "";
-		static System::Collections::Generic::List<String^> ^excludedDirs = 
-			gcnew System::Collections::Generic::List<String ^>();
+		
+		static MyDLPRemoteSensFileConf ^GetInstance();
+		static void SetInstance(MyDLPRemoteSensFileConf ^sensFileConf);
+		
+		System::Collections::Generic::List<MyDLPClamRegex ^> ^regexVal;
+        String^ md5Val;
+		System::Collections::Generic::List<String^> ^excludedDirs;
         
-		static Boolean blockEncrypted = true;
-		static Boolean blockBroken = true;
+		Boolean blockEncrypted;
+		Boolean blockBroken;
 
-		static System::Collections::Generic::List<String^> ^fileGroups = 
-			gcnew System::Collections::Generic::List<String ^>();
+		System::Collections::Generic::List<String^> ^fileGroups;
 
-		static Boolean enableCC = true;
-		static UInt32 maxCCCount = 1;
+		Boolean enableCC;
+		UInt32 maxCCCount;
 		
-		static Boolean enableRegex = true;
-		static UInt32 maxRegexCount = 1;
+		Boolean enableRegex;
+		UInt32 maxRegexCount;
 		
-		static Boolean enableTRId = true;
-		static UInt32 maxTRIdCount = 1;
+		Boolean enableTRId;
+		UInt32 maxTRIdCount;
 		
-		static Boolean enableIBAN = true;
-		static UInt32 maxIBANCount = 1;
+		Boolean enableIBAN;
+		UInt32 maxIBANCount;
 		
-		static Boolean enableSSN = true;
-		static UInt32 maxSSNCount = 1;		
+		Boolean enableSSN;
+		UInt32 maxSSNCount;		
 	};
 
 }

@@ -199,11 +199,15 @@ BOOL ScanFile (__in_bcount(BufferSize) PUCHAR Buffer, __in ULONG BufferSize,
 
 		mydlpsf::MyDLPSensitiveFileRecognition ^recObj =  mydlpsf::MyDLPSensFilePool::GetInstance()->AcquireObject();
 		int ret = recObj->SearchSensitiveData(gcnew System::String(tempFileInfo->filename));
-		mydlpsf::MyDLPSensFilePool::GetInstance()->ReleaseObject(recObj);
 
 		if(ret == 1) {
+			mydlpsf::MyDLPEventLogger::GetInstance()->LogSensFile("File transfer blocked: " + 
+				gcnew String(FileName) + " -- " + recObj->GetLastResult());
+			mydlpsf::MyDLPSensFilePool::GetInstance()->ReleaseObject(recObj);
 			return TRUE;
 		}	
+
+		mydlpsf::MyDLPSensFilePool::GetInstance()->ReleaseObject(recObj);
 
 	} else if(Phase == 2) {
 		

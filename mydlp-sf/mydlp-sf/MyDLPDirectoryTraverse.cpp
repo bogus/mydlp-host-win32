@@ -122,9 +122,9 @@ namespace mydlpsf {
             else if (((String ^)all[key]) == "d")
             {
 				bool isExcluded = false;
-				if(MyDLPRemoteSensFileConf::excludedDirs->Count != 0)
+				if(MyDLPRemoteSensFileConf::GetInstance()->excludedDirs->Count != 0)
 				{
-					for each(String ^dirName in MyDLPRemoteSensFileConf::excludedDirs)
+					for each(String ^dirName in MyDLPRemoteSensFileConf::GetInstance()->excludedDirs)
 					{
 						if(dirName == key) {
 							isExcluded = true;

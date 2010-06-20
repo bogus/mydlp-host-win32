@@ -129,28 +129,28 @@ namespace mydlpsf {
 			return 2;
 		}
 
-		if(MyDLPRemoteSensFileConf::enableCC)
-			cl_engine_set_num(this->engine, CL_ENGINE_MIN_CC_COUNT, MyDLPRemoteSensFileConf::maxCCCount);
+		if(mydlpsf::MyDLPRemoteSensFileConf::GetInstance()->enableCC)
+			cl_engine_set_num(this->engine, CL_ENGINE_MIN_CC_COUNT, mydlpsf::MyDLPRemoteSensFileConf::GetInstance()->maxCCCount);
 		else
 			cl_engine_set_num(this->engine, CL_ENGINE_MIN_CC_COUNT, 0);
 
-		if(MyDLPRemoteSensFileConf::enableSSN)
-			cl_engine_set_num(this->engine, CL_ENGINE_MIN_SSN_COUNT, MyDLPRemoteSensFileConf::maxSSNCount);
+		if(mydlpsf::MyDLPRemoteSensFileConf::GetInstance()->enableSSN)
+			cl_engine_set_num(this->engine, CL_ENGINE_MIN_SSN_COUNT, mydlpsf::MyDLPRemoteSensFileConf::GetInstance()->maxSSNCount);
 		else
 			cl_engine_set_num(this->engine, CL_ENGINE_MIN_SSN_COUNT, 0);
 
-		if(MyDLPRemoteSensFileConf::enableRegex)
-			cl_engine_set_num(this->engine, CL_ENGINE_MIN_REGEX_COUNT, MyDLPRemoteSensFileConf::maxRegexCount);
+		if(mydlpsf::MyDLPRemoteSensFileConf::GetInstance()->enableRegex)
+			cl_engine_set_num(this->engine, CL_ENGINE_MIN_REGEX_COUNT, mydlpsf::MyDLPRemoteSensFileConf::GetInstance()->maxRegexCount);
 		else
 			cl_engine_set_num(this->engine, CL_ENGINE_MIN_REGEX_COUNT, 0);
 
-		if(MyDLPRemoteSensFileConf::enableIBAN)
-			cl_engine_set_num(this->engine, CL_ENGINE_MIN_IBAN_COUNT, MyDLPRemoteSensFileConf::maxIBANCount);
+		if(mydlpsf::MyDLPRemoteSensFileConf::GetInstance()->enableIBAN)
+			cl_engine_set_num(this->engine, CL_ENGINE_MIN_IBAN_COUNT, mydlpsf::MyDLPRemoteSensFileConf::GetInstance()->maxIBANCount);
 		else
 			cl_engine_set_num(this->engine, CL_ENGINE_MIN_IBAN_COUNT, 0);				
 
-		if(MyDLPRemoteSensFileConf::enableTRId)
-			cl_engine_set_num(this->engine, CL_ENGINE_MIN_TRID_COUNT, MyDLPRemoteSensFileConf::maxTRIdCount);
+		if(mydlpsf::MyDLPRemoteSensFileConf::GetInstance()->enableTRId)
+			cl_engine_set_num(this->engine, CL_ENGINE_MIN_TRID_COUNT, mydlpsf::MyDLPRemoteSensFileConf::GetInstance()->maxTRIdCount);
 		else
 			cl_engine_set_num(this->engine, CL_ENGINE_MIN_TRID_COUNT, 0);
 
@@ -158,16 +158,18 @@ namespace mydlpsf {
 
 		scanOptions = CL_SCAN_ALGORITHMIC | CL_SCAN_STRUCTURED;
 
-		if(MyDLPRemoteSensFileConf::blockEncrypted)
+		if(mydlpsf::MyDLPRemoteSensFileConf::GetInstance()->blockEncrypted)
 			scanOptions = scanOptions | CL_SCAN_BLOCKENCRYPTED;
-
-		if(MyDLPRemoteSensFileConf::blockBroken)
-			scanOptions = scanOptions | CL_SCAN_BLOCKBROKEN;
 /*
-		if(MyDLPRemoteSensFileConf::fileGroups->Count == 0) {
+		if(mydlpsf::MyDLPRemoteSensFileConf::GetInstance()->blockBroken)
+			scanOptions = scanOptions | CL_SCAN_BLOCKBROKEN;
+*/
+
+/*
+		if(mydlpsf::MyDLPRemoteSensFileConf::GetInstance()->fileGroups->Count == 0) {
 			scanOptions = scanOptions | CL_SCAN_ARCHIVE | CL_SCAN_MAIL | CL_SCAN_OLE2 | CL_SCAN_PDF | CL_SCAN_HTML | CL_SCAN_PE | CL_SCAN_PS;
 		} else {
-			for each (String ^option in MyDLPRemoteSensFileConf::fileGroups) {
+			for each (String ^option in mydlpsf::MyDLPRemoteSensFileConf::GetInstance()->fileGroups) {
 				if(clamFileGroupOptions->Contains(option))
 					//scanOptions = scanOptions | UInt32::Parse(clamFileGroupOptions[option]->ToString());
 					scanOptions = scanOptions;

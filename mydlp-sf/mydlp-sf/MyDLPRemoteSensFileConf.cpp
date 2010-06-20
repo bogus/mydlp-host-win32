@@ -24,7 +24,36 @@ namespace mydlpsf {
 
 	MyDLPRemoteSensFileConf::MyDLPRemoteSensFileConf(void)
 	{
-		
+		regexVal = gcnew System::Collections::Generic::List<MyDLPClamRegex ^>();
+		md5Val = "";
+		excludedDirs = gcnew System::Collections::Generic::List<String ^>();
+		blockEncrypted = true;
+		blockBroken = true;
+		fileGroups = gcnew System::Collections::Generic::List<String ^>();
+		enableCC = true;
+		maxCCCount = 1;
+		enableRegex = true;
+		maxRegexCount = 1;
+		enableTRId = true;
+		maxTRIdCount = 1;
+		enableIBAN = true;
+		maxIBANCount = 1;
+		enableSSN = true;
+		maxSSNCount = 1;		
 	}
 
+	MyDLPRemoteSensFileConf ^MyDLPRemoteSensFileConf::GetInstance()
+	{
+		if(sensFileConf == nullptr)
+		{
+			sensFileConf = gcnew MyDLPRemoteSensFileConf();
+		}
+
+		return sensFileConf;
+	}
+
+	void MyDLPRemoteSensFileConf::SetInstance(MyDLPRemoteSensFileConf ^sensFileConf)
+	{
+		mydlpsf::MyDLPRemoteSensFileConf::sensFileConf = sensFileConf;
+	}
 }
