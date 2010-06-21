@@ -20,6 +20,12 @@
 #include "StdAfx.h"
 #include "MyDLPRemoteSensFileConf.h"
 
+using namespace System;
+using namespace System::Xml;
+using namespace System::Xml::Schema;
+using namespace System::Xml::Serialization;
+using namespace System::IO;
+
 namespace mydlpsf {
 
 	MyDLPRemoteSensFileConf::MyDLPRemoteSensFileConf(void)
@@ -39,7 +45,10 @@ namespace mydlpsf {
 		enableIBAN = true;
 		maxIBANCount = 1;
 		enableSSN = true;
-		maxSSNCount = 1;		
+		maxSSNCount = 1;	
+		enableRemovableOnlineScanning = true;
+		scanInsertedLogical = true;
+		scanPluggedInRemovableDevices = true;
 	}
 
 	MyDLPRemoteSensFileConf ^MyDLPRemoteSensFileConf::GetInstance()
@@ -55,5 +64,36 @@ namespace mydlpsf {
 	void MyDLPRemoteSensFileConf::SetInstance(MyDLPRemoteSensFileConf ^sensFileConf)
 	{
 		mydlpsf::MyDLPRemoteSensFileConf::sensFileConf = sensFileConf;
+	}
+
+	void MyDLPRemoteSensFileConf::Serialize(String ^filename)
+	{
+		try
+		{
+			XmlSerializer ^serializer = gcnew XmlSerializer(MyDLPRemoteSensFileConf::GetInstance()->GetType());
+			TextWriter ^writer = gcnew StreamWriter(filename);
+			serializer->Serialize(writer, MyDLPRemoteSensFileConf::GetInstance());
+			writer->Close();
+		} 
+		catch(Exception ^ex)
+		{
+			throw gcnew Exception("MyDLPRemoteSensFileConf::Serialize", ex);
+		}
+	}
+
+	void MyDLPRemoteSensFileConf::Deserialize(String ^filename)
+	{
+		try
+		{
+			XmlSerializer ^serializer = gcnew XmlSerializer(MyDLPRemoteSensFileConf::GetInstance()->GetType());
+			FileStream ^fs = gcnew FileStream(filename, FileMode::Open);
+			XmlReader ^reader = gcnew XmlTextReader(fs);
+			MyDLPRemoteSensFileConf::SetInstance(dynamic_cast<MyDLPRemoteSensFileConf ^> (serializer->Deserialize(reader)));
+			fs->Close();
+		} 
+		catch(Exception ^ex)
+		{
+			throw gcnew Exception("MyDLPRemoteSensFileConf::Deserialize", ex);
+		}
 	}
 }

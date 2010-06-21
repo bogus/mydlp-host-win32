@@ -24,4 +24,50 @@ namespace mydlpsf {
 	MyDLPRemoteDeviceConf::MyDLPRemoteDeviceConf(void)
 	{
 	}
+
+	MyDLPRemoteDeviceConf ^MyDLPRemoteDeviceConf::GetInstance()
+	{
+		if(deviceConf == nullptr)
+		{
+			deviceConf = gcnew MyDLPRemoteDeviceConf();
+		}
+
+		return deviceConf;
+	}
+
+	void MyDLPRemoteDeviceConf::SetInstance(MyDLPRemoteDeviceConf ^deviceConf)
+	{
+		mydlpsf::MyDLPRemoteDeviceConf::deviceConf = deviceConf;
+	}
+
+	void MyDLPRemoteDeviceConf::Serialize(String ^filename)
+	{
+		try
+		{
+			XmlSerializer ^serializer = gcnew XmlSerializer(MyDLPRemoteDeviceConf::GetInstance()->GetType());
+			TextWriter ^writer = gcnew StreamWriter(filename);
+			serializer->Serialize(writer, MyDLPRemoteDeviceConf::GetInstance());
+			writer->Close();
+		} 
+		catch(Exception ^ex)
+		{
+			throw gcnew Exception("MyDLPRemoteDeviceConf::Serialize", ex);
+		}
+	}
+
+	void MyDLPRemoteDeviceConf::Deserialize(String ^filename)
+	{
+		try
+		{
+			XmlSerializer ^serializer = gcnew XmlSerializer(MyDLPRemoteDeviceConf::GetInstance()->GetType());
+			FileStream ^fs = gcnew FileStream(filename, FileMode::Open);
+			XmlReader ^reader = gcnew XmlTextReader(fs);
+			MyDLPRemoteDeviceConf::SetInstance(dynamic_cast<MyDLPRemoteDeviceConf ^> (serializer->Deserialize(reader)));
+			fs->Close();
+		} 
+		catch(Exception ^ex)
+		{
+			throw gcnew Exception("MyDLPRemoteDeviceConf::Deserialize", ex);
+		}
+	}
 }

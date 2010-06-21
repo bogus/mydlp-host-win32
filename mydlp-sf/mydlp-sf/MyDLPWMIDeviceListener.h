@@ -17,34 +17,41 @@
  *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  *  MA 02110-1301, USA.
  */
-#ifndef __MYDLP_DIR_TRAVERSE__
-#define __MYDLP_DIR_TRAVERSE__
+
+#ifndef __MYDLP_WMIDEVICELISTENER_H_
+#define __MYDLP_WMIDEVICELISTENER_H_
 
 #pragma once
 #pragma managed
 
-#include "MyDLPSensitiveFileRecognition.h"
-#include "MyDLPSensFilePool.h"
+#include "MyDLPRemoteSensFileConf.h"
 
 using namespace System;
+using namespace System::Collections::Generic;
+using namespace System::Text;
+using namespace System::Management;
 
 namespace mydlpsf
 {
-	public ref class MyDLPDirectoryTraverse
+	public ref class MyDLPWMIDeviceListener
 	{
 	private:
-		void TraverseDirectory(String ^path, UInt32 lvl, 
-			MyDLPSensitiveFileRecognition ^fileSearch, String ^%detected);
+		static MyDLPWMIDeviceListener ^deviceListener;
+		ManagementEventWatcher ^w;
+		static void USBAdded(Object ^sender, EventArrivedEventArgs ^e);
+		static void USBRemoved(Object ^sender, EventArrivedEventArgs ^e);
+		static void LogicalInserted(Object ^sender, EventArrivedEventArgs ^e);
 
-		Boolean ^cont;
+	protected:
+		MyDLPWMIDeviceListener(void);
 
 	public:
-		MyDLPDirectoryTraverse(void);
+		static MyDLPWMIDeviceListener ^GetInstance();
 		
-		void StopScan();
-		void TraverseAllDrives();
-		void TraverseDir(String ^path);
-		
+		void AddRemoveUSBHandler();
+		void AddInsertUSBHandler();
+		void AddInsertLogicalDeviceHandler();
 	};
 }
+
 #endif

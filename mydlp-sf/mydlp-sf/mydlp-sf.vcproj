@@ -186,6 +186,16 @@
 			AssemblyName="System.Xml, Version=2.0.0.0, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL"
 			MinFrameworkVersion="131072"
 		/>
+		<AssemblyReference
+			RelativePath="System.Management.dll"
+			AssemblyName="System.Management, Version=2.0.0.0, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL"
+			MinFrameworkVersion="131072"
+		/>
+		<AssemblyReference
+			RelativePath="System.Management.Instrumentation.dll"
+			AssemblyName="System.Management.Instrumentation, Version=3.5.0.0, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL"
+			MinFrameworkVersion="196613"
+		/>
 	</References>
 	<Files>
 		<Filter
@@ -195,38 +205,6 @@
 			>
 			<File
 				RelativePath=".\AssemblyInfo.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\MyDLPClamRegex.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\MyDLPDirectoryTraverse.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\MyDLPEventLogger.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\MyDLPFSMFListener.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\MyDLPRemoteDeviceConf.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\MyDLPRemoteSensFileConf.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\MyDLPSensFilePool.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\MyDLPSensitiveFileRecognition.cpp"
 				>
 			</File>
 			<File
@@ -249,6 +227,58 @@
 					/>
 				</FileConfiguration>
 			</File>
+			<Filter
+				Name="conf"
+				>
+				<File
+					RelativePath=".\MyDLPRemoteDeviceConf.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\MyDLPRemoteSensFileConf.cpp"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="util"
+				>
+				<File
+					RelativePath=".\MyDLPDirectoryTraverse.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\MyDLPEventLogger.cpp"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="sens-file"
+				>
+				<File
+					RelativePath=".\MyDLPClamRegex.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\MyDLPFSMFListener.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\MyDLPSensFilePool.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\MyDLPSensitiveFileRecognition.cpp"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="device"
+				>
+				<File
+					RelativePath=".\MyDLPWMIDeviceListener.cpp"
+					>
+				</File>
+			</Filter>
 		</Filter>
 		<Filter
 			Name="Header Files"
@@ -256,39 +286,7 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
-				RelativePath=".\MyDLPClamRegex.h"
-				>
-			</File>
-			<File
-				RelativePath=".\MyDLPDirectoryTraverse.h"
-				>
-			</File>
-			<File
-				RelativePath=".\MyDLPEventLogger.h"
-				>
-			</File>
-			<File
-				RelativePath=".\MyDLPFSMFListener.h"
-				>
-			</File>
-			<File
-				RelativePath=".\MyDLPRemoteDeviceConf.h"
-				>
-			</File>
-			<File
-				RelativePath=".\MyDLPRemoteSensFileConf.h"
-				>
-			</File>
-			<File
 				RelativePath=".\MyDLPScannerInc.h"
-				>
-			</File>
-			<File
-				RelativePath=".\MyDLPSensFilePool.h"
-				>
-			</File>
-			<File
-				RelativePath=".\MyDLPSensitiveFileRecognition.h"
 				>
 			</File>
 			<File
@@ -299,6 +297,58 @@
 				RelativePath=".\Stdafx.h"
 				>
 			</File>
+			<Filter
+				Name="conf"
+				>
+				<File
+					RelativePath=".\MyDLPRemoteDeviceConf.h"
+					>
+				</File>
+				<File
+					RelativePath=".\MyDLPRemoteSensFileConf.h"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="util"
+				>
+				<File
+					RelativePath=".\MyDLPDirectoryTraverse.h"
+					>
+				</File>
+				<File
+					RelativePath=".\MyDLPEventLogger.h"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="device"
+				>
+				<File
+					RelativePath=".\MyDLPWMIDeviceListener.h"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="sens-file"
+				>
+				<File
+					RelativePath=".\MyDLPClamRegex.h"
+					>
+				</File>
+				<File
+					RelativePath=".\MyDLPFSMFListener.h"
+					>
+				</File>
+				<File
+					RelativePath=".\MyDLPSensFilePool.h"
+					>
+				</File>
+				<File
+					RelativePath=".\MyDLPSensitiveFileRecognition.h"
+					>
+				</File>
+			</Filter>
 		</Filter>
 		<Filter
 			Name="Resource Files"

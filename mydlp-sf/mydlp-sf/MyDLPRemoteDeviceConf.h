@@ -34,17 +34,24 @@
 #include <iostream>
 
 using namespace System;
+using namespace System::Xml;
+using namespace System::Xml::Schema;
+using namespace System::Xml::Serialization;
+using namespace System::IO;
 
 namespace mydlpsf {
 	public ref class MyDLPRemoteDeviceConf
 	{
 	private:
 		static MyDLPRemoteDeviceConf ^deviceConf;
+		static void SetInstance(MyDLPRemoteDeviceConf ^deviceConf);
+
 	public:
 		MyDLPRemoteDeviceConf(void);
 		
 		static MyDLPRemoteDeviceConf ^GetInstance();
-		static void SetInstance(MyDLPRemoteDeviceConf ^sensFileConf);
+		static void Serialize(String ^filename);
+		static void Deserialize(String ^filename);
 
 		Boolean checkUSB;
         Boolean disableUSB;

@@ -36,6 +36,7 @@ namespace mydlpsf {
 
 	MyDLPDirectoryTraverse::MyDLPDirectoryTraverse(void)
 	{
+		cont = true;
 	}
 
 	void MyDLPDirectoryTraverse::TraverseAllDrives() {
@@ -66,6 +67,11 @@ namespace mydlpsf {
 
 	}
 
+	void MyDLPDirectoryTraverse::StopScan()
+	{
+		cont = false;
+	}
+
 	void MyDLPDirectoryTraverse::TraverseDir(String ^path) 
 	{
 		String ^detected = gcnew String("TraverseDir: " + path + "\n");
@@ -77,7 +83,12 @@ namespace mydlpsf {
 
 	void MyDLPDirectoryTraverse::TraverseDirectory(String ^path, UInt32 lvl, 
 		MyDLPSensitiveFileRecognition ^fileSearch, String ^%detected)
-	{
+	{		
+
+		if(cont->Equals(FALSE)) {
+			return;
+		}
+
 		array<String ^> ^dirs = Directory::GetDirectories(path);
 		array<String ^> ^files = Directory::GetFiles(path);
 		System::Collections::SortedList ^all = gcnew System::Collections::SortedList();
@@ -96,6 +107,10 @@ namespace mydlpsf {
 
 		for each(String ^key in all->Keys)
         {
+			if(cont->Equals(FALSE)) {
+				return;
+			}
+
             if (((String ^)all[key]) == "f")
             {
                 try
@@ -132,10 +147,9 @@ namespace mydlpsf {
 						}
 					}
 				}
-				if(!isExcluded)
+				if(!isExcluded && cont)
 					MyDLPDirectoryTraverse::TraverseDirectory(key, lvl + 1, fileSearch, detected);
             }
         }
-
 	}
 }

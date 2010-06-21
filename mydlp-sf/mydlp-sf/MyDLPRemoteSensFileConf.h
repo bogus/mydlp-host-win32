@@ -41,6 +41,8 @@ using namespace System;
 using namespace System::Xml;
 using namespace System::Xml::Schema;
 using namespace System::Xml::Serialization;
+using namespace System::IO;
+
 
 namespace mydlpsf {
 
@@ -48,13 +50,16 @@ namespace mydlpsf {
 	{
 	private:
 		static MyDLPRemoteSensFileConf ^sensFileConf;
+		static void SetInstance(MyDLPRemoteSensFileConf ^sensFileConf);
 
 	public:
 		MyDLPRemoteSensFileConf(void);
 		
 		static MyDLPRemoteSensFileConf ^GetInstance();
-		static void SetInstance(MyDLPRemoteSensFileConf ^sensFileConf);
 		
+		static void Serialize(String ^filename);
+		static void Deserialize(String ^filename);
+
 		System::Collections::Generic::List<MyDLPClamRegex ^> ^regexVal;
         String^ md5Val;
 		System::Collections::Generic::List<String^> ^excludedDirs;
@@ -77,7 +82,11 @@ namespace mydlpsf {
 		UInt32 maxIBANCount;
 		
 		Boolean enableSSN;
-		UInt32 maxSSNCount;		
+		UInt32 maxSSNCount;
+
+		Boolean enableRemovableOnlineScanning;
+		Boolean scanPluggedInRemovableDevices;
+		Boolean scanInsertedLogical;
 	};
 
 }
