@@ -826,6 +826,8 @@ Return Value:
 
     UNREFERENCED_PARAMETER( CompletionContext );
 
+	PAGED_CODE();
+
     //
     //  If not client port just ignore this write.
     //
@@ -889,34 +891,41 @@ Return Value:
                 //  Use the users buffer
                 //
 
-                buffer  = Data->Iopb->Parameters.Write.WriteBuffer;
+                buffer  = Data->Iopb->Parameters.Write.WriteBuffer;		
 
 				scanBuffer = TRUE;
             }
 		}
 
-		for(writeLength = 0; scanBuffer && writeLength < Data->Iopb->Parameters.Write.Length; 
-			writeLength += SCANNER_READ_BUFFER_SIZE)
+		if(scanBuffer) 
 		{
+			notification = ExAllocatePoolWithTag( PagedPool,
+													  sizeof( SCANNER_NOTIFICATION ),
+													  'aacS' );
+			if (notification == NULL) {
+					Data->IoStatus.Status = STATUS_INSUFFICIENT_RESOURCES;
+					Data->IoStatus.Information = 0;
+					returnStatus = FLT_PREOP_COMPLETE;
+					leave;
+			}
+		}
 
+		for(i = 0, writeLength = 0; scanBuffer && (writeLength < Data->Iopb->Parameters.Write.Length); 
+			writeLength += SCANNER_READ_BUFFER_SIZE, i++)
+		{
             //
             //  In a production-level filter, we would actually let user mode scan the file directly.
             //  Allocating & freeing huge amounts of non-paged pool like this is not very good for system perf.
             //  This is just a sample!
             //
 
-            notification = ExAllocatePoolWithTag( NonPagedPool,
-                                                  sizeof( SCANNER_NOTIFICATION ),
-                                                  'nacS' );
-            if (notification == NULL) {
-
-                Data->IoStatus.Status = STATUS_INSUFFICIENT_RESOURCES;
-                Data->IoStatus.Information = 0;
-                returnStatus = FLT_PREOP_COMPLETE;
-                leave;
-            }
-
 			notification->BytesToScan = min( Data->Iopb->Parameters.Write.Length - writeLength, SCANNER_READ_BUFFER_SIZE );
+
+			//if(i < ceil(Data->Iopb->Parameters.Write.Length / (SCANNER_READ_BUFFER_SIZE * 1.0)))
+			if( (Data->Iopb->Parameters.Write.Length - writeLength) < SCANNER_READ_BUFFER_SIZE )
+				notification->IsFinalChunk = TRUE;
+			else
+				notification->IsFinalChunk = FALSE;
 
             //
             //  The buffer can be a raw user buffer. Protect access to it
@@ -1002,12 +1011,15 @@ Return Value:
 					break;
 				}
 			}
+
+			if(notification->IsFinalChunk)
+				break;
 		}
     } finally {
 
         if (notification != NULL) {
 
-            ExFreePoolWithTag( notification, 'nacS' );
+            ExFreePoolWithTag( notification, 'aacS' );
         }
 
         if (context) {

@@ -68,7 +68,7 @@ MWchTmpMap mMap;
 DWORD ScannerWorker(__in PSCANNER_THREAD_CONTEXT Context);
 BOOL ScanFile (__in_bcount(BufferSize) PUCHAR Buffer, __in ULONG BufferSize,
 			   __in_bcount(FileNameLength) PWCHAR FileName, __in ULONG FileNameLength, 
-			   __in USHORT Phase);
+			   __in USHORT Phase, __in BOOLEAN isFinalChunk);
 TEMPFILE_INFO* ScanMMap(__in_bcount(FileNameLength) PWCHAR FileName, __in ULONG FileNameLength,
 			  __in BOOLEAN deletePair);
 
