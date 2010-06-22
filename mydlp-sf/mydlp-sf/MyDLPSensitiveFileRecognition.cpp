@@ -191,30 +191,36 @@ namespace mydlpsf {
 
 		this->result = "Clean";
 		
-		IntPtr ptr = Marshal::StringToHGlobalUni(filename);
-		length = GetShortPathName((LPCWSTR)ptr.ToPointer(), NULL, 0);
-	    if (length == 0)
-			return 2;
-
-		buffer = new TCHAR[length];
-
-		length = GetShortPathName((LPCWSTR)ptr.ToPointer(), buffer, length);
-		if (length == 0) 
-			return 2;
-
-		Marshal::FreeHGlobal(ptr);
-
-		if((ret = cl_scanfile((const char *)ManagedToSTL(gcnew String(buffer)).c_str(), &virname, &size, this->engine, scanOptions)) == CL_VIRUS) {
-			this->result = STLToManaged(virname);
-			return 1;
-		} else {
-			if(ret == CL_CLEAN) {
-				return 0;
-			} else {
-				cl_engine_free(engine);
+		try 
+		{
+			IntPtr ptr = Marshal::StringToHGlobalUni(filename);
+			length = GetShortPathName((LPCWSTR)ptr.ToPointer(), NULL, 0);
+			if (length == 0)
 				return 2;
+
+			buffer = new TCHAR[length];
+
+			length = GetShortPathName((LPCWSTR)ptr.ToPointer(), buffer, length);
+			if (length == 0) 
+				return 2;
+
+			Marshal::FreeHGlobal(ptr);
+
+			if((ret = cl_scanfile((const char *)ManagedToSTL(gcnew String(buffer)).c_str(), &virname, &size, this->engine, scanOptions)) == CL_VIRUS) {
+				this->result = STLToManaged(virname);
+				return 1;
+			} else {
+				if(ret == CL_CLEAN) {
+					return 0;
+				} else {
+					cl_engine_free(engine);
+					return 2;
+				}
 			}
+		} catch (Exception ^ex) {
+
 		}
+
 		return 0;
 	}
 

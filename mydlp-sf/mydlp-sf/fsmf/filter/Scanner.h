@@ -67,7 +67,8 @@ extern SCANNER_DATA ScannerData;
 typedef struct _SCANNER_STREAM_HANDLE_CONTEXT {
 
     BOOLEAN RescanRequired;
-    
+	ULONG LastByteOffsetLowPart;
+    BOOLEAN IsLeak;
 } SCANNER_STREAM_HANDLE_CONTEXT, *PSCANNER_STREAM_HANDLE_CONTEXT;
 
 #pragma warning(push)

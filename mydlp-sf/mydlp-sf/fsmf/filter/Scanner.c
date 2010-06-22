@@ -24,6 +24,7 @@ Environment:
 #include <suppress.h>
 #include "MyDLPScannerInc.h"
 #include "Scanner.h"
+#include <stdio.h>
 
 #pragma prefast(disable:__WARNING_ENCODE_MEMBER_FUNCTION_POINTER, "Not valid for kernel mode drivers")
 
@@ -92,7 +93,7 @@ const FLT_OPERATION_REGISTRATION Callbacks[] = {
       NULL},
 
     { IRP_MJ_WRITE,
-      0,
+      FLTFL_OPERATION_REGISTRATION_SKIP_PAGING_IO,
       ScannerPreWrite,
       NULL},
 
@@ -292,7 +293,7 @@ Return Value
     ScannerData.UserProcess = PsGetCurrentProcess();
     ScannerData.ClientPort = ClientPort;
 
-    DbgPrint( "!!! scanner.sys --- connected, port=0x%p\n", ClientPort );
+    DbgPrint( "!!! mydlp-scanner.sys --- connected, port=0x%p\n", ClientPort );
 
     return STATUS_SUCCESS;
 }
@@ -323,7 +324,7 @@ Return value
 
     PAGED_CODE();
 
-    DbgPrint( "!!! scanner.sys --- disconnected, port=0x%p\n", ScannerData.ClientPort );
+    DbgPrint( "!!! mydlp-scanner.sys --- disconnected, port=0x%p\n", ScannerData.ClientPort );
 
     //
     //  Close our handle to the connection: note, since we limited max connections to 1,
@@ -546,7 +547,7 @@ Return Value:
 
     if (IoThreadToProcess( Data->Thread ) == ScannerData.UserProcess) {
 
-        DbgPrint( "!!! scanner.sys -- allowing create for trusted process \n" );
+        DbgPrint( "!!! mydlp-scanner.sys -- allowing create for trusted process \n" );
 
         return FLT_PREOP_SUCCESS_NO_CALLBACK;
     }
@@ -602,7 +603,6 @@ Return Value:
     //
     //  If this create was failing anyway, don't bother scanning now.
     //
-
 	
 	if (!FltObjects->FileObject->WriteAccess) {
 		return FLT_POSTOP_FINISHED_PROCESSING;
@@ -662,9 +662,9 @@ Return Value:
         //  Ask the filter manager to undo the create.
         //
 
-        DbgPrint( "!!! scanner.sys -- foul language detected in postcreate !!!\n" );
+        DbgPrint( "!!! mydlp-scanner.sys -- foul language detected in postcreate !!!\n" );
 
-        DbgPrint( "!!! scanner.sys -- undoing create \n" );
+        DbgPrint( "!!! mydlp-scanner.sys -- undoing create \n" );
 
         FltCancelFileOpen( FltObjects->Instance, FltObjects->FileObject );
 
@@ -694,6 +694,8 @@ Return Value:
             //
 
             scannerContext->RescanRequired = TRUE;
+			scannerContext->LastByteOffsetLowPart = 0;
+			scannerContext->IsLeak = FALSE;
 
             (VOID) FltSetStreamHandleContext( FltObjects->Instance,
                                               FltObjects->FileObject,
@@ -774,7 +776,7 @@ Return Value:
 
             if (!safe) {
 
-                DbgPrint( "!!! scanner.sys -- foul language detected in precleanup !!!\n" );
+                DbgPrint( "!!! mydlp-scanner.sys -- foul language detected in precleanup !!!\n" );
             }
         }
 
@@ -818,15 +820,15 @@ Return Value:
     PSCANNER_NOTIFICATION notification = NULL;
     PSCANNER_STREAM_HANDLE_CONTEXT context = NULL;
     ULONG replyLength;
-    BOOLEAN safe = TRUE, scanBuffer = FALSE;
+    BOOLEAN safe = TRUE, scanBuffer = FALSE, isFound = FALSE;
     PUCHAR buffer, destBuffer;
 	USHORT phase = 1;
 	POBJECT_NAME_INFORMATION dosNameInfo;
-	ULONG writeLength, i;
+	ULONG writeLength, i = 0;
 
     UNREFERENCED_PARAMETER( CompletionContext );
 
-	PAGED_CODE();
+	//PAGED_CODE();
 
     //
     //  If not client port just ignore this write.
@@ -840,6 +842,14 @@ Return Value:
     status = FltGetStreamHandleContext( FltObjects->Instance,
                                         FltObjects->FileObject,
                                         &context );
+
+	if(context->IsLeak) {
+		Data->IoStatus.Status = STATUS_ACCESS_DENIED;
+		Data->IoStatus.Information = 0;
+		returnStatus = FLT_PREOP_COMPLETE;
+		FltReleaseContext( context );
+		return returnStatus;
+	}
 
     if (!NT_SUCCESS( status )) {
 
@@ -897,9 +907,18 @@ Return Value:
             }
 		}
 
+		if(context->LastByteOffsetLowPart == 0 || Data->Iopb->Parameters.Write.ByteOffset.LowPart > context->LastByteOffsetLowPart)
+		{
+			scanBuffer = (scanBuffer && TRUE);
+		} 
+		else 
+		{
+			scanBuffer = (scanBuffer && FALSE);
+		}
+
 		if(scanBuffer) 
 		{
-			notification = ExAllocatePoolWithTag( PagedPool,
+			notification = ExAllocatePoolWithTag( NonPagedPool,
 													  sizeof( SCANNER_NOTIFICATION ),
 													  'aacS' );
 			if (notification == NULL) {
@@ -920,12 +939,6 @@ Return Value:
             //
 
 			notification->BytesToScan = min( Data->Iopb->Parameters.Write.Length - writeLength, SCANNER_READ_BUFFER_SIZE );
-
-			//if(i < ceil(Data->Iopb->Parameters.Write.Length / (SCANNER_READ_BUFFER_SIZE * 1.0)))
-			if( (Data->Iopb->Parameters.Write.Length - writeLength) < SCANNER_READ_BUFFER_SIZE )
-				notification->IsFinalChunk = TRUE;
-			else
-				notification->IsFinalChunk = FALSE;
 
             //
             //  The buffer can be a raw user buffer. Protect access to it
@@ -976,7 +989,7 @@ Return Value:
                                      NULL );
 
             if (STATUS_SUCCESS == status) {
-
+			   
                safe = ((PSCANNER_REPLY) notification)->SafeToOpen;
 
            } else {
@@ -985,7 +998,7 @@ Return Value:
                //  Couldn't send message. This sample will let the i/o through.
                //
 
-               DbgPrint( "!!! scanner.sys --- couldn't send message to user-mode to scan file, status 0x%X\n", status );
+               DbgPrint( "!!! mydlp-scanner.sys --- couldn't send message to user-mode to scan file, status 0x%X\n", status );
            }
         
 
@@ -999,22 +1012,31 @@ Return Value:
 				//  is not going to be used for any more writes)
 				//
 
-				DbgPrint( "!!! scanner.sys -- foul language detected in write !!!\n" );
+				DbgPrint( "!!! mydlp-scanner.sys -- foul language detected in write !!!\n" );
 
 				if (!FlagOn( Data->Iopb->IrpFlags, IRP_PAGING_IO )) {
 
-					DbgPrint( "!!! scanner.sys -- blocking the write !!!\n" );
+					DbgPrint( "!!! mydlp-scanner.sys -- blocking the write !!!\n" );
 
 					Data->IoStatus.Status = STATUS_ACCESS_DENIED;
 					Data->IoStatus.Information = 0;
+					isFound = TRUE;
 					returnStatus = FLT_PREOP_COMPLETE;
-					break;
 				}
 			}
-
-			if(notification->IsFinalChunk)
-				break;
 		}
+		if(scanBuffer) {
+
+			context->LastByteOffsetLowPart = Data->Iopb->Parameters.Write.ByteOffset.LowPart;
+			context->IsLeak = isFound;	
+			(VOID) FltSetStreamHandleContext( FltObjects->Instance,
+                                      FltObjects->FileObject,
+                                      FLT_SET_CONTEXT_REPLACE_IF_EXISTS,
+                                      context,
+                                      NULL );
+			// DO NOT remove or unload hangs
+			FltReleaseContext( context );
+		} 
     } finally {
 
         if (notification != NULL) {
@@ -1027,7 +1049,9 @@ Return Value:
             FltReleaseContext( context );
         }
     }
+	
 
+	
     return returnStatus;
 }
 
@@ -1097,91 +1121,20 @@ Return Value:
 
     try {
 
-        //
-        //  Obtain the volume object .
-        //
+		if (NT_SUCCESS( status )) {
 
-        status = FltGetVolumeFromInstance( Instance, &volume );
+	        notification = ExAllocatePoolWithTag( NonPagedPool,
+                                       sizeof( SCANNER_NOTIFICATION ),
+                                       'nacS' );
 
-        if (!NT_SUCCESS( status )) {
+			if(NULL == notification) {
 
-            leave;
-        }
+				status = STATUS_INSUFFICIENT_RESOURCES;
+				leave;
+			}
 
-        //
-        //  Determine sector size. Noncached I/O can only be done at sector size offsets, and in lengths which are
-        //  multiples of sector size. A more efficient way is to make this call once and remember the sector size in the
-        //  instance setup routine and setup an instance context where we can cache it.
-        //
 
-        status = FltGetVolumeProperties( volume,
-                                         &volumeProps,
-                                         sizeof( volumeProps ),
-                                         &length );
-        //
-        //  STATUS_BUFFER_OVERFLOW can be returned - however we only need the properties, not the names
-        //  hence we only check for error status.
-        //
-
-        if (NT_ERROR( status )) {
-
-            leave;
-        }
-
-        length = max( SCANNER_READ_BUFFER_SIZE, volumeProps.SectorSize );
-
-        //
-        //  Use non-buffered i/o, so allocate aligned pool
-        //
-
-        buffer = FltAllocatePoolAlignedWithTag( Instance,
-                                                NonPagedPool,
-                                                length,
-                                                'nacS' );
-
-        if (NULL == buffer) {
-
-            status = STATUS_INSUFFICIENT_RESOURCES;
-            leave;
-        }
-
-        notification = ExAllocatePoolWithTag( NonPagedPool,
-                                              sizeof( SCANNER_NOTIFICATION ),
-                                              'nacS' );
-
-        if(NULL == notification) {
-
-            status = STATUS_INSUFFICIENT_RESOURCES;
-            leave;
-        }
-
-        //
-        //  Read the beginning of the file and pass the contents to user mode.
-        //
-
-        offset.QuadPart = bytesRead = 0;
-        status = FltReadFile( Instance,
-                              FileObject,
-                              &offset,
-                              length,
-                              buffer,
-                              FLTFL_IO_OPERATION_NON_CACHED |
-                               FLTFL_IO_OPERATION_DO_NOT_UPDATE_BYTE_OFFSET,
-                              &bytesRead,
-                              NULL,
-                              NULL );
-
-        if (NT_SUCCESS( status ) && (0 != bytesRead)) {
-
-            notification->BytesToScan = (ULONG) bytesRead;
-
-            //
-            //  Copy only as much as the buffer can hold
-            //
-
-            RtlCopyMemory( &notification->Contents,
-                           buffer,
-                           min( notification->BytesToScan, SCANNER_READ_BUFFER_SIZE ) );
+            notification->BytesToScan = 0;
 
 			notification->Phase = phase;
 
@@ -1213,25 +1166,15 @@ Return Value:
                 //  Couldn't send message
                 //
 
-                DbgPrint( "!!! scanner.sys --- couldn't send message to user-mode to scan file, status 0x%X\n", status );
+                DbgPrint( "!!! mydlp-scanner.sys --- couldn't send message to user-mode to scan file, status 0x%X\n", status );
             }
         }
 
     } finally {
 
-        if (NULL != buffer) {
-
-            FltFreePoolAlignedWithTag( Instance, buffer, 'nacS' );
-        }
-
-        if (NULL != notification) {
+		if (NULL != notification) {
 
             ExFreePoolWithTag( notification, 'nacS' );
-        }
-
-        if (NULL != volume) {
-
-            FltObjectDereference( volume );
         }
     }
 

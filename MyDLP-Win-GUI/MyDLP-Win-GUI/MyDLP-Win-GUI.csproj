@@ -8,8 +8,8 @@
     <ProjectGuid>{C408CAFD-A27E-4C1E-BD2A-F510B65EFDE8}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>SysTrayTest</RootNamespace>
-    <AssemblyName>SysTrayTest</AssemblyName>
+    <RootNamespace>MydlpWinGui</RootNamespace>
+    <AssemblyName>MyDLP-Win-GUI</AssemblyName>
     <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -45,6 +45,12 @@
     <Compile Include="Form1.Designer.cs">
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
+    <Compile Include="LocalScan.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="LocalScan.Designer.cs">
+      <DependentUpon>LocalScan.cs</DependentUpon>
+    </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="Form1.resx">
@@ -59,6 +65,7 @@
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
     </Compile>
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -72,10 +79,31 @@
     <Compile Include="TaskbarNotifier.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="DefineSensitiveData.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="DefineSensitiveData.Designer.cs">
+      <DependentUpon>DefineSensitiveData.cs</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="images\close.bmp" />
-    <EmbeddedResource Include="images\skin.bmp" />
+    <EmbeddedResource Include="images\close.bmp">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="images\skin.bmp">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="languages\Resource1.tr-TR.resx">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="DefineSensitiveData.resx">
+      <DependentUpon>DefineSensitiveData.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="LocalScan.resx">
+      <DependentUpon>LocalScan.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

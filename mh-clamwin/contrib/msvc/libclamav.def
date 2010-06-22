@@ -45,6 +45,7 @@ cl_dlp_regex_init
 cl_dlp_iban_init
 cl_dlp_md5db_init
 cl_dlp_md5db_unlink
+cl_istext
 
 ; ClamWin specific
 cw_init

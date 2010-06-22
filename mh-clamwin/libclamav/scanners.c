@@ -88,6 +88,7 @@
 #include "cache.h"
 #include "dlp_regex.h"
 #include "dlp_iban.h"
+#include "textdet.h"
 
 #ifdef HAVE_BZLIB_H
 #include <bzlib.h>
@@ -2658,6 +2659,24 @@ int cl_scanfile(const char *filename, const char **virname, unsigned long int *s
     close(fd);
 
     return ret;
+}
+
+int cl_istext(const unsigned char *buf, unsigned int len)
+{
+	int ret;
+
+    ret = cli_texttype(buf, len);
+
+	if(ret == CL_TYPE_TEXT_ASCII)
+		return 1;
+	else if(ret == CL_TYPE_TEXT_UTF8)
+		return 2;
+	else if(ret == CL_TYPE_TEXT_UTF16LE)
+		return 3;
+	else if(ret == CL_TYPE_TEXT_UTF16BE)
+		return 4;
+	else
+		return 5;
 }
 
 /*

@@ -123,7 +123,7 @@ DWORD ScannerWorker(__in PSCANNER_THREAD_CONTEXT Context)
 		notification = &message->Notification;
 
 		result = ScanFile( notification->Contents, notification->BytesToScan, 
-			notification->FileName, notification->FileNameLength, notification->Phase, notification->IsFinalChunk );
+			notification->FileName, notification->FileNameLength, notification->Phase);
 
 		replyMessage.ReplyHeader.Status = 0;
 		replyMessage.ReplyHeader.MessageId = message->MessageHeader.MessageId;
@@ -167,19 +167,22 @@ DWORD ScannerWorker(__in PSCANNER_THREAD_CONTEXT Context)
 
 BOOL ScanFile (__in_bcount(BufferSize) PUCHAR Buffer, __in ULONG BufferSize,
 			   __in_bcount(FileNameLength) PWCHAR FileName, __in ULONG FileNameLength, 
-			   __in USHORT Phase, __in BOOLEAN IsFinalChunk)
+			   __in USHORT Phase)
 {
 	FILE *fp;
 	TEMPFILE_INFO *tempFileInfo;
 	std::string tempFileName;
-
+	
 	tempFileInfo = ScanMMap(FileName, FileNameLength, false);
 
 	if(Phase == 1) {
 		
 		if(tempFileInfo == NULL) {
+			CHAR buf[MAX_PATH];
+			GetTempPathA(MAX_PATH, buf);
 			tempFileInfo = (TEMPFILE_INFO *)malloc(sizeof(TEMPFILE_INFO));
-			tempFileName = _tempnam("c:\\tmp", "mydlptmp");
+			// Revise temp file creation
+			tempFileName = _tempnam(buf, "mydlptmp");
 			tempFileName += (std::string)(const char*)(System::Runtime::InteropServices::Marshal::StringToHGlobalAnsi(Guid::NewGuid().ToString() 
 				+ System::IO::Path::GetExtension(gcnew System::String(FileName)))).ToPointer();
 			tempFileInfo->filename = (char *) malloc(sizeof(char) * tempFileName.length());
@@ -195,13 +198,16 @@ BOOL ScanFile (__in_bcount(BufferSize) PUCHAR Buffer, __in ULONG BufferSize,
 		fflush(tempFileInfo->tmpfd);
 		fclose(tempFileInfo->tmpfd);
 
-		printf("---- FileName: %S ---- %u %d\n", FileName, BufferSize, IsFinalChunk);
+		struct stat filestatus;
+		stat( tempFileInfo->filename , &filestatus );
 
-		if(IsFinalChunk) {		
+		if(Buffer[BufferSize - 1] == 0 || (cl_istext(Buffer, BufferSize) != 5)) {
+			
 			mydlpsf::MyDLPSensitiveFileRecognition ^recObj =  mydlpsf::MyDLPSensFilePool::GetInstance()->AcquireObject();
 			int ret = recObj->SearchSensitiveData(gcnew System::String(tempFileInfo->filename));
-
+			
 			if(ret == 1) {
+				Console::WriteLine("File transfer blocked: " + gcnew String(FileName) + " -- " + recObj->GetLastResult());				
 				mydlpsf::MyDLPEventLogger::GetInstance()->LogSensFile("File transfer blocked: " + 
 					gcnew String(FileName) + " -- " + recObj->GetLastResult());
 				mydlpsf::MyDLPSensFilePool::GetInstance()->ReleaseObject(recObj);

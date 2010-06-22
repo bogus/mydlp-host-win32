@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Windows.Forms;
 
-namespace SysTrayTest
+namespace MydlpWinGui
 {
     static class Program
     {

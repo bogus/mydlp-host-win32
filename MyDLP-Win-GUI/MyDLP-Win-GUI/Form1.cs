@@ -5,12 +5,21 @@ using System.Data;
 using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
+using System.Resources;
+using System.Threading;
+using System.Globalization;
 using CustomUIControls;
 
-namespace SysTrayTest
+namespace MydlpWinGui
 {
     public partial class Form1 : Form
     {
+
+        public static ResourceManager resM = new ResourceManager("MydlpWinGui.languages.Resource1", Type.GetType("MydlpWinGui.Form1").Assembly);
+        private DefineSensitiveData defineSensitiveData = new DefineSensitiveData();
+        private LocalScan localScan = new LocalScan();
+        private Control currentPanelControl;
+
         public Form1()
         {
             InitializeComponent();
@@ -20,6 +29,8 @@ namespace SysTrayTest
             taskbarNotifier1.SetCloseBitmap(new Bitmap(GetType(), "images.close.bmp"), Color.FromArgb(255, 0, 255), new Point(127, 8));
             taskbarNotifier1.TitleRectangle = new Rectangle(40, 9, 70, 25);
             taskbarNotifier1.ContentRectangle = new Rectangle(8, 41, 133, 68);
+
+
             /*
             taskbarNotifier1.TitleClick += new EventHandler(TitleClick);
             taskbarNotifier1.ContentClick += new EventHandler(ContentClick);
@@ -71,8 +82,43 @@ namespace SysTrayTest
 
         private void Form1_Shown(object sender, EventArgs e)
         {
+            /*
             WindowState = FormWindowState.Minimized;
             Hide();
+             */ 
         }
+
+        private void Form1_Load(object sender, EventArgs e)
+        {
+            Thread.CurrentThread.CurrentUICulture = new CultureInfo("tr-TR");
+            Thread.CurrentThread.CurrentCulture = new CultureInfo("tr-TR");
+
+            menuDefSensData.Text = resM.GetString("menu.defsensdata");
+            menuScan.Text = resM.GetString("menu.localscan");
+            menuOnlineScan.Text = resM.GetString("menu.onlinescan");
+            menuOptions.Text = resM.GetString("menu.options");
+
+            panelTitle.Text = resM.GetString("menu.defsensdata");
+            panel2.Controls.Add(defineSensitiveData);
+            currentPanelControl = defineSensitiveData;
+        }
+
+        private void menuDefSensData_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            panelTitle.Text = ((LinkLabel)sender).Text;
+            panel2.Controls.Remove(currentPanelControl);
+            panel2.Controls.Add(defineSensitiveData);
+            currentPanelControl = defineSensitiveData;
+        }
+
+        private void menuScan_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            panelTitle.Text = ((LinkLabel)sender).Text;
+            panel2.Controls.Remove(currentPanelControl);
+            panel2.Controls.Add(localScan);
+            currentPanelControl = localScan;
+        }
+
+
     }
 }

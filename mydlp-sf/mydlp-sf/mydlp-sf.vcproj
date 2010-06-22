@@ -48,7 +48,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="C:\WinDDK\7600.16385.1\inc\ddk;&quot;C:\Documents and Settings\Administrator\Desktop\clamav-win32\libclamav&quot;"
+				AdditionalIncludeDirectories="C:\WinDDK\7600.16385.1\inc\ddk;&quot;..\..\mh-clamwin\libclamav&quot;"
 				PreprocessorDefinitions="WIN32;_DEBUG"
 				RuntimeLibrary="3"
 				UsePrecompiledHeader="2"
@@ -68,7 +68,7 @@
 				Name="VCLinkerTool"
 				AdditionalDependencies="libclamavd.lib fltlib.lib $(NOINHERIT)"
 				LinkIncremental="2"
-				AdditionalLibraryDirectories="C:\WinDDK\7600.16385.1\lib\wxp\i386;&quot;C:\Documents and Settings\Administrator\Desktop\clamav-win32\contrib\msvc\Debug\Win32&quot;"
+				AdditionalLibraryDirectories="C:\WinDDK\7600.16385.1\lib\wxp\i386;&quot;..\..\mh-clamwin\contrib\msvc\Debug\Win32&quot;"
 				ModuleDefinitionFile=""
 				GenerateDebugInformation="true"
 				AssemblyDebug="1"

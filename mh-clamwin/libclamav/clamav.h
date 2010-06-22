@@ -248,6 +248,8 @@ extern int cl_dlp_iban_init();
 extern char *cl_dlp_md5db_init(const unsigned char *md5_list);
 extern int cl_dlp_md5db_unlink(); 
 
+extern int cl_istext(const unsigned char *buf, unsigned int len);
+
 #ifdef __cplusplus
 }
 #endif
