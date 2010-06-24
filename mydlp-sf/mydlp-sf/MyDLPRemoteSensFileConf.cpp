@@ -25,6 +25,7 @@ using namespace System::Xml;
 using namespace System::Xml::Schema;
 using namespace System::Xml::Serialization;
 using namespace System::IO;
+using namespace Microsoft::Win32;
 
 namespace mydlpsf {
 
@@ -63,10 +64,12 @@ namespace mydlpsf {
 		mydlpsf::MyDLPRemoteSensFileConf::sensFileConf = sensFileConf;
 	}
 
-	void MyDLPRemoteSensFileConf::Serialize(String ^filename)
+	void MyDLPRemoteSensFileConf::Serialize()
 	{
 		try
 		{
+			RegistryKey ^key = Registry::LocalMachine->OpenSubKey( "Software\\MyDLP" );
+			String ^filename = key->GetValue("Config_Dir") + "\\" + confFileName;
 			XmlSerializer ^serializer = gcnew XmlSerializer(MyDLPRemoteSensFileConf::GetInstance()->GetType());
 			TextWriter ^writer = gcnew StreamWriter(filename);
 			serializer->Serialize(writer, MyDLPRemoteSensFileConf::GetInstance());
@@ -78,10 +81,12 @@ namespace mydlpsf {
 		}
 	}
 
-	void MyDLPRemoteSensFileConf::Deserialize(String ^filename)
+	void MyDLPRemoteSensFileConf::Deserialize()
 	{
 		try
 		{
+			RegistryKey ^key = Registry::LocalMachine->OpenSubKey( "Software\\MyDLP" );
+			String ^filename = key->GetValue("Config_Dir") + "\\" + confFileName;
 			XmlSerializer ^serializer = gcnew XmlSerializer(MyDLPRemoteSensFileConf::GetInstance()->GetType());
 			FileStream ^fs = gcnew FileStream(filename, FileMode::Open);
 			XmlReader ^reader = gcnew XmlTextReader(fs);

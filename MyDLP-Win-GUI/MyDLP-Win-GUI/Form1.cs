@@ -10,6 +10,7 @@ using System.Threading;
 using System.Globalization;
 using CustomUIControls;
 using mydlpsf;
+using Microsoft.Win32;
 
 namespace MydlpWinGui
 {
@@ -30,12 +31,12 @@ namespace MydlpWinGui
         public Form1()
         {
             // Load sensitive data configuration
-            MyDLPRemoteSensFileConf.Deserialize("c:\\mydlp\\conf\\sensfile.conf");
-            MyDLPRemoteDeviceConf.Deserialize("c:\\mydlp\\conf\\device.conf");
-            MyDLPRemoteScreenCaptureConf.Deserialize("c:\\mydlp\\conf\\screencapture.conf");
+            MyDLPRemoteSensFileConf.Deserialize();
+            MyDLPRemoteDeviceConf.Deserialize();
+            MyDLPRemoteScreenCaptureConf.Deserialize();
             sensFileConf = MyDLPRemoteSensFileConf.GetInstance();
             deviceConf = MyDLPRemoteDeviceConf.GetInstance();
-            screenCaptureConf = MyDLPRemoteScreenCaptureConf.GetInstance(); 
+            screenCaptureConf = MyDLPRemoteScreenCaptureConf.GetInstance();
 
             localScan = new LocalScan();
             onlineScan = new OnlineScan();

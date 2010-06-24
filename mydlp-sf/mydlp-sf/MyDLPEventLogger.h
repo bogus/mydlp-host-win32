@@ -24,7 +24,7 @@
 #pragma managed
 
 using namespace System;
-
+using namespace log4net;
 namespace mydlpsf
 {
 	public ref class MyDLPEventLogger
@@ -33,8 +33,10 @@ namespace mydlpsf
 		static MyDLPEventLogger ^eventLogger;
 		System::Diagnostics::EventLog ^eventLogDevice;
 		System::Diagnostics::EventLog ^eventLogSensFile;
-		System::Threading::Mutex ^sensFileMutex;
-		System::Threading::Mutex ^deviceMutex;
+		
+		ILog ^logSensFile;
+		ILog ^logDevice;
+
 		MyDLPEventLogger(void);
 
 	public:

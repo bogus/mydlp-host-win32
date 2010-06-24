@@ -110,7 +110,25 @@ namespace MydlpWinGui
 
         private void buttonSaveAll_Click(object sender, EventArgs e)
         {
+            try
+            {
+                MyDLPRemoteSensFileConf.GetInstance().enableCC = checkBoxCC.Checked;
+                MyDLPRemoteSensFileConf.GetInstance().enableSSN = checkBoxSSN.Checked;
+                MyDLPRemoteSensFileConf.GetInstance().enableIBAN = checkBoxIBAN.Checked;
+                MyDLPRemoteSensFileConf.GetInstance().enableTRId = checkBoxTRid.Checked;
+                MyDLPRemoteSensFileConf.GetInstance().maxCCCount = UInt32.Parse(maskedTextBoxCC.Text);
+                MyDLPRemoteSensFileConf.GetInstance().maxSSNCount = UInt32.Parse(maskedTextBoxSSN.Text);
+                MyDLPRemoteSensFileConf.GetInstance().maxTRIdCount = UInt32.Parse(maskedTextBoxTRid.Text);
+                MyDLPRemoteSensFileConf.GetInstance().maxIBANCount = UInt32.Parse(maskedTextBoxIBAN.Text);
 
+                MyDLPRemoteSensFileConf.Serialize();
+
+                MessageBox.Show("Changes Saved", "Success");
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Operation failed!", "Error");
+            }
         }
 
         private void SensitiveData_Load(object sender, EventArgs e)

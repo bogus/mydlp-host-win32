@@ -1,6 +1,8 @@
 #include "StdAfx.h"
 #include "MyDLPRemoteScreenCaptureConf.h"
 
+using namespace Microsoft::Win32;
+
 namespace mydlpsf
 {
 	MyDLPRemoteScreenCaptureConf::MyDLPRemoteScreenCaptureConf(void)
@@ -28,10 +30,12 @@ namespace mydlpsf
 		mydlpsf::MyDLPRemoteScreenCaptureConf::screenCaptureConf = screenCaptureConf;
 	}
 
-	void MyDLPRemoteScreenCaptureConf::Serialize(String ^filename)
+	void MyDLPRemoteScreenCaptureConf::Serialize()
 	{
 		try
 		{
+			RegistryKey ^key = Registry::LocalMachine->OpenSubKey( "Software\\MyDLP" );
+			String ^filename = key->GetValue("Config_Dir") + "\\" + confFileName;
 			XmlSerializer ^serializer = gcnew XmlSerializer(MyDLPRemoteScreenCaptureConf::GetInstance()->GetType());
 			TextWriter ^writer = gcnew StreamWriter(filename);
 			serializer->Serialize(writer, MyDLPRemoteScreenCaptureConf::GetInstance());
@@ -43,10 +47,12 @@ namespace mydlpsf
 		}
 	}
 
-	void MyDLPRemoteScreenCaptureConf::Deserialize(String ^filename)
+	void MyDLPRemoteScreenCaptureConf::Deserialize()
 	{
 		try
 		{
+			RegistryKey ^key = Registry::LocalMachine->OpenSubKey( "Software\\MyDLP" );
+			String ^filename = key->GetValue("Config_Dir") + "\\" + confFileName;
 			XmlSerializer ^serializer = gcnew XmlSerializer(MyDLPRemoteScreenCaptureConf::GetInstance()->GetType());
 			FileStream ^fs = gcnew FileStream(filename, FileMode::Open);
 			XmlReader ^reader = gcnew XmlTextReader(fs);

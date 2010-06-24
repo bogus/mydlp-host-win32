@@ -5,6 +5,7 @@ using System.Drawing;
 using System.Data;
 using System.Text;
 using System.Windows.Forms;
+using mydlpsf;
 
 namespace MydlpWinGui
 {
@@ -34,7 +35,23 @@ namespace MydlpWinGui
 
         private void button1_Click(object sender, EventArgs e)
         {
+            try
+            {
+                MyDLPRemoteScreenCaptureConf.GetInstance().enableScreenCaptureFilter = checkBox1.Checked;
+                MyDLPRemoteScreenCaptureConf.GetInstance().forbidMSOffice = checkBox2.Checked;
+                MyDLPRemoteScreenCaptureConf.GetInstance().forbidOOOrg = checkBox3.Checked;
+                MyDLPRemoteScreenCaptureConf.GetInstance().forbidAcrobatReader = checkBox4.Checked;
+                MyDLPRemoteScreenCaptureConf.GetInstance().forbidPhotoshop = checkBox5.Checked;
+                MyDLPRemoteScreenCaptureConf.GetInstance().forbidAcrobatReader = checkBox6.Checked;
 
+                MyDLPRemoteScreenCaptureConf.Serialize();
+
+                MessageBox.Show("Changes Saved", "Success");
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Operation failed!", "Error");
+            }
         }
     }
 }

@@ -74,10 +74,26 @@ namespace MydlpWinGui
         private void buttonScanAll_Click(object sender, EventArgs e)
         {
             // Add service routine for local drives scanning
+            MyDLPSensFilePool.GetInstance().UpdatePool();
+
+            progressBar1.Style = ProgressBarStyle.Marquee;
+            progressBar1.MarqueeAnimationSpeed = 50;
+            progressBar1.Value = 0;
+
+            MyDLPDirectoryTraverse dirTraverse = new MyDLPDirectoryTraverse();
+            dirTraverse.TraverseAllDrives();
+            textBox4.DataBindings.Clear();
+            textBox4.DataBindings.Add("Text", dirTraverse.detected, null);
         }
 
         private void buttonScanDir_Click(object sender, EventArgs e)
         {
+            MyDLPSensFilePool.GetInstance().UpdatePool();
+
+            progressBar1.Style = ProgressBarStyle.Marquee;
+            progressBar1.MarqueeAnimationSpeed = 50;
+            progressBar1.Value = 0;
+
             // Add service routine for directory scanning
             if (textBox1.Text.Length != 0 && Directory.Exists(textBox1.Text))
             {
@@ -138,6 +154,32 @@ namespace MydlpWinGui
                 }
                 listView1.Items.RemoveAt(listView1.SelectedIndices[0]);
             }
+        }
+
+        private void buttonSave_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                MyDLPRemoteDeviceConf.GetInstance().scanInsertedLogical = checkBoxScanCD.Checked;
+                MyDLPRemoteDeviceConf.GetInstance().scanPluggedInRemovableDevices = checkBoxScanUSB.Checked;
+
+                MyDLPRemoteDeviceConf.Serialize();
+
+                MessageBox.Show("Changes Saved", "Success");
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Operation Failed");
+            }
+
+        }
+
+        private void buttonStopScan_Click(object sender, EventArgs e)
+        {
+            progressBar1.Style = ProgressBarStyle.Blocks;
+            progressBar1.MarqueeAnimationSpeed = 0;
+            progressBar1.Value = 0;
+
         }
     }
 }

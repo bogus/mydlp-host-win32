@@ -50,14 +50,16 @@ namespace mydlpsf {
 		MyDLPRemoteDeviceConf(void);
 		
 		static MyDLPRemoteDeviceConf ^GetInstance();
-		static void Serialize(String ^filename);
-		static void Deserialize(String ^filename);
+		static void Serialize();
+		static void Deserialize();
 		
 		System::Collections::Generic::List<String^> ^excludedDirs;
 		Boolean enableRemovableOnlineScanning;
 		Boolean justLogRemovableOnlineScanning;
 		Boolean scanPluggedInRemovableDevices;
 		Boolean scanInsertedLogical;
+
+		static const String ^confFileName = "device.conf";
 	};
 }
 

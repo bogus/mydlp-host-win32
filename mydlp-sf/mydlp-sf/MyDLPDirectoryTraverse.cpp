@@ -42,7 +42,7 @@ namespace mydlpsf {
 	void MyDLPDirectoryTraverse::TraverseAllDrives() {
 		array<String ^> ^allDrives = Environment::GetLogicalDrives();
         List<String ^> ^fixedDrives = gcnew List<String ^>();
-		detected = gcnew String("TraverseAllDrives\n");
+		detected = gcnew String("TraverseAllDrives" + System::Environment::NewLine);
 
 		for (int i = 0; i < allDrives->Length; i++)
         {
@@ -74,7 +74,7 @@ namespace mydlpsf {
 
 	void MyDLPDirectoryTraverse::TraverseDir(String ^path) 
 	{
-		detected = gcnew String("TraverseDir: " + path + "\n");
+		detected = gcnew String("TraverseDir: " + path + System::Environment::NewLine);
 		MyDLPSensitiveFileRecognition ^sensFileObj = MyDLPSensFilePool::GetInstance()->AcquireObject();
 		TraverseDirectory(path, 4, sensFileObj);
 		MyDLPSensFilePool::GetInstance()->ReleaseObject(sensFileObj);
@@ -122,7 +122,7 @@ namespace mydlpsf {
                     
                     if (ret == 1)
                     {
-                        detected += key + ":" + fileSearch->GetLastResult() + "\n";
+						detected += key + ":" + fileSearch->GetLastResult() + System::Environment::NewLine;
                     }
                     else if (ret == 2)
                     {

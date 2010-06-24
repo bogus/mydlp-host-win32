@@ -43,8 +43,8 @@ namespace mydlpsf
 
 		static MyDLPRemoteScreenCaptureConf ^GetInstance();
 		
-		static void Serialize(String ^filename);
-		static void Deserialize(String ^filename);
+		static void Serialize();
+		static void Deserialize();
 
 		Boolean enableScreenCaptureFilter;
 		Boolean forbidMSOffice;
@@ -53,6 +53,7 @@ namespace mydlpsf
 		Boolean forbidPhotoshop;
 		Boolean forbidAutoCAD;
 
+		static const String ^confFileName = "screencapture.conf";
 	};
 }
 

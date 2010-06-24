@@ -20,6 +20,8 @@
 #include "StdAfx.h"
 #include "MyDLPRemoteDeviceConf.h"
 
+using namespace Microsoft::Win32;
+
 namespace mydlpsf {
 	MyDLPRemoteDeviceConf::MyDLPRemoteDeviceConf(void)
 	{
@@ -46,10 +48,12 @@ namespace mydlpsf {
 		mydlpsf::MyDLPRemoteDeviceConf::deviceConf = deviceConf;
 	}
 
-	void MyDLPRemoteDeviceConf::Serialize(String ^filename)
+	void MyDLPRemoteDeviceConf::Serialize()
 	{
 		try
 		{
+			RegistryKey ^key = Registry::LocalMachine->OpenSubKey( "Software\\MyDLP" );
+			String ^filename = key->GetValue("Config_Dir") + "\\" + confFileName;
 			XmlSerializer ^serializer = gcnew XmlSerializer(MyDLPRemoteDeviceConf::GetInstance()->GetType());
 			TextWriter ^writer = gcnew StreamWriter(filename);
 			serializer->Serialize(writer, MyDLPRemoteDeviceConf::GetInstance());
@@ -61,10 +65,12 @@ namespace mydlpsf {
 		}
 	}
 
-	void MyDLPRemoteDeviceConf::Deserialize(String ^filename)
+	void MyDLPRemoteDeviceConf::Deserialize()
 	{
 		try
 		{
+			RegistryKey ^key = Registry::LocalMachine->OpenSubKey( "Software\\MyDLP" );
+			String ^filename = key->GetValue("Config_Dir") + "\\" + confFileName;
 			XmlSerializer ^serializer = gcnew XmlSerializer(MyDLPRemoteDeviceConf::GetInstance()->GetType());
 			FileStream ^fs = gcnew FileStream(filename, FileMode::Open);
 			XmlReader ^reader = gcnew XmlTextReader(fs);

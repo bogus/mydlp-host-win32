@@ -57,8 +57,8 @@ namespace mydlpsf {
 		
 		static MyDLPRemoteSensFileConf ^GetInstance();
 		
-		static void Serialize(String ^filename);
-		static void Deserialize(String ^filename);
+		static void Serialize();
+		static void Deserialize();
 
 		System::Collections::Generic::List<MyDLPClamRegex ^> ^regexVal;
         String^ md5Val;
@@ -82,6 +82,8 @@ namespace mydlpsf {
 		
 		Boolean enableSSN;
 		UInt32 maxSSNCount;
+
+		static const String ^confFileName = "sensfile.conf";
 	};
 
 }

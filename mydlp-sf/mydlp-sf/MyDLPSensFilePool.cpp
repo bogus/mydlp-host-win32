@@ -22,6 +22,7 @@
 #include "MyDLPSensitiveFileRecognition.h"
 
 using namespace System;
+using namespace Microsoft::Win32;
 
 namespace mydlpsf
 {
@@ -53,6 +54,10 @@ namespace mydlpsf
 	void MyDLPSensFilePool::InitPool()
 	{
 		int i = 0;
+		RegistryKey ^key = Registry::LocalMachine->OpenSubKey( "Software\\MyDLP" );
+
+		MyDLPRemoteSensFileConf::Deserialize();
+
 		array<System::UInt32> ^ids = gcnew array<System::UInt32>(mydlpsf::MyDLPRemoteSensFileConf::GetInstance()->regexVal->Count);
 		array<System::String ^> ^regex = gcnew array<System::String ^>(mydlpsf::MyDLPRemoteSensFileConf::GetInstance()->regexVal->Count);
 		MyDLPSensitiveFileRecognition ^sensFileObject;
@@ -77,31 +82,9 @@ namespace mydlpsf
 	}
 
 	void MyDLPSensFilePool::UpdatePool()
-	{
-		int i = 0;
-		array<System::UInt32> ^ids = gcnew array<System::UInt32>(mydlpsf::MyDLPRemoteSensFileConf::GetInstance()->regexVal->Count);
-		array<System::String ^> ^regex = gcnew array<System::String ^>(mydlpsf::MyDLPRemoteSensFileConf::GetInstance()->regexVal->Count);
-		MyDLPSensitiveFileRecognition ^sensFileObject;
-		
+	{		
 		objectPool->objQueue = gcnew Queue(objectPool->poolSize);
-
-		for each(MyDLPClamRegex ^clamRegex in mydlpsf::MyDLPRemoteSensFileConf::GetInstance()->regexVal)
-		{
-			ids[i] = clamRegex->id;
-			regex[i] = clamRegex->regex;
-			i++;
-		}
-
-		for(i = 0 ; i < objectPool->poolSize ; i++)
-		{
-			sensFileObject = gcnew MyDLPSensitiveFileRecognition();
-			sensFileObject->Init();
-			sensFileObject->AddRegex(ids, regex, (int)regex->Length);
-			sensFileObject->AddMD5s(mydlpsf::MyDLPRemoteSensFileConf::GetInstance()->md5Val);
-			sensFileObject->AddIBAN();
-			sensFileObject->CompileClamEngine();
-			objQueue->Enqueue(sensFileObject);
-		}
+		InitPool();
 	}
 
 	MyDLPSensitiveFileRecognition^ MyDLPSensFilePool::AcquireObject()

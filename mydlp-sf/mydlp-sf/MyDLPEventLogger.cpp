@@ -21,6 +21,8 @@
 #include "StdAfx.h"
 #include "MyDLPEventLogger.h"
 
+using namespace Microsoft::Win32;
+
 namespace mydlpsf
 {
 	MyDLPEventLogger::MyDLPEventLogger(void)
@@ -33,37 +35,16 @@ namespace mydlpsf
 		{
 			eventLogger = gcnew MyDLPEventLogger();
 
-			eventLogger->eventLogDevice = gcnew System::Diagnostics::EventLog();
-			((System::ComponentModel::ISupportInitialize ^)(eventLogger->eventLogDevice))->BeginInit();
-            eventLogger->eventLogDevice->Log = "MyDLPLog";
-            eventLogger->eventLogDevice->Source = "MyDLPLogs-Device";
-            ((System::ComponentModel::ISupportInitialize ^)(eventLogger->eventLogDevice))->EndInit();
+			RegistryKey ^key = Registry::LocalMachine->OpenSubKey( "Software\\MyDLP" );
 
-            eventLogger->eventLogSensFile = gcnew System::Diagnostics::EventLog();
-			((System::ComponentModel::ISupportInitialize ^)(eventLogger->eventLogSensFile))->BeginInit();
-            eventLogger->eventLogSensFile->Log = "MyDLPLog";
-            eventLogger->eventLogSensFile->Source = "MyDLPLogs-SF";           
-			((System::ComponentModel::ISupportInitialize ^)(eventLogger->eventLogSensFile))->EndInit();
-
-			if (!System::Diagnostics::EventLog::SourceExists("MyDLPLogs-Device"))
-            {
-                System::Diagnostics::EventLog::CreateEventSource("MyDLPLogs-Device", "MyDLPLog");
-            }
-            if (!System::Diagnostics::EventLog::SourceExists("MyDLPLogs-SF"))
-            {
-                System::Diagnostics::EventLog::CreateEventSource("MyDLPLogs-SF", "MyDLPLog");
-            }
-
-			eventLogger->eventLogDevice->Source = "MyDLPLogs-Device";
-            eventLogger->eventLogDevice->Log = "MyDLPLog";
-
-            eventLogger->eventLogSensFile->Source = "MyDLPLogs-SF";
-            eventLogger->eventLogSensFile->Log = "MyDLPLog";
-
-			eventLogger->deviceMutex = gcnew System::Threading::Mutex();
-			eventLogger->sensFileMutex = gcnew System::Threading::Mutex();
+			Layout::ILayout ^patternLayout = gcnew Layout::PatternLayout("%-5p%d{yyyy-MM-dd hh:mm:ss} – %m\r\n");
+			Config::BasicConfigurator::Configure(LogManager::CreateDomain("sensfile"), 
+				gcnew Appender::FileAppender(patternLayout, key->GetValue("Log_Dir") + "\\" + "sens.log", true));
+			eventLogger->logSensFile = LogManager::GetLogger("sensfile", "Sensifitive File Logging");
+			Config::BasicConfigurator::Configure(LogManager::CreateDomain("device"), 
+				gcnew Appender::FileAppender(patternLayout, key->GetValue("Log_Dir") + "\\" + "device.log", true));
+			eventLogger->logDevice = LogManager::GetLogger("device", "Device Logging");
 		}
-
 		return eventLogger;
 	}
 	
@@ -71,13 +52,9 @@ namespace mydlpsf
 	{
 		try
 		{
-			//eventLogger->sensFileMutex->WaitOne();
-			eventLogger->eventLogSensFile->WriteEntry(log);
-			//eventLogger->sensFileMutex->ReleaseMutex();
+			eventLogger->logSensFile->Info(log);
 		} catch (System::Exception ^ex) {
 
-			// find a solution for full event log file
-			// roll it, if it is full
 		}
 	}
 
@@ -85,13 +62,8 @@ namespace mydlpsf
 	{		
 		try
 		{
-			//eventLogger->deviceMutex->WaitOne();
-			eventLogger->eventLogDevice->WriteEntry(log);
-			//eventLogger->deviceMutex->ReleaseMutex();
+			eventLogger->logDevice->Info(log);
 		} catch (System::Exception ^ex) {
-
-			// find a solution for full event log file
-			// roll it, if it is full
 		}
 	}
 

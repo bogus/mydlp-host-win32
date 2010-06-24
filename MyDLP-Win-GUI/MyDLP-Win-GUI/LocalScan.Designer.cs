@@ -31,6 +31,7 @@
             this.components = new System.ComponentModel.Container();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
+            this.textBox4 = new System.Windows.Forms.TextBox();
             this.buttonStopScan = new System.Windows.Forms.Button();
             this.label3 = new System.Windows.Forms.Label();
             this.progressBar1 = new System.Windows.Forms.ProgressBar();
@@ -65,7 +66,6 @@
             this.folderBrowserDialog = new System.Windows.Forms.FolderBrowserDialog();
             this.folderBrowserDialog2 = new System.Windows.Forms.FolderBrowserDialog();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
-            this.textBox4 = new System.Windows.Forms.TextBox();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.groupBox2.SuspendLayout();
@@ -103,6 +103,15 @@
             this.tabPage1.Text = "Manual Scan";
             this.tabPage1.UseVisualStyleBackColor = true;
             // 
+            // textBox4
+            // 
+            this.textBox4.Location = new System.Drawing.Point(18, 236);
+            this.textBox4.Multiline = true;
+            this.textBox4.Name = "textBox4";
+            this.textBox4.ReadOnly = true;
+            this.textBox4.Size = new System.Drawing.Size(487, 138);
+            this.textBox4.TabIndex = 5;
+            // 
             // buttonStopScan
             // 
             this.buttonStopScan.Location = new System.Drawing.Point(344, 207);
@@ -111,6 +120,7 @@
             this.buttonStopScan.TabIndex = 4;
             this.buttonStopScan.Text = "Stop Scan";
             this.buttonStopScan.UseVisualStyleBackColor = true;
+            this.buttonStopScan.Click += new System.EventHandler(this.buttonStopScan_Click);
             // 
             // label3
             // 
@@ -124,8 +134,10 @@
             // progressBar1
             // 
             this.progressBar1.Location = new System.Drawing.Point(18, 207);
+            this.progressBar1.MarqueeAnimationSpeed = 0;
             this.progressBar1.Name = "progressBar1";
             this.progressBar1.Size = new System.Drawing.Size(313, 23);
+            this.progressBar1.Step = 20;
             this.progressBar1.TabIndex = 2;
             // 
             // groupBox2
@@ -227,6 +239,7 @@
             this.buttonSave.TabIndex = 2;
             this.buttonSave.Text = "Save Changes";
             this.buttonSave.UseVisualStyleBackColor = true;
+            this.buttonSave.Click += new System.EventHandler(this.buttonSave_Click);
             // 
             // groupBox4
             // 
@@ -413,15 +426,6 @@
             // folderBrowserDialog2
             // 
             this.folderBrowserDialog2.ShowNewFolderButton = false;
-            // 
-            // textBox4
-            // 
-            this.textBox4.Location = new System.Drawing.Point(18, 236);
-            this.textBox4.Multiline = true;
-            this.textBox4.Name = "textBox4";
-            this.textBox4.ReadOnly = true;
-            this.textBox4.Size = new System.Drawing.Size(487, 138);
-            this.textBox4.TabIndex = 5;
             // 
             // LocalScan
             // 
