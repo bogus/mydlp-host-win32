@@ -90,7 +90,7 @@
             // 
             this.groupBox1.Controls.Add(this.checkBoxJustLog);
             this.groupBox1.Controls.Add(this.checkBoxEnableScan);
-            this.groupBox1.Location = new System.Drawing.Point(18, 60);
+            this.groupBox1.Location = new System.Drawing.Point(18, 77);
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.Size = new System.Drawing.Size(488, 81);
             this.groupBox1.TabIndex = 0;
