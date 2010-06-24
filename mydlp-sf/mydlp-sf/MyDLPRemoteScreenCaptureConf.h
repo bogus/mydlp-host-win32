@@ -18,24 +18,11 @@
  *  MA 02110-1301, USA.
  */
 
-#ifndef __MYDLP_REMSENSCONF_H_
-#define __MYDLP_REMSENSCONF_H_
+#ifndef __MYDLP_REMOTESCREENCAPCONF_H_
+#define __MYDLP_REMOTESCREENCAPCONF_H_
 
 #pragma once
-#pragma managed 
-
-#include "stdafx.h"
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <io.h>
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <fcntl.h>
-#include <iostream>
-#include "MyDLPClamRegex.h"
-
-#using <System.Xml.dll>
+#pragma managed
 
 using namespace System;
 using namespace System::Xml;
@@ -43,47 +30,30 @@ using namespace System::Xml::Schema;
 using namespace System::Xml::Serialization;
 using namespace System::IO;
 
-
-namespace mydlpsf {
-
-	public ref class MyDLPRemoteSensFileConf
+namespace mydlpsf
+{
+	public ref class MyDLPRemoteScreenCaptureConf
 	{
 	private:
-		static MyDLPRemoteSensFileConf ^sensFileConf;
-		static void SetInstance(MyDLPRemoteSensFileConf ^sensFileConf);
+		static MyDLPRemoteScreenCaptureConf ^screenCaptureConf;
+		static void SetInstance(MyDLPRemoteScreenCaptureConf ^screenCaptureConf);
 
 	public:
-		MyDLPRemoteSensFileConf(void);
-		
-		static MyDLPRemoteSensFileConf ^GetInstance();
+		MyDLPRemoteScreenCaptureConf(void);
+
+		static MyDLPRemoteScreenCaptureConf ^GetInstance();
 		
 		static void Serialize(String ^filename);
 		static void Deserialize(String ^filename);
 
-		System::Collections::Generic::List<MyDLPClamRegex ^> ^regexVal;
-        String^ md5Val;
-        
-		Boolean blockEncrypted;
-		Boolean blockBroken;
+		Boolean enableScreenCaptureFilter;
+		Boolean forbidMSOffice;
+		Boolean forbidOOOrg;
+		Boolean forbidAcrobatReader;
+		Boolean forbidPhotoshop;
+		Boolean forbidAutoCAD;
 
-		System::Collections::Generic::List<String^> ^fileGroups;
-
-		Boolean enableCC;
-		UInt32 maxCCCount;
-		
-		Boolean enableRegex;
-		UInt32 maxRegexCount;
-		
-		Boolean enableTRId;
-		UInt32 maxTRIdCount;
-		
-		Boolean enableIBAN;
-		UInt32 maxIBANCount;
-		
-		Boolean enableSSN;
-		UInt32 maxSSNCount;
 	};
-
 }
 
 #endif

@@ -52,21 +52,12 @@ namespace mydlpsf {
 		static MyDLPRemoteDeviceConf ^GetInstance();
 		static void Serialize(String ^filename);
 		static void Deserialize(String ^filename);
-
-		Boolean checkUSB;
-        Boolean disableUSB;
-        Boolean logUSBDiscs;
-        Boolean logUSBFileMovements;
-
-        Boolean checkLogical;
-        Boolean disableLogical;
-        Boolean disableCDDVDRW;
-        Boolean logLogicalDiscs;
-        
-        Boolean checkNIC;
-        Boolean disableWirelessNIC;
-        Boolean disableBluetoothNIC;
-        Boolean disableWiredNIC;  
+		
+		System::Collections::Generic::List<String^> ^excludedDirs;
+		Boolean enableRemovableOnlineScanning;
+		Boolean justLogRemovableOnlineScanning;
+		Boolean scanPluggedInRemovableDevices;
+		Boolean scanInsertedLogical;
 	};
 }
 

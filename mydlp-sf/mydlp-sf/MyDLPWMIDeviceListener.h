@@ -24,7 +24,7 @@
 #pragma once
 #pragma managed
 
-#include "MyDLPRemoteSensFileConf.h"
+#include "MyDLPRemoteConf.h"
 
 using namespace System;
 using namespace System::Collections::Generic;

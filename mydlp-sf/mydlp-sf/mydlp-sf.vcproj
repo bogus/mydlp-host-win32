@@ -235,6 +235,10 @@
 					>
 				</File>
 				<File
+					RelativePath=".\MyDLPRemoteScreenCaptureConf.cpp"
+					>
+				</File>
+				<File
 					RelativePath=".\MyDLPRemoteSensFileConf.cpp"
 					>
 				</File>
@@ -301,7 +305,15 @@
 				Name="conf"
 				>
 				<File
+					RelativePath=".\MyDLPRemoteConf.h"
+					>
+				</File>
+				<File
 					RelativePath=".\MyDLPRemoteDeviceConf.h"
+					>
+				</File>
+				<File
+					RelativePath=".\MyDLPRemoteScreenCaptureConf.h"
 					>
 				</File>
 				<File

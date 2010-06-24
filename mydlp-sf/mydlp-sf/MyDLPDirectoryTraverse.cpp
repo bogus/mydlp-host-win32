@@ -42,7 +42,7 @@ namespace mydlpsf {
 	void MyDLPDirectoryTraverse::TraverseAllDrives() {
 		array<String ^> ^allDrives = Environment::GetLogicalDrives();
         List<String ^> ^fixedDrives = gcnew List<String ^>();
-		String ^detected = gcnew String("TraverseAllDrives\n");
+		detected = gcnew String("TraverseAllDrives\n");
 
 		for (int i = 0; i < allDrives->Length; i++)
         {
@@ -58,7 +58,7 @@ namespace mydlpsf {
 
 		for each (String ^driveLetter in fixedDrives)
 		{
-			TraverseDirectory(driveLetter, 4, sensFileObj, detected);
+			TraverseDirectory(driveLetter, 4, sensFileObj);
 		}
 		
 		MyDLPSensFilePool::GetInstance()->ReleaseObject(sensFileObj);
@@ -74,15 +74,15 @@ namespace mydlpsf {
 
 	void MyDLPDirectoryTraverse::TraverseDir(String ^path) 
 	{
-		String ^detected = gcnew String("TraverseDir: " + path + "\n");
+		detected = gcnew String("TraverseDir: " + path + "\n");
 		MyDLPSensitiveFileRecognition ^sensFileObj = MyDLPSensFilePool::GetInstance()->AcquireObject();
-		TraverseDirectory(path, 4, sensFileObj, detected);
+		TraverseDirectory(path, 4, sensFileObj);
 		MyDLPSensFilePool::GetInstance()->ReleaseObject(sensFileObj);
 		MyDLPEventLogger::GetInstance()->LogSensFile(detected);
 	}
 
 	void MyDLPDirectoryTraverse::TraverseDirectory(String ^path, UInt32 lvl, 
-		MyDLPSensitiveFileRecognition ^fileSearch, String ^%detected)
+		MyDLPSensitiveFileRecognition ^fileSearch)
 	{		
 
 		if(cont->Equals(FALSE)) {
@@ -137,9 +137,9 @@ namespace mydlpsf {
             else if (((String ^)all[key]) == "d")
             {
 				bool isExcluded = false;
-				if(MyDLPRemoteSensFileConf::GetInstance()->excludedDirs->Count != 0)
+				if(MyDLPRemoteDeviceConf::GetInstance()->excludedDirs->Count != 0)
 				{
-					for each(String ^dirName in MyDLPRemoteSensFileConf::GetInstance()->excludedDirs)
+					for each(String ^dirName in MyDLPRemoteDeviceConf::GetInstance()->excludedDirs)
 					{
 						if(dirName == key) {
 							isExcluded = true;
@@ -148,7 +148,7 @@ namespace mydlpsf {
 					}
 				}
 				if(!isExcluded && cont)
-					MyDLPDirectoryTraverse::TraverseDirectory(key, lvl + 1, fileSearch, detected);
+					MyDLPDirectoryTraverse::TraverseDirectory(key, lvl + 1, fileSearch);
             }
         }
 	}

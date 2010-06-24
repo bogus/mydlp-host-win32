@@ -117,8 +117,44 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="app.savechanges" xml:space="preserve">
+    <value>Değişiklikleri Kaydet</value>
+  </data>
+  <data name="app.title" xml:space="preserve">
+    <value>MyDLP Uçbirim Bilgi Sızıntısı Engelleme</value>
+  </data>
   <data name="def.tabmd5" xml:space="preserve">
     <value>MD5 Dosya Tanımlama</value>
+  </data>
+  <data name="def.tabmd5.001" xml:space="preserve">
+    <value>Yeni Dosya Ekleme</value>
+  </data>
+  <data name="def.tabmd5.002" xml:space="preserve">
+    <value>Gözat</value>
+  </data>
+  <data name="def.tabmd5.003" xml:space="preserve">
+    <value>Tanım</value>
+  </data>
+  <data name="def.tabmd5.004" xml:space="preserve">
+    <value>Ekle</value>
+  </data>
+  <data name="def.tabmd5.005" xml:space="preserve">
+    <value>Dosya</value>
+  </data>
+  <data name="def.tabmd5.006" xml:space="preserve">
+    <value>Mevcut Dosyalar</value>
+  </data>
+  <data name="def.tabmd5.007" xml:space="preserve">
+    <value>Dosya Tanım</value>
+  </data>
+  <data name="def.tabmd5.008" xml:space="preserve">
+    <value>Dosya Boyutu</value>
+  </data>
+  <data name="def.tabmd5.009" xml:space="preserve">
+    <value>Sindirim Değeri</value>
+  </data>
+  <data name="def.tabmd5.010" xml:space="preserve">
+    <value>Sil</value>
   </data>
   <data name="def.tabmd5.definition" xml:space="preserve">
     <value>Önemli dosyalarınızı seçerek, bu dosyaların belirlenmesini ve dışarı sızmasının engellenmesini sağlayın</value>
@@ -126,11 +162,56 @@
   <data name="def.tabpredefined" xml:space="preserve">
     <value>Öntanımlı İfadeler</value>
   </data>
+  <data name="def.tabpredefined.001" xml:space="preserve">
+    <value>Kredi kartı tanımayı etkinleştir</value>
+  </data>
+  <data name="def.tabpredefined.002" xml:space="preserve">
+    <value>Sosyal güvenlik numarası tanımayı etkinleştir(ABD)</value>
+  </data>
+  <data name="def.tabpredefined.003" xml:space="preserve">
+    <value>TC Kimlik No tanımayı etkinleştir</value>
+  </data>
+  <data name="def.tabpredefined.004" xml:space="preserve">
+    <value>IBAN tanımayı etkinleştir</value>
+  </data>
+  <data name="def.tabpredefined.005" xml:space="preserve">
+    <value>Kredi kartı sayı eşiği</value>
+  </data>
+  <data name="def.tabpredefined.006" xml:space="preserve">
+    <value>SSN sayı eşiği</value>
+  </data>
+  <data name="def.tabpredefined.007" xml:space="preserve">
+    <value>TCK No sayı eşiği</value>
+  </data>
+  <data name="def.tabpredefined.008" xml:space="preserve">
+    <value>IBAN sayı eşiği</value>
+  </data>
+  <data name="def.tabpredefined.009" xml:space="preserve">
+    <value>Öntanımlı İfade Değerleri</value>
+  </data>
   <data name="def.tabpredefined.definition" xml:space="preserve">
     <value>Kredi kartı numaraları, Sosyal Güvenlik Numaraları (sadece ABD), TC Kimlik Numaraları (sadece Türkiye) ve IBAN değerlerine göre kurallar oluşturun</value>
   </data>
   <data name="def.tabregex" xml:space="preserve">
     <value>Düzenli İfadeler</value>
+  </data>
+  <data name="def.tabregex.001" xml:space="preserve">
+    <value>İfade</value>
+  </data>
+  <data name="def.tabregex.002" xml:space="preserve">
+    <value>Ekle</value>
+  </data>
+  <data name="def.tabregex.003" xml:space="preserve">
+    <value>Sil</value>
+  </data>
+  <data name="def.tabregex.004" xml:space="preserve">
+    <value>Mevcut İfadeler</value>
+  </data>
+  <data name="def.tabregex.005" xml:space="preserve">
+    <value>İfade Değeri</value>
+  </data>
+  <data name="def.tabregex.006" xml:space="preserve">
+    <value>Yeni İfade Ekleme</value>
   </data>
   <data name="def.tabregex.definition" xml:space="preserve">
     <value>Belirlediğiniz cümleler ve PCRE uyumlu düzenli ifadeler için kurallar girin</value>
@@ -147,7 +228,61 @@
   <data name="menu.options" xml:space="preserve">
     <value>Seçenekler</value>
   </data>
+  <data name="menu.screencapture" xml:space="preserve">
+    <value>Ekran Yakalama Engelleme </value>
+  </data>
+  <data name="online.tabonlinescanhist" xml:space="preserve">
+    <value>Kayıp Engelleme Geçmişi</value>
+  </data>
+  <data name="online.tabonlinescanhist.definition" xml:space="preserve">
+    <value>Taşınabilir cihazlara yapılan önemli veri hareketlerinin kayıtları</value>
+  </data>
+  <data name="online.tabonlinescanopt" xml:space="preserve">
+    <value>Kayıp Engelleme Seçenekleri</value>
+  </data>
+  <data name="online.tabonlinescanopt.001" xml:space="preserve">
+    <value>Canlı Tarama Seçenekleri</value>
+  </data>
+  <data name="online.tabonlinescanopt.002" xml:space="preserve">
+    <value>Canlı tarama, bilgisayarınıza takılan taşınabilir cihazlara kopyalanan dosyaları tarayarak, içinde önemli veri olduğu tespit edilen dosyaların kopyalanmasını engeller. Taşınabilir cihazların içerisinde bulunan dosyalara hassas verilerin kopyalanmasını engeller.</value>
+  </data>
+  <data name="online.tabonlinescanopt.003" xml:space="preserve">
+    <value>Canlı taramayı etkinleştir.</value>
+  </data>
+  <data name="online.tabonlinescanopt.004" xml:space="preserve">
+    <value>Canlı taramada engelleme yapma. Sadece kayıt tut.</value>
+  </data>
+  <data name="online.tabonlinescanopt.definition" xml:space="preserve">
+    <value>USB, Kart okuyucu gibi taşınabilir cihazlara yapılan değerli dosya transferleri ile ilgili seçenekler</value>
+  </data>
+  <data name="options.taboptions" xml:space="preserve">
+    <value>Uygulama ve Servis Ayarları</value>
+  </data>
+  <data name="options.taboptions.definition" xml:space="preserve">
+    <value>Uygulama ve servis ayarları ile ilgili ayarlamaları yapabilirsiniz.</value>
+  </data>
   <data name="scan.tabmanualscan" xml:space="preserve">
+    <value>Tarama</value>
+  </data>
+  <data name="scan.tabmanualscan.001" xml:space="preserve">
+    <value>Yerel Diskleri Tara</value>
+  </data>
+  <data name="scan.tabmanualscan.002" xml:space="preserve">
+    <value>Seçili Dizini Tara</value>
+  </data>
+  <data name="scan.tabmanualscan.003" xml:space="preserve">
+    <value>Bilgisayarınıza bağlı bulunan bütün yerel diskleri seçenekler kısmında belirtilen dizinler dışında tarar ve sonuçları kaydeder.</value>
+  </data>
+  <data name="scan.tabmanualscan.004" xml:space="preserve">
+    <value>Seçmiş olduğunuz dizini seçeneklerde belirtmiş olduğunuz dışlanmış dizinler haricinde tarayarak önemli bilgi içeren dosyaları belirler</value>
+  </data>
+  <data name="scan.tabmanualscan.005" xml:space="preserve">
+    <value>Gözat</value>
+  </data>
+  <data name="scan.tabmanualscan.006" xml:space="preserve">
+    <value>Taramayı Durdur</value>
+  </data>
+  <data name="scan.tabmanualscan.007" xml:space="preserve">
     <value>Tarama</value>
   </data>
   <data name="scan.tabmanualscan.definition" xml:space="preserve">
@@ -156,13 +291,61 @@
   <data name="scan.tabscanhistory" xml:space="preserve">
     <value>Tarama Geçmişi</value>
   </data>
+  <data name="scan.tabscanhistory.001" xml:space="preserve">
+    <value>Kayıt</value>
+  </data>
+  <data name="scan.tabscanhistory.002" xml:space="preserve">
+    <value>Kayıt Dosyasını Göster</value>
+  </data>
   <data name="scan.tabscanhistory.definition" xml:space="preserve">
     <value>Yapmış olduğunuz taramalar ile ilgili bilgileri görebilirsiniz.</value>
   </data>
   <data name="scan.tabscanoptions" xml:space="preserve">
     <value>Tarama Seçenekleri</value>
   </data>
+  <data name="scan.tabscanoptions.001" xml:space="preserve">
+    <value>Dışlanmış Dizinler</value>
+  </data>
+  <data name="scan.tabscanoptions.002" xml:space="preserve">
+    <value>Dışlanmış dizinler taramalarınız sırasında incelenmeyecek dizinlerdir. Özellikle sistem dizinleri, dışlananlar listesine eklenmelidir.</value>
+  </data>
+  <data name="scan.tabscanoptions.003" xml:space="preserve">
+    <value>Gözat</value>
+  </data>
+  <data name="scan.tabscanoptions.004" xml:space="preserve">
+    <value>Ekle</value>
+  </data>
+  <data name="scan.tabscanoptions.005" xml:space="preserve">
+    <value>Sil</value>
+  </data>
+  <data name="scan.tabscanoptions.006" xml:space="preserve">
+    <value>Dizin</value>
+  </data>
+  <data name="scan.tabscanoptions.007" xml:space="preserve">
+    <value>Çıkarılabilir Aygıtlar</value>
+  </data>
+  <data name="scan.tabscanoptions.008" xml:space="preserve">
+    <value>Çıkarılabilir aygıtların takıldıkları anda otomatik olarak taranarak hassas veri içeren dosyaların tespit edilmesini sağlar. </value>
+  </data>
+  <data name="scan.tabscanoptions.009" xml:space="preserve">
+    <value>USB aygıtlarını otomatik olarak tara</value>
+  </data>
+  <data name="scan.tabscanoptions.010" xml:space="preserve">
+    <value>CD/DVD aygıtlarını otomatik olarak tara</value>
+  </data>
   <data name="scan.tabscanoptions.definition" xml:space="preserve">
     <value>Disk taramalarında atlanacak dizinler, zamanlı taramalar ve tarama yapıalcak aygıtlar ile ilgili ayarları yapabilirsiniz</value>
+  </data>
+  <data name="screen.taboptions" xml:space="preserve">
+    <value>Ekran Görüntüsü (Print Screen) Seçenekleri</value>
+  </data>
+  <data name="screen.taboptions.001" xml:space="preserve">
+    <value>Ekran yakalama (Print Screen) engelleme özelliğini aşağıda seçili uygulamalar için etkinleştir.</value>
+  </data>
+  <data name="screen.taboptions.002" xml:space="preserve">
+    <value>Yasaklı Uygulamalar</value>
+  </data>
+  <data name="screen.taboptions.definition" xml:space="preserve">
+    <value>Ekran görüntüsü yakalamasının engelleneceği uygulamaları seçebilir, ekran görüntüsü engelleme ile ilgili ayarlamaları yapabilirsiniz.</value>
   </data>
 </root>

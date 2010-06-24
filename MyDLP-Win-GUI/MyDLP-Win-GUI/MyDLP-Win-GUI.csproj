@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="3.5" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -31,6 +31,14 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="log4net, Version=1.2.10.0, Culture=neutral, PublicKeyToken=1b44e1d426115821, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\Documents and Settings\Administrator\Desktop\log4net-1.2.10\bin\net\2.0\release\log4net.dll</HintPath>
+    </Reference>
+    <Reference Include="mydlp-sf, Version=1.0.3825.28837, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\mydlp-sf\Debug\mydlp-sf.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Deployment" />
@@ -50,6 +58,18 @@
     </Compile>
     <Compile Include="LocalScan.Designer.cs">
       <DependentUpon>LocalScan.cs</DependentUpon>
+    </Compile>
+    <Compile Include="OnlineScan.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="OnlineScan.Designer.cs">
+      <DependentUpon>OnlineScan.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Options.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Options.Designer.cs">
+      <DependentUpon>Options.cs</DependentUpon>
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -76,14 +96,20 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
-    <Compile Include="TaskbarNotifier.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="DefineSensitiveData.cs">
+    <Compile Include="ScreenCapture.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="DefineSensitiveData.Designer.cs">
-      <DependentUpon>DefineSensitiveData.cs</DependentUpon>
+    <Compile Include="ScreenCapture.Designer.cs">
+      <DependentUpon>ScreenCapture.cs</DependentUpon>
+    </Compile>
+    <Compile Include="SensitiveData.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="SensitiveData.Designer.cs">
+      <DependentUpon>SensitiveData.cs</DependentUpon>
+    </Compile>
+    <Compile Include="TaskbarNotifier.cs">
+      <SubType>Form</SubType>
     </Compile>
   </ItemGroup>
   <ItemGroup>
@@ -96,12 +122,20 @@
     <EmbeddedResource Include="languages\Resource1.tr-TR.resx">
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="DefineSensitiveData.resx">
-      <DependentUpon>DefineSensitiveData.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
     <EmbeddedResource Include="LocalScan.resx">
       <DependentUpon>LocalScan.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="OnlineScan.resx">
+      <DependentUpon>OnlineScan.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Options.resx">
+      <DependentUpon>Options.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="SensitiveData.resx">
+      <DependentUpon>SensitiveData.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>

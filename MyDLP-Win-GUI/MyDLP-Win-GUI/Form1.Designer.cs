@@ -49,6 +49,7 @@ namespace MydlpWinGui
             this.menuDefSensData = new System.Windows.Forms.LinkLabel();
             this.panel2 = new System.Windows.Forms.Panel();
             this.panelTitle = new System.Windows.Forms.Label();
+            this.menuScreenCapture = new System.Windows.Forms.LinkLabel();
             ((System.ComponentModel.ISupportInitialize)(this.eventLogSensFile)).BeginInit();
             this.contextMenuStrip1.SuspendLayout();
             this.panel1.SuspendLayout();
@@ -99,6 +100,7 @@ namespace MydlpWinGui
             // panel1
             // 
             this.panel1.BackColor = System.Drawing.Color.White;
+            this.panel1.Controls.Add(this.menuScreenCapture);
             this.panel1.Controls.Add(this.menuOptions);
             this.panel1.Controls.Add(this.menuOnlineScan);
             this.panel1.Controls.Add(this.menuScan);
@@ -112,12 +114,13 @@ namespace MydlpWinGui
             // menuOptions
             // 
             this.menuOptions.AutoSize = true;
-            this.menuOptions.Location = new System.Drawing.Point(13, 113);
+            this.menuOptions.Location = new System.Drawing.Point(12, 142);
             this.menuOptions.Name = "menuOptions";
             this.menuOptions.Size = new System.Drawing.Size(43, 13);
             this.menuOptions.TabIndex = 3;
             this.menuOptions.TabStop = true;
             this.menuOptions.Text = "Options";
+            this.menuOptions.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.menuOptions_LinkClicked);
             // 
             // menuOnlineScan
             // 
@@ -128,6 +131,7 @@ namespace MydlpWinGui
             this.menuOnlineScan.TabIndex = 2;
             this.menuOnlineScan.TabStop = true;
             this.menuOnlineScan.Text = "Removable Device Scan";
+            this.menuOnlineScan.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.menuOnlineScan_LinkClicked);
             // 
             // menuScan
             // 
@@ -170,6 +174,17 @@ namespace MydlpWinGui
             this.panelTitle.TabIndex = 3;
             this.panelTitle.Text = "label1";
             // 
+            // menuScreenCapture
+            // 
+            this.menuScreenCapture.AutoSize = true;
+            this.menuScreenCapture.Location = new System.Drawing.Point(12, 113);
+            this.menuScreenCapture.Name = "menuScreenCapture";
+            this.menuScreenCapture.Size = new System.Drawing.Size(81, 13);
+            this.menuScreenCapture.TabIndex = 4;
+            this.menuScreenCapture.TabStop = true;
+            this.menuScreenCapture.Text = "Screen Capture";
+            this.menuScreenCapture.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.menuScreenCapture_LinkClicked);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -211,6 +226,7 @@ namespace MydlpWinGui
         private LinkLabel menuOnlineScan;
         private Panel panel2;
         private Label panelTitle;
+        private LinkLabel menuScreenCapture;
     }
 }
 

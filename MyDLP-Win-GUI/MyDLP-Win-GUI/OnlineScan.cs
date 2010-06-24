@@ -1,0 +1,37 @@
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Drawing;
+using System.Data;
+using System.Text;
+using System.Windows.Forms;
+
+namespace MydlpWinGui
+{
+    public partial class OnlineScan : UserControl
+    {
+        public OnlineScan()
+        {
+            InitializeComponent();
+        }
+
+        private void OnlineScan_Load(object sender, EventArgs e)
+        {
+            tabOnlineOptions.Text = Form1.resM.GetString("online.tabonlinescanopt");
+            tabOnlineScanHistory.Text = Form1.resM.GetString("online.tabonlinescanhist");
+
+            // First tab
+            groupBox1.Text = Form1.resM.GetString("online.tabonlinescanopt.001");
+            label1.Text = Form1.resM.GetString("online.tabonlinescanopt.002");
+            checkBoxEnableScan.Text = Form1.resM.GetString("online.tabonlinescanopt.003");
+            checkBoxJustLog.Text = Form1.resM.GetString("online.tabonlinescanopt.004");
+
+            // second tab
+            label2.Text = Form1.resM.GetString("online.tabonlinescanhist.definition");
+
+            checkBoxEnableScan.Checked = Form1.deviceConf.enableRemovableOnlineScanning;
+            checkBoxJustLog.Checked = Form1.deviceConf.justLogRemovableOnlineScanning;
+
+        }
+    }
+}

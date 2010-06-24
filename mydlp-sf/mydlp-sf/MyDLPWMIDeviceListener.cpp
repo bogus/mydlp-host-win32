@@ -111,7 +111,7 @@ namespace mydlpsf
 	void MyDLPWMIDeviceListener::USBAdded(Object ^sender, EventArrivedEventArgs ^e)
 	{
 		//Console::WriteLine("USB Added");
-		if(MyDLPRemoteSensFileConf::GetInstance()->scanPluggedInRemovableDevices)
+		if(MyDLPRemoteDeviceConf::GetInstance()->scanPluggedInRemovableDevices)
 		{
 			
 		}

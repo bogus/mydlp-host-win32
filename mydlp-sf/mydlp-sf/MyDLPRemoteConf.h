@@ -17,36 +17,12 @@
  *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  *  MA 02110-1301, USA.
  */
-#ifndef __MYDLP_DIR_TRAVERSE__
-#define __MYDLP_DIR_TRAVERSE__
 
-#pragma once
-#pragma managed
+#ifndef __MYDLP_REMOTECONF_H_
+#define __MYDLP_REMOTECONF_H_
 
-#include "MyDLPRemoteConf.h"
-#include "MyDLPSensFilePool.h"
+#include "MyDLPRemoteSensFileConf.h"
+#include "MyDLPRemoteDeviceConf.h"
+#include "MyDLPRemoteScreenCaptureConf.h"
 
-using namespace System;
-
-namespace mydlpsf
-{
-	public ref class MyDLPDirectoryTraverse
-	{
-	private:
-		void TraverseDirectory(String ^path, UInt32 lvl, 
-			MyDLPSensitiveFileRecognition ^fileSearch);
-
-		Boolean ^cont;
-
-	public:
-		MyDLPDirectoryTraverse(void);
-		
-		void StopScan();
-		void TraverseAllDrives();
-		void TraverseDir(String ^path);
-
-		String ^detected;
-		
-	};
-}
 #endif

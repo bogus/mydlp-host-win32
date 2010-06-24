@@ -23,6 +23,12 @@
 namespace mydlpsf {
 	MyDLPRemoteDeviceConf::MyDLPRemoteDeviceConf(void)
 	{
+		excludedDirs = gcnew System::Collections::Generic::List<String ^>();
+		enableRemovableOnlineScanning = true;
+		justLogRemovableOnlineScanning = false;
+		
+		scanInsertedLogical = true;
+		scanPluggedInRemovableDevices = true;
 	}
 
 	MyDLPRemoteDeviceConf ^MyDLPRemoteDeviceConf::GetInstance()

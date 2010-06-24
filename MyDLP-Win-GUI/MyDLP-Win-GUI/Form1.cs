@@ -9,6 +9,7 @@ using System.Resources;
 using System.Threading;
 using System.Globalization;
 using CustomUIControls;
+using mydlpsf;
 
 namespace MydlpWinGui
 {
@@ -16,12 +17,31 @@ namespace MydlpWinGui
     {
 
         public static ResourceManager resM = new ResourceManager("MydlpWinGui.languages.Resource1", Type.GetType("MydlpWinGui.Form1").Assembly);
-        private DefineSensitiveData defineSensitiveData = new DefineSensitiveData();
-        private LocalScan localScan = new LocalScan();
+        public static MyDLPRemoteSensFileConf sensFileConf;
+        public static MyDLPRemoteDeviceConf deviceConf;
+        public static MyDLPRemoteScreenCaptureConf screenCaptureConf;
+        private SensitiveData defineSensitiveData = new SensitiveData();
+        private LocalScan localScan;
+        private OnlineScan onlineScan;
+        private ScreenCapture screenCapture;
+        private Options options;
         private Control currentPanelControl;
 
         public Form1()
         {
+            // Load sensitive data configuration
+            MyDLPRemoteSensFileConf.Deserialize("c:\\mydlp\\conf\\sensfile.conf");
+            MyDLPRemoteDeviceConf.Deserialize("c:\\mydlp\\conf\\device.conf");
+            MyDLPRemoteScreenCaptureConf.Deserialize("c:\\mydlp\\conf\\screencapture.conf");
+            sensFileConf = MyDLPRemoteSensFileConf.GetInstance();
+            deviceConf = MyDLPRemoteDeviceConf.GetInstance();
+            screenCaptureConf = MyDLPRemoteScreenCaptureConf.GetInstance(); 
+
+            localScan = new LocalScan();
+            onlineScan = new OnlineScan();
+            screenCapture = new ScreenCapture();
+            options = new Options();
+
             InitializeComponent();
 
             taskbarNotifier1 = new TaskbarNotifier();
@@ -93,9 +113,12 @@ namespace MydlpWinGui
             Thread.CurrentThread.CurrentUICulture = new CultureInfo("tr-TR");
             Thread.CurrentThread.CurrentCulture = new CultureInfo("tr-TR");
 
+            this.Text = resM.GetString("app.title");
+
             menuDefSensData.Text = resM.GetString("menu.defsensdata");
             menuScan.Text = resM.GetString("menu.localscan");
             menuOnlineScan.Text = resM.GetString("menu.onlinescan");
+            menuScreenCapture.Text = resM.GetString("menu.screencapture");
             menuOptions.Text = resM.GetString("menu.options");
 
             panelTitle.Text = resM.GetString("menu.defsensdata");
@@ -117,6 +140,30 @@ namespace MydlpWinGui
             panel2.Controls.Remove(currentPanelControl);
             panel2.Controls.Add(localScan);
             currentPanelControl = localScan;
+        }
+
+        private void menuOnlineScan_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            panelTitle.Text = ((LinkLabel)sender).Text;
+            panel2.Controls.Remove(currentPanelControl);
+            panel2.Controls.Add(onlineScan);
+            currentPanelControl = onlineScan;
+        }
+
+        private void menuScreenCapture_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            panelTitle.Text = ((LinkLabel)sender).Text;
+            panel2.Controls.Remove(currentPanelControl);
+            panel2.Controls.Add(screenCapture);
+            currentPanelControl = screenCapture;
+        }
+
+        private void menuOptions_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            panelTitle.Text = ((LinkLabel)sender).Text;
+            panel2.Controls.Remove(currentPanelControl);
+            panel2.Controls.Add(options);
+            currentPanelControl = options;
         }
 
 

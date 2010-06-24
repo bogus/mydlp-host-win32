@@ -32,7 +32,6 @@ namespace mydlpsf {
 	{
 		regexVal = gcnew System::Collections::Generic::List<MyDLPClamRegex ^>();
 		md5Val = "";
-		excludedDirs = gcnew System::Collections::Generic::List<String ^>();
 		blockEncrypted = true;
 		blockBroken = true;
 		fileGroups = gcnew System::Collections::Generic::List<String ^>();
@@ -46,9 +45,7 @@ namespace mydlpsf {
 		maxIBANCount = 1;
 		enableSSN = true;
 		maxSSNCount = 1;	
-		enableRemovableOnlineScanning = true;
-		scanInsertedLogical = true;
-		scanPluggedInRemovableDevices = true;
+		
 	}
 
 	MyDLPRemoteSensFileConf ^MyDLPRemoteSensFileConf::GetInstance()
