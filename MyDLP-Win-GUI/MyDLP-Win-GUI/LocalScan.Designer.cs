@@ -59,10 +59,7 @@
             this.label4 = new System.Windows.Forms.Label();
             this.tabPage3 = new System.Windows.Forms.TabPage();
             this.textBox3 = new System.Windows.Forms.TextBox();
-            this.button3 = new System.Windows.Forms.Button();
             this.label6 = new System.Windows.Forms.Label();
-            this.listViewLog = new System.Windows.Forms.ListView();
-            this.columnHeaderLog = new System.Windows.Forms.ColumnHeader();
             this.folderBrowserDialog = new System.Windows.Forms.FolderBrowserDialog();
             this.folderBrowserDialog2 = new System.Windows.Forms.FolderBrowserDialog();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
@@ -109,6 +106,7 @@
             this.textBox4.Multiline = true;
             this.textBox4.Name = "textBox4";
             this.textBox4.ReadOnly = true;
+            this.textBox4.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             this.textBox4.Size = new System.Drawing.Size(487, 138);
             this.textBox4.TabIndex = 5;
             // 
@@ -363,9 +361,7 @@
             // tabPage3
             // 
             this.tabPage3.Controls.Add(this.textBox3);
-            this.tabPage3.Controls.Add(this.button3);
             this.tabPage3.Controls.Add(this.label6);
-            this.tabPage3.Controls.Add(this.listViewLog);
             this.tabPage3.Location = new System.Drawing.Point(4, 22);
             this.tabPage3.Name = "tabPage3";
             this.tabPage3.Padding = new System.Windows.Forms.Padding(3);
@@ -376,21 +372,14 @@
             // 
             // textBox3
             // 
-            this.textBox3.Location = new System.Drawing.Point(20, 148);
+            this.textBox3.Location = new System.Drawing.Point(20, 48);
             this.textBox3.Multiline = true;
             this.textBox3.Name = "textBox3";
             this.textBox3.ReadOnly = true;
-            this.textBox3.Size = new System.Drawing.Size(495, 220);
+            this.textBox3.ScrollBars = System.Windows.Forms.ScrollBars.Both;
+            this.textBox3.Size = new System.Drawing.Size(495, 320);
             this.textBox3.TabIndex = 3;
-            // 
-            // button3
-            // 
-            this.button3.Location = new System.Drawing.Point(358, 45);
-            this.button3.Name = "button3";
-            this.button3.Size = new System.Drawing.Size(157, 23);
-            this.button3.TabIndex = 2;
-            this.button3.Text = "Show Log";
-            this.button3.UseVisualStyleBackColor = true;
+            this.textBox3.WordWrap = false;
             // 
             // label6
             // 
@@ -401,24 +390,6 @@
             this.label6.TabIndex = 1;
             this.label6.Text = "label6";
             // 
-            // listViewLog
-            // 
-            this.listViewLog.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-            this.columnHeaderLog});
-            this.listViewLog.FullRowSelect = true;
-            this.listViewLog.GridLines = true;
-            this.listViewLog.Location = new System.Drawing.Point(20, 45);
-            this.listViewLog.Name = "listViewLog";
-            this.listViewLog.Size = new System.Drawing.Size(331, 97);
-            this.listViewLog.TabIndex = 0;
-            this.listViewLog.UseCompatibleStateImageBehavior = false;
-            this.listViewLog.View = System.Windows.Forms.View.Details;
-            // 
-            // columnHeaderLog
-            // 
-            this.columnHeaderLog.Text = "Log File";
-            this.columnHeaderLog.Width = 325;
-            // 
             // folderBrowserDialog
             // 
             this.folderBrowserDialog.ShowNewFolderButton = false;
@@ -426,6 +397,12 @@
             // folderBrowserDialog2
             // 
             this.folderBrowserDialog2.ShowNewFolderButton = false;
+            // 
+            // timer1
+            // 
+            this.timer1.Enabled = true;
+            this.timer1.Interval = 600000;
+            this.timer1.Tick += new System.EventHandler(this.timer1_Tick_1);
             // 
             // LocalScan
             // 
@@ -485,11 +462,13 @@
         private System.Windows.Forms.CheckBox checkBoxScanCD;
         private System.Windows.Forms.Button buttonSave;
         private System.Windows.Forms.Label label6;
-        private System.Windows.Forms.ListView listViewLog;
-        private System.Windows.Forms.ColumnHeader columnHeaderLog;
-        private System.Windows.Forms.Button button3;
         private System.Windows.Forms.TextBox textBox3;
         private System.Windows.Forms.Timer timer1;
         private System.Windows.Forms.TextBox textBox4;
+
+        private static System.Windows.Forms.Button staticScanDir;
+        private static System.Windows.Forms.Button staticScanAll;
+        private static System.Windows.Forms.Button staticStopScan;
+        private static System.Windows.Forms.ProgressBar staticProgressBar;
     }
 }

@@ -21,7 +21,7 @@
 #include "StdAfx.h"
 #include "MyDLPFSMFListener.h"
 
-using System::String;
+using namespace System::Threading;
 
 namespace mydlpsf
 {
@@ -33,15 +33,11 @@ namespace mydlpsf
 	{
 		DWORD requestCount = SCANNER_DEFAULT_REQUEST_COUNT;
 		DWORD threadCount = SCANNER_DEFAULT_THREAD_COUNT;
-		HANDLE threads[SCANNER_MAX_THREAD_COUNT];
 		SCANNER_THREAD_CONTEXT context;
-		HANDLE port, completion;
 		PSCANNER_MESSAGE msg;
 		DWORD threadId;
 		HRESULT hr;
 		DWORD i, j;
-	
-		
 
 		hr = FilterConnectCommunicationPort( ScannerPortName, 0, NULL, 0, NULL, &port );
 
@@ -89,13 +85,44 @@ namespace mydlpsf
 
 	init_cleanup:
 
-		printf( "Scanner:  All done. Result = 0x%08x\n", hr );
+		mydlpsf::MyDLPEventLogger::GetInstance()->LogError( "Scanner:  All done. Result = " + hr.ToString() );
 
 		CloseHandle( port );
 		CloseHandle( completion );
 
 		return hr;
 	}
+
+	void MyDLPFSMFListener::StartCommunicationPort()
+	{
+		MyDLPFSMFListener ^listener = gcnew MyDLPFSMFListener();
+		listener->Init();
+	}
+
+	void MyDLPFSMFListener::RunFilter()
+	{
+		if(!isRunning)
+		{
+			Thread ^thread = gcnew Thread(gcnew ThreadStart(MyDLPFSMFListener::StartCommunicationPort));
+			thread->Start();
+			isRunning = true;
+		}
+	}
+
+	void MyDLPFSMFListener::StopFilter()
+	{
+		if(isRunning)
+		{
+			for(int i = 0; i < SCANNER_MAX_THREAD_COUNT; i++ )
+				CloseHandle(threads[i]);
+		
+			CloseHandle( port );
+			CloseHandle( completion );
+
+			isRunning = false;
+		}
+	}
+	
 }
 
 DWORD ScannerWorker(__in PSCANNER_THREAD_CONTEXT Context) 
@@ -139,7 +166,7 @@ DWORD ScannerWorker(__in PSCANNER_THREAD_CONTEXT Context)
 		if (SUCCEEDED( hr )) {
 			//printf( "Replied message\n" );
 		} else {
-			printf( "Scanner: Error replying message. Error = 0x%X\n", hr );
+			mydlpsf::MyDLPEventLogger::GetInstance()->LogError( "Scanner: Error replying message. Error = " + hr.ToString() );
 			break;
 		}
 
@@ -156,9 +183,9 @@ DWORD ScannerWorker(__in PSCANNER_THREAD_CONTEXT Context)
 	if (!SUCCEEDED( hr )) {
 
 		if (hr == HRESULT_FROM_WIN32( ERROR_INVALID_HANDLE )) {
-			printf( "Scanner: Port is disconnected, probably due to scanner filter unloading.\n" );
+			mydlpsf::MyDLPEventLogger::GetInstance()->LogError("Scanner: Port is disconnected, probably due to scanner filter unloading.\n" );
 		} else {
-			printf( "Scanner: Unknown error occured. Error = 0x%X\n", hr );
+			mydlpsf::MyDLPEventLogger::GetInstance()->LogError( "Scanner: Unknown error occured. Error = 0x%X\n" + hr.ToString() );
 		}
 	}
 	free( message );
@@ -207,9 +234,7 @@ BOOL ScanFile (__in_bcount(BufferSize) PUCHAR Buffer, __in ULONG BufferSize,
 			int ret = recObj->SearchSensitiveData(gcnew System::String(tempFileInfo->filename));
 			
 			if(ret == 1) {
-				Console::WriteLine("File transfer blocked: " + gcnew String(FileName) + " -- " + recObj->GetLastResult());				
-				mydlpsf::MyDLPEventLogger::GetInstance()->LogSensFile("File transfer blocked: " + 
-					gcnew String(FileName) + " -- " + recObj->GetLastResult());
+				mydlpsf::MyDLPEventLogger::GetInstance()->LogRemovable(gcnew String(FileName) + " -- " + recObj->GetLastResult());
 				mydlpsf::MyDLPSensFilePool::GetInstance()->ReleaseObject(recObj);
 				return TRUE;
 			}	

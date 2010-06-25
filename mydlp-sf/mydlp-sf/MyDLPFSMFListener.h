@@ -73,14 +73,23 @@ BOOL ScanFile (__in_bcount(BufferSize) PUCHAR Buffer, __in ULONG BufferSize,
 TEMPFILE_INFO* ScanMMap(__in_bcount(FileNameLength) PWCHAR FileName, __in ULONG FileNameLength,
 			  __in BOOLEAN deletePair);
 
+static HANDLE threads[SCANNER_MAX_THREAD_COUNT];
+static HANDLE port, completion;
+
 namespace mydlpsf
 {
 
 	public ref class MyDLPFSMFListener
 	{
+	private:
+		int Init();
+		static void StartCommunicationPort();
+		static bool isRunning = false;
+
 	public:
 		MyDLPFSMFListener(void);
-		int Init();
+		static void RunFilter();
+		static void StopFilter();		
 	};
 }
 #endif

@@ -27,25 +27,34 @@
 #include "MyDLPSensFilePool.h"
 
 using namespace System;
+using namespace System::Collections::Generic;
 
 namespace mydlpsf
 {
 	public ref class MyDLPDirectoryTraverse
 	{
 	private:
-		void TraverseDirectory(String ^path, UInt32 lvl, 
-			MyDLPSensitiveFileRecognition ^fileSearch);
+		void TraverseDirectory(Object ^obj, Object ^origPath);
+		void Traverse(Object ^obj);
 
 		Boolean ^cont;
+		Boolean ^completed;
+	
+	protected:
+		virtual void OnCompleted(EventArgs ^e); 
+		virtual void OnDetectedChanged(EventArgs ^e); 
 
 	public:
 		MyDLPDirectoryTraverse(void);
 		
 		void StopScan();
-		void TraverseAllDrives();
-		void TraverseDir(String ^path);
+		static List<MyDLPDirectoryTraverse ^> ^TraverseAllDrives();
+		static List<MyDLPDirectoryTraverse ^> ^TraverseDir(String ^path);
 
 		String ^detected;
+
+		event EventHandler ^Completed;
+		event EventHandler ^DetectedChanged;
 		
 	};
 }

@@ -7,14 +7,22 @@ using System.Text;
 using System.IO;
 using System.Windows.Forms;
 using mydlpsf;
+using System.Reflection;
 
 namespace MydlpWinGui
 {
     public partial class LocalScan : UserControl
     {
+        private List<MyDLPDirectoryTraverse> dirTraverseList;
+
         public LocalScan()
         {
             InitializeComponent();
+
+            staticProgressBar = progressBar1;
+            staticScanAll = buttonScanAll;
+            staticScanDir = buttonScanDir;
+            staticStopScan = buttonStopScan;
         }
 
         private void LocalScan_Load(object sender, EventArgs e)
@@ -49,13 +57,15 @@ namespace MydlpWinGui
 
             // third tab
             label6.Text = Form1.resM.GetString("scan.tabscanhistory.definition");
-            listViewLog.Columns[0].Text = Form1.resM.GetString("scan.tabscanhistory.001");
-            button3.Text = Form1.resM.GetString("scan.tabscanhistory.002");
 
             FillExcludedList();
 
             checkBoxScanUSB.Checked = Form1.deviceConf.scanPluggedInRemovableDevices;
             checkBoxScanCD.Checked = Form1.deviceConf.scanInsertedLogical;
+
+            buttonStopScan.Enabled = false;
+
+            ReadSensLogFile();
         }
 
         private void FillExcludedList()
@@ -80,10 +90,16 @@ namespace MydlpWinGui
             progressBar1.MarqueeAnimationSpeed = 50;
             progressBar1.Value = 0;
 
-            MyDLPDirectoryTraverse dirTraverse = new MyDLPDirectoryTraverse();
-            dirTraverse.TraverseAllDrives();
+            dirTraverseList = MyDLPDirectoryTraverse.TraverseAllDrives();
+            dirTraverseList[0].Completed += new EventHandler(TraverseComplete);
+            dirTraverseList[0].DetectedChanged += new EventHandler(UpdateDetectedFileList); 
             textBox4.DataBindings.Clear();
-            textBox4.DataBindings.Add("Text", dirTraverse.detected, null);
+            textBox4.DataBindings.Add("Text", dirTraverseList[0].detected, null);
+
+            buttonScanDir.Enabled = false;
+            buttonScanAll.Enabled = false;
+            buttonStopScan.Enabled = true;
+            
         }
 
         private void buttonScanDir_Click(object sender, EventArgs e)
@@ -94,13 +110,17 @@ namespace MydlpWinGui
             progressBar1.MarqueeAnimationSpeed = 50;
             progressBar1.Value = 0;
 
-            // Add service routine for directory scanning
+            // Add servicec routine for directory scanning
             if (textBox1.Text.Length != 0 && Directory.Exists(textBox1.Text))
             {
-                MyDLPDirectoryTraverse dirTraverse = new MyDLPDirectoryTraverse();
-                dirTraverse.TraverseDir(textBox1.Text);
+                dirTraverseList = MyDLPDirectoryTraverse.TraverseDir(textBox1.Text);
+                dirTraverseList[0].Completed += new EventHandler(TraverseComplete);
+                dirTraverseList[0].DetectedChanged += new EventHandler(UpdateDetectedFileList); 
                 textBox4.DataBindings.Clear();
-                textBox4.DataBindings.Add("Text", dirTraverse.detected, null);
+                textBox4.DataBindings.Add("Text", dirTraverseList[0].detected, null);
+                buttonScanDir.Enabled = false;
+                buttonScanAll.Enabled = false;
+                buttonStopScan.Enabled = true;
             }
             else
             {
@@ -180,6 +200,85 @@ namespace MydlpWinGui
             progressBar1.MarqueeAnimationSpeed = 0;
             progressBar1.Value = 0;
 
+            for (int i = 0; i < dirTraverseList.Count; i++)
+            {
+                dirTraverseList[i].StopScan();
+            }
+
+            buttonScanDir.Enabled = true;
+            buttonScanAll.Enabled = true;
+            buttonStopScan.Enabled = false;
+
+        }
+
+        private void TraverseComplete(object sender, EventArgs e)
+        {
+
+            SetControlPropertyValue(progressBar1, "Style", ProgressBarStyle.Blocks);
+            SetControlPropertyValue(progressBar1, "MarqueeAnimationSpeed", 0);
+            SetControlPropertyValue(progressBar1, "Value", 0);
+
+            SetControlPropertyValue(buttonScanDir, "Enabled", true);
+            SetControlPropertyValue(buttonScanAll, "Enabled", true);
+            SetControlPropertyValue(buttonStopScan, "Enabled", false);
+        }
+
+        private void UpdateDetectedFileList(object sender, EventArgs e)
+        {
+            SetControlPropertyValue(textBox4, "Text", ((MyDLPDirectoryTraverse)sender).detected);
+        }
+
+        delegate void SetControlValueCallback(Control oControl, string propName, object propValue);
+        private void SetControlPropertyValue(Control oControl, string propName, object propValue)
+        {
+            if (oControl.InvokeRequired)
+            {
+                SetControlValueCallback d = new SetControlValueCallback(SetControlPropertyValue);
+                oControl.Invoke(d, new object[] { oControl, propName, propValue });
+            }
+            else
+            {
+                Type t = oControl.GetType();
+                PropertyInfo[] props = t.GetProperties();
+                foreach (PropertyInfo p in props)
+                {
+                    if (p.Name.ToUpper() == propName.ToUpper())
+                    {
+                        p.SetValue(oControl, propValue, null);
+                    }
+                }
+            }
+        }
+
+        private void ReadSensLogFile()
+        {
+
+            try
+            {
+                String str = MyDLPEventLogger.GetInstance().sensFileLogPath;
+                FileStream fs = File.Open(str, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
+                StreamReader reader = new StreamReader(fs);
+                textBox3.Clear();
+
+                String curLine;
+                for (int i = 0; i < 200 && (curLine = reader.ReadLine()) != null; i++)
+                {
+                    textBox3.Text += curLine + Environment.NewLine;
+                }
+
+                reader.Close();
+                fs.Close();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+
+        }
+
+        private void timer1_Tick_1(object sender, EventArgs e)
+        {
+            ReadSensLogFile();
         }
     }
 }

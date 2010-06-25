@@ -6,6 +6,7 @@ using System.Data;
 using System.Text;
 using System.Windows.Forms;
 using mydlpsf;
+using System.IO;
 
 namespace MydlpWinGui
 {
@@ -33,6 +34,9 @@ namespace MydlpWinGui
             checkBoxEnableScan.Checked = Form1.deviceConf.enableRemovableOnlineScanning;
             checkBoxJustLog.Checked = Form1.deviceConf.justLogRemovableOnlineScanning;
 
+            ReadRemovableLogFile();
+            timer1.Start();
+
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -50,6 +54,38 @@ namespace MydlpWinGui
             {
                 MessageBox.Show("Operation failed!", "Error");
             }
+        }
+
+        private void ReadRemovableLogFile()
+        {
+        
+            try
+            {
+                String str = MyDLPEventLogger.GetInstance().removableLogPath;
+                FileStream fs = File.Open(str, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
+                StreamReader reader = new StreamReader(fs);
+                //StreamReader reader = new StreamReader(File.OpenRead(str));
+                textBox1.Clear();
+
+                String curLine;
+                for (int i = 0; i < 100 && (curLine = reader.ReadLine()) != null; i++)
+                {
+                    textBox1.Text += curLine + Environment.NewLine;
+                }
+
+                reader.Close();
+                //fs.Close();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+
+        }
+
+        private void timer1_Tick(object sender, EventArgs e)
+        {
+            ReadRemovableLogFile();
         }
     }
 }

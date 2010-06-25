@@ -38,12 +38,27 @@ namespace mydlpsf
 			RegistryKey ^key = Registry::LocalMachine->OpenSubKey( "Software\\MyDLP" );
 
 			Layout::ILayout ^patternLayout = gcnew Layout::PatternLayout("%-5p%d{yyyy-MM-dd hh:mm:ss} – %m\r\n");
+			
+			eventLogger->sensFileLogPath = key->GetValue("Log_Dir") + "\\" + "sens.log";
 			Config::BasicConfigurator::Configure(LogManager::CreateDomain("sensfile"), 
-				gcnew Appender::FileAppender(patternLayout, key->GetValue("Log_Dir") + "\\" + "sens.log", true));
+				gcnew Appender::FileAppender(patternLayout, eventLogger->sensFileLogPath, true));
 			eventLogger->logSensFile = LogManager::GetLogger("sensfile", "Sensifitive File Logging");
+			
+			eventLogger->deviceLogPath = key->GetValue("Log_Dir") + "\\" + "device.log";
 			Config::BasicConfigurator::Configure(LogManager::CreateDomain("device"), 
-				gcnew Appender::FileAppender(patternLayout, key->GetValue("Log_Dir") + "\\" + "device.log", true));
+				gcnew Appender::FileAppender(patternLayout, eventLogger->deviceLogPath, true));
 			eventLogger->logDevice = LogManager::GetLogger("device", "Device Logging");
+			
+			eventLogger->removableLogPath = key->GetValue("Log_Dir") + "\\" + "removable.log";
+			Config::BasicConfigurator::Configure(LogManager::CreateDomain("removable"), 
+				gcnew Appender::FileAppender(patternLayout, eventLogger->removableLogPath, true));
+			eventLogger->logRemovable = LogManager::GetLogger("removable", "Removable Media Logging");
+
+			eventLogger->errorLogPath = key->GetValue("Log_Dir") + "\\" + "error.log";
+			Config::BasicConfigurator::Configure(LogManager::CreateDomain("error"), 
+				gcnew Appender::FileAppender(patternLayout, eventLogger->errorLogPath, true));
+			eventLogger->logError = LogManager::GetLogger("error", "Error Logging");
+			
 		}
 		return eventLogger;
 	}
@@ -63,6 +78,24 @@ namespace mydlpsf
 		try
 		{
 			eventLogger->logDevice->Info(log);
+		} catch (System::Exception ^ex) {
+		}
+	}
+
+	void MyDLPEventLogger::LogRemovable(String ^log)
+	{		
+		try
+		{
+			eventLogger->logRemovable->Warn(log);
+		} catch (System::Exception ^ex) {
+		}
+	}
+
+	void MyDLPEventLogger::LogError(String ^log)
+	{		
+		try
+		{
+			eventLogger->logError->Warn(log);
 		} catch (System::Exception ^ex) {
 		}
 	}

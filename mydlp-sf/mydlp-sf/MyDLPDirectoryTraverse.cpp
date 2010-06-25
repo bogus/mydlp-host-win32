@@ -30,6 +30,7 @@ using namespace System::Collections::Generic;
 using namespace System::Text;
 using namespace System::IO;
 using namespace System::Runtime::InteropServices;
+using namespace System::Threading;
 
 
 namespace mydlpsf {
@@ -37,12 +38,15 @@ namespace mydlpsf {
 	MyDLPDirectoryTraverse::MyDLPDirectoryTraverse(void)
 	{
 		cont = true;
+		completed = false;
 	}
 
-	void MyDLPDirectoryTraverse::TraverseAllDrives() {
+	List<MyDLPDirectoryTraverse ^> ^MyDLPDirectoryTraverse::TraverseAllDrives() {
+		
+		List<MyDLPDirectoryTraverse ^> ^dirTraverseList = gcnew List<MyDLPDirectoryTraverse ^>();
+
 		array<String ^> ^allDrives = Environment::GetLogicalDrives();
         List<String ^> ^fixedDrives = gcnew List<String ^>();
-		detected = gcnew String("TraverseAllDrives" + System::Environment::NewLine);
 
 		for (int i = 0; i < allDrives->Length; i++)
         {
@@ -54,17 +58,18 @@ namespace mydlpsf {
 			Marshal::FreeHGlobal(ptr);
         }
 
-		MyDLPSensitiveFileRecognition ^sensFileObj = MyDLPSensFilePool::GetInstance()->AcquireObject();
-
+		
 		for each (String ^driveLetter in fixedDrives)
 		{
-			TraverseDirectory(driveLetter, 4, sensFileObj);
+			MyDLPDirectoryTraverse ^dirTraverse = gcnew MyDLPDirectoryTraverse();
+			dirTraverse->detected = gcnew String("Traverse Drive : " + driveLetter + System::Environment::NewLine);
+			Thread ^thread = gcnew Thread( gcnew ParameterizedThreadStart(dirTraverse, &MyDLPDirectoryTraverse::Traverse) );
+			thread->Start(driveLetter);
+			
+			dirTraverseList->Add(dirTraverse);
 		}
-		
-		MyDLPSensFilePool::GetInstance()->ReleaseObject(sensFileObj);
-
-		MyDLPEventLogger::GetInstance()->LogSensFile(detected);
-
+	
+		return dirTraverseList;
 	}
 
 	void MyDLPDirectoryTraverse::StopScan()
@@ -72,22 +77,34 @@ namespace mydlpsf {
 		cont = false;
 	}
 
-	void MyDLPDirectoryTraverse::TraverseDir(String ^path) 
+	List<MyDLPDirectoryTraverse ^> ^MyDLPDirectoryTraverse::TraverseDir(String ^path) 
 	{
-		detected = gcnew String("TraverseDir: " + path + System::Environment::NewLine);
-		MyDLPSensitiveFileRecognition ^sensFileObj = MyDLPSensFilePool::GetInstance()->AcquireObject();
-		TraverseDirectory(path, 4, sensFileObj);
-		MyDLPSensFilePool::GetInstance()->ReleaseObject(sensFileObj);
-		MyDLPEventLogger::GetInstance()->LogSensFile(detected);
+		MyDLPDirectoryTraverse ^dirTraverse = gcnew MyDLPDirectoryTraverse();
+		List<MyDLPDirectoryTraverse ^> ^dirTraverseList = gcnew List<MyDLPDirectoryTraverse ^>();
+
+		dirTraverse->detected = gcnew String("TraverseDir: " + path + System::Environment::NewLine);
+		Thread ^thread = gcnew Thread( gcnew ParameterizedThreadStart(dirTraverse, &MyDLPDirectoryTraverse::Traverse) );
+		thread->Start(path);
+
+		dirTraverseList->Add(dirTraverse);
+		return dirTraverseList;
 	}
 
-	void MyDLPDirectoryTraverse::TraverseDirectory(String ^path, UInt32 lvl, 
-		MyDLPSensitiveFileRecognition ^fileSearch)
-	{		
+	void MyDLPDirectoryTraverse::Traverse(Object ^obj)
+	{
+		
+		String ^origPath = gcnew String(((String ^)obj)->ToCharArray());
+		TraverseDirectory(obj, origPath);
+	}
 
+	void MyDLPDirectoryTraverse::TraverseDirectory(Object ^obj, Object ^origPath)
+	{		
 		if(cont->Equals(FALSE)) {
 			return;
 		}
+		
+		String ^path = obj->ToString();
+		String ^originalPath = (String ^)origPath;
 
 		array<String ^> ^dirs = Directory::GetDirectories(path);
 		array<String ^> ^files = Directory::GetFiles(path);
@@ -118,16 +135,21 @@ namespace mydlpsf {
                     int ret = 0;                    
 					FileStream ^fs = gcnew FileStream(key, FileMode::Open, FileAccess::Read);
                     fs->Close();
+					
+					MyDLPSensitiveFileRecognition ^fileSearch = MyDLPSensFilePool::GetInstance()->AcquireObject();
                     ret = fileSearch->SearchSensitiveData(key);
                     
                     if (ret == 1)
                     {
 						detected += key + ":" + fileSearch->GetLastResult() + System::Environment::NewLine;
+						OnDetectedChanged(EventArgs::Empty);
                     }
                     else if (ret == 2)
                     {
                         //Error in clamav
                     }
+
+					MyDLPSensFilePool::GetInstance()->ReleaseObject(fileSearch);
                 }
                 catch (...)
                 {
@@ -148,8 +170,27 @@ namespace mydlpsf {
 					}
 				}
 				if(!isExcluded && cont)
-					MyDLPDirectoryTraverse::TraverseDirectory(key, lvl + 1, fileSearch);
+					MyDLPDirectoryTraverse::TraverseDirectory(key, origPath);
             }
         }
+
+		if(path == originalPath)
+			OnCompleted(EventArgs::Empty);
 	}
+
+	void MyDLPDirectoryTraverse::OnCompleted(EventArgs ^e) 
+    {
+		if(completed->Equals(FALSE))
+		{
+			this->Completed(this, e);
+			completed = true;
+			MyDLPEventLogger::GetInstance()->LogSensFile(detected);
+		}
+    }
+
+	void MyDLPDirectoryTraverse::OnDetectedChanged(EventArgs ^e) 
+    {
+		this->DetectedChanged(this, e);
+	}
+
 }
