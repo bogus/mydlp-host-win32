@@ -2006,6 +2006,11 @@ static int cli_scanraw(cli_ctx *ctx, cli_file_t type, uint8_t typercg, cli_file_
 			}
 			break;
 
+			case CL_TYPE_AUTOCAD:
+				printf("AUTOCAD File FOUND in RAW");
+				nret = CL_CLEAN;
+			break;
+
 		    case CL_TYPE_MSEXE:
  			if(SCAN_PE && (type == CL_TYPE_MSEXE || type == CL_TYPE_ZIP || type == CL_TYPE_MSOLE2) && ctx->dconf->pe) {
 			    if(map->len > 10485760)
@@ -2415,6 +2420,23 @@ int cli_magic_scandesc(int desc, cli_ctx *ctx)
 		if((ret == CL_CLEAN) && SCAN_STRUCTURED && (DCONF_OTHER & OTHER_CONF_DLP))
 			ret = cli_scanpdf_structured(ctx);
 	    break;
+	
+	case CL_TYPE_AUTOCAD:
+		*ctx->virname = "Filetype.Autocad";
+		ret = CL_VIRUS;
+		break;
+	case CL_TYPE_PHOTOSHOP:
+		*ctx->virname = "Filetype.Photoshop";
+		ret = CL_VIRUS;
+		break;
+	case CL_TYPE_PAINTSHOP:
+		*ctx->virname = "Filetype.Paintshop";
+		ret = CL_VIRUS;
+		break;
+	case CL_TYPE_CORELDRAW:
+		*ctx->virname = "Filetype.Coreldraw";
+		ret = CL_VIRUS;
+		break;
 
 	case CL_TYPE_PS: 
 	    ctx->container_type = CL_TYPE_PS;

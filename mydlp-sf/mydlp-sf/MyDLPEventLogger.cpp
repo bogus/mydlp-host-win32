@@ -42,7 +42,7 @@ namespace mydlpsf
 			eventLogger->sensFileLogPath = key->GetValue("Log_Dir") + "\\" + "sens.log";
 			Config::BasicConfigurator::Configure(LogManager::CreateDomain("sensfile"), 
 				gcnew Appender::FileAppender(patternLayout, eventLogger->sensFileLogPath, true));
-			eventLogger->logSensFile = LogManager::GetLogger("sensfile", "Sensifitive File Logging");
+			eventLogger->logSensFile = LogManager::GetLogger("sensfile", "Sensitive File Logging");
 			
 			eventLogger->deviceLogPath = key->GetValue("Log_Dir") + "\\" + "device.log";
 			Config::BasicConfigurator::Configure(LogManager::CreateDomain("device"), 
@@ -53,6 +53,11 @@ namespace mydlpsf
 			Config::BasicConfigurator::Configure(LogManager::CreateDomain("removable"), 
 				gcnew Appender::FileAppender(patternLayout, eventLogger->removableLogPath, true));
 			eventLogger->logRemovable = LogManager::GetLogger("removable", "Removable Media Logging");
+
+			eventLogger->screenCaptureLogPath = key->GetValue("Log_Dir") + "\\" + "screencapt.log";
+			Config::BasicConfigurator::Configure(LogManager::CreateDomain("screencapt"), 
+				gcnew Appender::FileAppender(patternLayout, eventLogger->screenCaptureLogPath, true));
+			eventLogger->logScreenCapture = LogManager::GetLogger("screencapt", "Screen Capture Filtering Logging");
 
 			eventLogger->errorLogPath = key->GetValue("Log_Dir") + "\\" + "error.log";
 			Config::BasicConfigurator::Configure(LogManager::CreateDomain("error"), 
@@ -87,6 +92,15 @@ namespace mydlpsf
 		try
 		{
 			eventLogger->logRemovable->Warn(log);
+		} catch (System::Exception ^ex) {
+		}
+	}
+
+	void MyDLPEventLogger::LogScreenCapture(String ^log)
+	{		
+		try
+		{
+			eventLogger->logScreenCapture->Warn(log);
 		} catch (System::Exception ^ex) {
 		}
 	}

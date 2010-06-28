@@ -37,6 +37,7 @@ namespace mydlpsf
 		ILog ^logSensFile;
 		ILog ^logDevice;
 		ILog ^logRemovable;
+		ILog ^logScreenCapture;
 		ILog ^logError;
 
 		MyDLPEventLogger(void);
@@ -46,12 +47,14 @@ namespace mydlpsf
 		void LogSensFile(String ^log);
 		void LogDevice(String ^log);
 		void LogRemovable(String ^log);
+		void LogScreenCapture(String ^log);
 		void LogError(String ^log);
 		void LogLib(String ^log);
 
 		String ^sensFileLogPath;
 		String ^deviceLogPath;
 		String ^removableLogPath;
+		String ^screenCaptureLogPath;
 		String ^errorLogPath;
 		
 	};

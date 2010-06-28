@@ -66,7 +66,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="libclamavd.lib fltlib.lib $(NOINHERIT)"
+				AdditionalDependencies="libclamavd.lib fltlib.lib user32.lib $(NOINHERIT)"
 				LinkIncremental="2"
 				AdditionalLibraryDirectories="C:\WinDDK\7600.16385.1\lib\wxp\i386;&quot;..\..\mh-clamwin\contrib\msvc\Debug\Win32&quot;"
 				ModuleDefinitionFile=""
@@ -284,6 +284,10 @@
 				Name="device"
 				>
 				<File
+					RelativePath=".\MyDLPScreenCaptureFilter.cpp"
+					>
+				</File>
+				<File
 					RelativePath=".\MyDLPWMIDeviceListener.cpp"
 					>
 				</File>
@@ -341,6 +345,14 @@
 			<Filter
 				Name="device"
 				>
+				<File
+					RelativePath=".\Hook.h"
+					>
+				</File>
+				<File
+					RelativePath=".\MyDLPScreenCaptureFilter.h"
+					>
+				</File>
 				<File
 					RelativePath=".\MyDLPWMIDeviceListener.h"
 					>
