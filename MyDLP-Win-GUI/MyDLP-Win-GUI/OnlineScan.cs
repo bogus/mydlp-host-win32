@@ -24,6 +24,7 @@ namespace MydlpWinGui
 
             // First tab
             groupBox1.Text = Form1.resM.GetString("online.tabonlinescanopt.001");
+            groupBox2.Text = Form1.resM.GetString("online.tabonlinescanopt.005");
             label1.Text = Form1.resM.GetString("online.tabonlinescanopt.002");
             checkBoxEnableScan.Text = Form1.resM.GetString("online.tabonlinescanopt.003");
             checkBoxJustLog.Text = Form1.resM.GetString("online.tabonlinescanopt.004");
@@ -33,6 +34,11 @@ namespace MydlpWinGui
 
             checkBoxEnableScan.Checked = Form1.deviceConf.enableRemovableOnlineScanning;
             checkBoxJustLog.Checked = Form1.deviceConf.justLogRemovableOnlineScanning;
+            checkBox1.Checked = Form1.deviceConf.filterPSD;
+            checkBox2.Checked = Form1.deviceConf.filterPSP;
+            checkBox3.Checked = Form1.deviceConf.filterDWG;
+            checkBox4.Checked = Form1.deviceConf.filterCDR;
+
 
             ReadRemovableLogFile();
             timer1.Start();
@@ -45,6 +51,11 @@ namespace MydlpWinGui
             {
                 MyDLPRemoteDeviceConf.GetInstance().enableRemovableOnlineScanning = checkBoxEnableScan.Checked;
                 MyDLPRemoteDeviceConf.GetInstance().justLogRemovableOnlineScanning = checkBoxJustLog.Checked;
+
+                MyDLPRemoteDeviceConf.GetInstance().filterPSD = checkBox1.Checked;
+                MyDLPRemoteDeviceConf.GetInstance().filterPSP = checkBox2.Checked;
+                MyDLPRemoteDeviceConf.GetInstance().filterCDR = checkBox4.Checked;
+                MyDLPRemoteDeviceConf.GetInstance().filterDWG = checkBox3.Checked;
 
                 MyDLPRemoteDeviceConf.Serialize();
 

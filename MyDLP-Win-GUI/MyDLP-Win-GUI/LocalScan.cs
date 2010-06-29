@@ -154,6 +154,7 @@ namespace MydlpWinGui
                 item.Text = textBox2.Text;
                 listView1.Items.Add(item);
                 Form1.deviceConf.excludedDirs.Add(textBox2.Text);
+                textBox2.Text = "";
             }
         }
 

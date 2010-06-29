@@ -37,10 +37,10 @@ namespace mydlpsf
 	private:
 		static MyDLPRemoteScreenCaptureConf ^screenCaptureConf;
 		static void SetInstance(MyDLPRemoteScreenCaptureConf ^screenCaptureConf);
-
-	public:
 		MyDLPRemoteScreenCaptureConf(void);
 
+
+	public:
 		static MyDLPRemoteScreenCaptureConf ^GetInstance();
 		
 		static void Serialize();

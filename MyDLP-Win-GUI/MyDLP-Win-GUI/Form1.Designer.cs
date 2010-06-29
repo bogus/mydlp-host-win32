@@ -36,6 +36,18 @@ namespace MydlpWinGui
         {
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
+            System.Windows.Forms.ListViewItem listViewItem6 = new System.Windows.Forms.ListViewItem(new string[] {
+            "Define Sensitive Data"}, 4, System.Drawing.Color.Empty, System.Drawing.Color.Empty, new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0))));
+            System.Windows.Forms.ListViewGroup listViewGroup2 = new System.Windows.Forms.ListViewGroup("Menu", System.Windows.Forms.HorizontalAlignment.Right);
+            System.Windows.Forms.ListViewItem listViewItem7 = new System.Windows.Forms.ListViewItem(new string[] {
+            "Local Scan"}, 0, System.Drawing.Color.Empty, System.Drawing.Color.Empty, new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0))));
+            System.Windows.Forms.ListViewItem listViewItem8 = new System.Windows.Forms.ListViewItem(new string[] {
+            "Online Scan"}, 2, System.Drawing.Color.Empty, System.Drawing.Color.Empty, new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0))));
+            System.Windows.Forms.ListViewItem listViewItem9 = new System.Windows.Forms.ListViewItem(new string[] {
+            "Screen Capture"}, 3, System.Drawing.Color.Empty, System.Drawing.Color.Empty, new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0))));
+            System.Windows.Forms.ListViewItem listViewItem10 = new System.Windows.Forms.ListViewItem(new string[] {
+            "Options",
+            ""}, 1, System.Drawing.Color.Empty, System.Drawing.Color.Empty, new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0))));
             this.notifyIcon1 = new System.Windows.Forms.NotifyIcon(this.components);
             this.eventLogSensFile = new System.Diagnostics.EventLog();
             this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
@@ -43,13 +55,11 @@ namespace MydlpWinGui
             this.disableOnLineScanningToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.enableOnLineScannigToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.panel1 = new System.Windows.Forms.Panel();
-            this.menuOptions = new System.Windows.Forms.LinkLabel();
-            this.menuOnlineScan = new System.Windows.Forms.LinkLabel();
-            this.menuScan = new System.Windows.Forms.LinkLabel();
-            this.menuDefSensData = new System.Windows.Forms.LinkLabel();
+            this.listView1 = new System.Windows.Forms.ListView();
+            this.imageList1 = new System.Windows.Forms.ImageList(this.components);
             this.panel2 = new System.Windows.Forms.Panel();
             this.panelTitle = new System.Windows.Forms.Label();
-            this.menuScreenCapture = new System.Windows.Forms.LinkLabel();
+            this.columnHeader1 = new System.Windows.Forms.ColumnHeader();
             ((System.ComponentModel.ISupportInitialize)(this.eventLogSensFile)).BeginInit();
             this.contextMenuStrip1.SuspendLayout();
             this.panel1.SuspendLayout();
@@ -99,62 +109,65 @@ namespace MydlpWinGui
             // 
             // panel1
             // 
-            this.panel1.BackColor = System.Drawing.Color.White;
-            this.panel1.Controls.Add(this.menuScreenCapture);
-            this.panel1.Controls.Add(this.menuOptions);
-            this.panel1.Controls.Add(this.menuOnlineScan);
-            this.panel1.Controls.Add(this.menuScan);
-            this.panel1.Controls.Add(this.menuDefSensData);
+            this.panel1.BackColor = System.Drawing.SystemColors.Window;
+            this.panel1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.panel1.Controls.Add(this.listView1);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Left;
             this.panel1.Location = new System.Drawing.Point(0, 0);
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(178, 466);
             this.panel1.TabIndex = 1;
             // 
-            // menuOptions
+            // listView1
             // 
-            this.menuOptions.AutoSize = true;
-            this.menuOptions.Location = new System.Drawing.Point(12, 142);
-            this.menuOptions.Name = "menuOptions";
-            this.menuOptions.Size = new System.Drawing.Size(43, 13);
-            this.menuOptions.TabIndex = 3;
-            this.menuOptions.TabStop = true;
-            this.menuOptions.Text = "Options";
-            this.menuOptions.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.menuOptions_LinkClicked);
+            this.listView1.AutoArrange = false;
+            this.listView1.BackColor = System.Drawing.SystemColors.Window;
+            this.listView1.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.listView1.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.columnHeader1});
+            this.listView1.FullRowSelect = true;
+            this.listView1.GridLines = true;
+            listViewGroup2.Header = "Menu";
+            listViewGroup2.HeaderAlignment = System.Windows.Forms.HorizontalAlignment.Right;
+            listViewGroup2.Name = "listViewGroup1";
+            listViewItem6.Group = listViewGroup2;
+            listViewItem6.IndentCount = 1;
+            listViewItem7.Group = listViewGroup2;
+            listViewItem7.IndentCount = 2;
+            listViewItem8.Group = listViewGroup2;
+            listViewItem8.IndentCount = 3;
+            listViewItem9.Group = listViewGroup2;
+            listViewItem9.IndentCount = 4;
+            listViewItem10.Group = listViewGroup2;
+            listViewItem10.IndentCount = 5;
+            this.listView1.Items.AddRange(new System.Windows.Forms.ListViewItem[] {
+            listViewItem6,
+            listViewItem7,
+            listViewItem8,
+            listViewItem9,
+            listViewItem10});
+            this.listView1.LargeImageList = this.imageList1;
+            this.listView1.Location = new System.Drawing.Point(12, 13);
+            this.listView1.Margin = new System.Windows.Forms.Padding(10);
+            this.listView1.MultiSelect = false;
+            this.listView1.Name = "listView1";
+            this.listView1.Scrollable = false;
+            this.listView1.Size = new System.Drawing.Size(156, 403);
+            this.listView1.TabIndex = 5;
+            this.listView1.TileSize = new System.Drawing.Size(150, 50);
+            this.listView1.UseCompatibleStateImageBehavior = false;
+            this.listView1.View = System.Windows.Forms.View.Tile;
+            this.listView1.SelectedIndexChanged += new System.EventHandler(this.listView1_SelectedIndexChanged);
             // 
-            // menuOnlineScan
+            // imageList1
             // 
-            this.menuOnlineScan.AutoSize = true;
-            this.menuOnlineScan.Location = new System.Drawing.Point(13, 84);
-            this.menuOnlineScan.Name = "menuOnlineScan";
-            this.menuOnlineScan.Size = new System.Drawing.Size(126, 13);
-            this.menuOnlineScan.TabIndex = 2;
-            this.menuOnlineScan.TabStop = true;
-            this.menuOnlineScan.Text = "Removable Device Scan";
-            this.menuOnlineScan.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.menuOnlineScan_LinkClicked);
-            // 
-            // menuScan
-            // 
-            this.menuScan.AutoSize = true;
-            this.menuScan.Location = new System.Drawing.Point(13, 55);
-            this.menuScan.Name = "menuScan";
-            this.menuScan.Size = new System.Drawing.Size(131, 13);
-            this.menuScan.TabIndex = 1;
-            this.menuScan.TabStop = true;
-            this.menuScan.Text = "Scan Directory or Devices";
-            this.menuScan.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.menuScan_LinkClicked);
-            // 
-            // menuDefSensData
-            // 
-            this.menuDefSensData.AutoEllipsis = true;
-            this.menuDefSensData.AutoSize = true;
-            this.menuDefSensData.Location = new System.Drawing.Point(13, 26);
-            this.menuDefSensData.Name = "menuDefSensData";
-            this.menuDefSensData.Size = new System.Drawing.Size(110, 13);
-            this.menuDefSensData.TabIndex = 0;
-            this.menuDefSensData.TabStop = true;
-            this.menuDefSensData.Text = "Define Sensitive Data";
-            this.menuDefSensData.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.menuDefSensData_LinkClicked);
+            this.imageList1.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("imageList1.ImageStream")));
+            this.imageList1.TransparentColor = System.Drawing.Color.Transparent;
+            this.imageList1.Images.SetKeyName(0, "localscan.png");
+            this.imageList1.Images.SetKeyName(1, "options.png");
+            this.imageList1.Images.SetKeyName(2, "removable.png");
+            this.imageList1.Images.SetKeyName(3, "screencapt.png");
+            this.imageList1.Images.SetKeyName(4, "sensfile.png");
             // 
             // panel2
             // 
@@ -173,17 +186,6 @@ namespace MydlpWinGui
             this.panelTitle.Size = new System.Drawing.Size(51, 16);
             this.panelTitle.TabIndex = 3;
             this.panelTitle.Text = "label1";
-            // 
-            // menuScreenCapture
-            // 
-            this.menuScreenCapture.AutoSize = true;
-            this.menuScreenCapture.Location = new System.Drawing.Point(12, 113);
-            this.menuScreenCapture.Name = "menuScreenCapture";
-            this.menuScreenCapture.Size = new System.Drawing.Size(81, 13);
-            this.menuScreenCapture.TabIndex = 4;
-            this.menuScreenCapture.TabStop = true;
-            this.menuScreenCapture.Text = "Screen Capture";
-            this.menuScreenCapture.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.menuScreenCapture_LinkClicked);
             // 
             // Form1
             // 
@@ -204,7 +206,6 @@ namespace MydlpWinGui
             ((System.ComponentModel.ISupportInitialize)(this.eventLogSensFile)).EndInit();
             this.contextMenuStrip1.ResumeLayout(false);
             this.panel1.ResumeLayout(false);
-            this.panel1.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -220,13 +221,11 @@ namespace MydlpWinGui
         private ToolStripMenuItem disableOnLineScanningToolStripMenuItem;
         private ToolStripMenuItem enableOnLineScannigToolStripMenuItem;
         private Panel panel1;
-        private LinkLabel menuDefSensData;
-        private LinkLabel menuScan;
-        private LinkLabel menuOptions;
-        private LinkLabel menuOnlineScan;
         private Panel panel2;
         private Label panelTitle;
-        private LinkLabel menuScreenCapture;
+        private ListView listView1;
+        private ImageList imageList1;
+        private ColumnHeader columnHeader1;
     }
 }
 

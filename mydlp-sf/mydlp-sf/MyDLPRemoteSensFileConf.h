@@ -51,10 +51,9 @@ namespace mydlpsf {
 	private:
 		static MyDLPRemoteSensFileConf ^sensFileConf;
 		static void SetInstance(MyDLPRemoteSensFileConf ^sensFileConf);
+		MyDLPRemoteSensFileConf(void);
 
 	public:
-		MyDLPRemoteSensFileConf(void);
-		
 		static MyDLPRemoteSensFileConf ^GetInstance();
 		
 		static void Serialize();

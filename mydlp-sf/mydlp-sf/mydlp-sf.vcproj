@@ -213,6 +213,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\MyDLPRemoteServiceConf.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\Stdafx.cpp"
 				>
 				<FileConfiguration
@@ -299,6 +303,10 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
+				RelativePath=".\MyDLPRemoteServiceConf.h"
+				>
+			</File>
+			<File
 				RelativePath=".\MyDLPScannerInc.h"
 				>
 			</File>
@@ -345,10 +353,6 @@
 			<Filter
 				Name="device"
 				>
-				<File
-					RelativePath=".\Hook.h"
-					>
-				</File>
 				<File
 					RelativePath=".\MyDLPScreenCaptureFilter.h"
 					>

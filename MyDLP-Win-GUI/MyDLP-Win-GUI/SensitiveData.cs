@@ -45,6 +45,8 @@ namespace MydlpWinGui
                 listView1.Items.Add(item);
                 md5Value += ":" + fileSize + ":" + desc;
                 Form1.sensFileConf.md5Val += "\n" + md5Value;
+                textBox1.Text = "";
+                textBox2.Text = "";
             }
             else
             {
@@ -86,6 +88,7 @@ namespace MydlpWinGui
                 item.Text = clamRegex.regex;
                 item.SubItems.Add(clamRegex.id.ToString());
                 listViewRegex.Items.Add(item);
+                textBox3.Text = "";
             }
         }
 
@@ -120,6 +123,7 @@ namespace MydlpWinGui
                 MyDLPRemoteSensFileConf.GetInstance().maxSSNCount = UInt32.Parse(maskedTextBoxSSN.Text);
                 MyDLPRemoteSensFileConf.GetInstance().maxTRIdCount = UInt32.Parse(maskedTextBoxTRid.Text);
                 MyDLPRemoteSensFileConf.GetInstance().maxIBANCount = UInt32.Parse(maskedTextBoxIBAN.Text);
+                MyDLPRemoteSensFileConf.GetInstance().enableRegex = checkBox1.Checked;
 
                 MyDLPRemoteSensFileConf.Serialize();
 
@@ -174,6 +178,7 @@ namespace MydlpWinGui
             button4.Text = Form1.resM.GetString("def.tabregex.002");
             button5.Text = Form1.resM.GetString("def.tabregex.003");
             listViewRegex.Columns[0].Text = Form1.resM.GetString("def.tabregex.005");
+            checkBox1.Text = Form1.resM.GetString("def.tabregex.007");
 
             // third tab
             label12.Text = Form1.resM.GetString("def.tabpredefined.definition");
@@ -213,6 +218,9 @@ namespace MydlpWinGui
                 item.SubItems.Add(clamRegex.id.ToString());
                 listViewRegex.Items.Add(item);
             }
+
+            checkBox1.Checked = Form1.sensFileConf.enableRegex;
+
         }
 
         protected string GetMD5HashFromFile(string fileName)

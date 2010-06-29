@@ -20,17 +20,16 @@
 #pragma once
 #pragma managed
 
-//#include <windows.h>
-#include "Hook.h"
+#include <windows.h>
 #include "MyDLPEventLogger.h"
 #include "MyDLPRemoteConf.h"
-
 
 using namespace System::Diagnostics;
 using namespace System::Runtime::InteropServices;
 using namespace System::Reflection;
+using namespace System::ComponentModel;
 
-//LRESULT CALLBACK KeyboardProc(int nCode, WPARAM wParam,LPARAM lParam);
+static LRESULT CALLBACK KeyboardProc(int nCode, WPARAM wParam,LPARAM lParam);
 
 namespace mydlpsf
 {
@@ -39,27 +38,12 @@ namespace mydlpsf
 	private:
 		static MyDLPScreenCaptureFilter ^screenCaptureFilter;
 		MyDLPScreenCaptureFilter(void);
-		//HHOOK hhookSysMsg; 
-		//static IntPtr ^hook;
-		//static int TestProc(int code, IntPtr ^wParam, IntPtr ^lParam);
-
+		HHOOK hhookSysMsg; 
+		
 	public:
 		static MyDLPScreenCaptureFilter ^GetInstance();
 		bool StartHook();
-		void StopHook();	
-		//HHOOK GetHook();
-/*
-		delegate int HookProc(int code, IntPtr ^wParam, IntPtr ^lParam);
-
-	protected:
-		[DllImport("user32.dll")]
-		static IntPtr SetWindowsHookEx(int code, HookProc ^func, IntPtr ^hInstance, int threadID);
-		[DllImport("user32.dll")]
-		static int UnhookWindowsHookEx(IntPtr hhook); 
-		[DllImport("user32.dll")]
-		static int CallNextHookEx(IntPtr ^hhook, int code, IntPtr ^wParam, IntPtr ^lParam);
-
-		HookProc ^hookProc;
-*/
+		void StopHook();
+		HHOOK GetHook();
 	};
 }

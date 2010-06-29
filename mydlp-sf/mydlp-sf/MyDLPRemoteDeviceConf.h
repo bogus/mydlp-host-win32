@@ -45,10 +45,9 @@ namespace mydlpsf {
 	private:
 		static MyDLPRemoteDeviceConf ^deviceConf;
 		static void SetInstance(MyDLPRemoteDeviceConf ^deviceConf);
-
-	public:
 		MyDLPRemoteDeviceConf(void);
-		
+
+	public:		
 		static MyDLPRemoteDeviceConf ^GetInstance();
 		static void Serialize();
 		static void Deserialize();
@@ -58,6 +57,11 @@ namespace mydlpsf {
 		Boolean justLogRemovableOnlineScanning;
 		Boolean scanPluggedInRemovableDevices;
 		Boolean scanInsertedLogical;
+
+		Boolean filterPSD;
+		Boolean filterPSP;
+		Boolean filterCDR;
+		Boolean filterDWG;
 
 		static const String ^confFileName = "device.conf";
 	};

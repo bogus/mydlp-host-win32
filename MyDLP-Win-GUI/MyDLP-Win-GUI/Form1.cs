@@ -21,6 +21,7 @@ namespace MydlpWinGui
         public static MyDLPRemoteSensFileConf sensFileConf;
         public static MyDLPRemoteDeviceConf deviceConf;
         public static MyDLPRemoteScreenCaptureConf screenCaptureConf;
+        public static MyDLPRemoteServiceConf serviceConf;
         private SensitiveData defineSensitiveData = new SensitiveData();
         private LocalScan localScan;
         private OnlineScan onlineScan;
@@ -34,9 +35,11 @@ namespace MydlpWinGui
             MyDLPRemoteSensFileConf.Deserialize();
             MyDLPRemoteDeviceConf.Deserialize();
             MyDLPRemoteScreenCaptureConf.Deserialize();
+            MyDLPRemoteServiceConf.Deserialize();
             sensFileConf = MyDLPRemoteSensFileConf.GetInstance();
             deviceConf = MyDLPRemoteDeviceConf.GetInstance();
             screenCaptureConf = MyDLPRemoteScreenCaptureConf.GetInstance();
+            serviceConf = MyDLPRemoteServiceConf.GetInstance();
 
             localScan = new LocalScan();
             onlineScan = new OnlineScan();
@@ -111,16 +114,16 @@ namespace MydlpWinGui
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            Thread.CurrentThread.CurrentUICulture = new CultureInfo("tr-TR");
-            Thread.CurrentThread.CurrentCulture = new CultureInfo("tr-TR");
+            Thread.CurrentThread.CurrentUICulture = new CultureInfo(serviceConf.language);
+            Thread.CurrentThread.CurrentCulture = new CultureInfo(serviceConf.language);
 
             this.Text = resM.GetString("app.title");
 
-            menuDefSensData.Text = resM.GetString("menu.defsensdata");
-            menuScan.Text = resM.GetString("menu.localscan");
-            menuOnlineScan.Text = resM.GetString("menu.onlinescan");
-            menuScreenCapture.Text = resM.GetString("menu.screencapture");
-            menuOptions.Text = resM.GetString("menu.options");
+            listView1.Items[0].Text = resM.GetString("menu.defsensdata");
+            listView1.Items[1].Text = resM.GetString("menu.localscan");
+            listView1.Items[2].Text = resM.GetString("menu.onlinescan");
+            listView1.Items[3].Text = resM.GetString("menu.screencapture");
+            listView1.Items[4].Text = resM.GetString("menu.options");
 
             panelTitle.Text = resM.GetString("menu.defsensdata");
             panel2.Controls.Add(defineSensitiveData);
@@ -165,6 +168,48 @@ namespace MydlpWinGui
             panel2.Controls.Remove(currentPanelControl);
             panel2.Controls.Add(options);
             currentPanelControl = options;
+        }
+
+        private void listView1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (listView1.SelectedIndices.Count == 0)
+                return;
+
+            if (listView1.SelectedIndices[0] == 0)
+            {
+                panelTitle.Text = listView1.SelectedItems[0].Text;
+                panel2.Controls.Remove(currentPanelControl);
+                panel2.Controls.Add(defineSensitiveData);
+                currentPanelControl = defineSensitiveData;
+            }
+            else if (listView1.SelectedIndices[0] == 1)
+            {
+                panelTitle.Text = listView1.SelectedItems[0].Text;
+                panel2.Controls.Remove(currentPanelControl);
+                panel2.Controls.Add(localScan);
+                currentPanelControl = localScan;
+            }
+            else if (listView1.SelectedIndices[0] == 2)
+            {
+                panelTitle.Text = listView1.SelectedItems[0].Text;
+                panel2.Controls.Remove(currentPanelControl);
+                panel2.Controls.Add(onlineScan);
+                currentPanelControl = onlineScan;
+            }
+            else if (listView1.SelectedIndices[0] == 3)
+            {
+                panelTitle.Text = listView1.SelectedItems[0].Text;
+                panel2.Controls.Remove(currentPanelControl);
+                panel2.Controls.Add(screenCapture);
+                currentPanelControl = screenCapture;
+            }
+            else if (listView1.SelectedIndices[0] == 4)
+            {
+                panelTitle.Text = listView1.SelectedItems[0].Text;
+                panel2.Controls.Remove(currentPanelControl);
+                panel2.Controls.Add(options);
+                currentPanelControl = options;
+            }
         }
 
 

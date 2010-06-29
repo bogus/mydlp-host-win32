@@ -72,6 +72,7 @@
             this.checkBoxCC = new System.Windows.Forms.CheckBox();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.buttonSaveAll = new System.Windows.Forms.Button();
+            this.checkBox1 = new System.Windows.Forms.CheckBox();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.groupAddMd5.SuspendLayout();
@@ -236,6 +237,7 @@
             // 
             // tabPage2
             // 
+            this.tabPage2.Controls.Add(this.checkBox1);
             this.tabPage2.Controls.Add(this.button5);
             this.tabPage2.Controls.Add(this.label7);
             this.tabPage2.Controls.Add(this.listViewRegex);
@@ -262,7 +264,7 @@
             // label7
             // 
             this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(22, 148);
+            this.label7.Location = new System.Drawing.Point(22, 163);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(35, 13);
             this.label7.TabIndex = 3;
@@ -275,9 +277,9 @@
             this.columnRegexId});
             this.listViewRegex.FullRowSelect = true;
             this.listViewRegex.GridLines = true;
-            this.listViewRegex.Location = new System.Drawing.Point(6, 167);
+            this.listViewRegex.Location = new System.Drawing.Point(6, 180);
             this.listViewRegex.Name = "listViewRegex";
-            this.listViewRegex.Size = new System.Drawing.Size(519, 161);
+            this.listViewRegex.Size = new System.Drawing.Size(519, 148);
             this.listViewRegex.TabIndex = 2;
             this.listViewRegex.UseCompatibleStateImageBehavior = false;
             this.listViewRegex.View = System.Windows.Forms.View.Details;
@@ -297,7 +299,7 @@
             this.groupRegex.Controls.Add(this.button4);
             this.groupRegex.Controls.Add(this.textBox3);
             this.groupRegex.Controls.Add(this.label6);
-            this.groupRegex.Location = new System.Drawing.Point(6, 44);
+            this.groupRegex.Location = new System.Drawing.Point(6, 58);
             this.groupRegex.Name = "groupRegex";
             this.groupRegex.Size = new System.Drawing.Size(519, 100);
             this.groupRegex.TabIndex = 1;
@@ -502,6 +504,16 @@
             this.buttonSaveAll.UseVisualStyleBackColor = true;
             this.buttonSaveAll.Click += new System.EventHandler(this.buttonSaveAll_Click);
             // 
+            // checkBox1
+            // 
+            this.checkBox1.AutoSize = true;
+            this.checkBox1.Location = new System.Drawing.Point(21, 35);
+            this.checkBox1.Name = "checkBox1";
+            this.checkBox1.Size = new System.Drawing.Size(158, 17);
+            this.checkBox1.TabIndex = 5;
+            this.checkBox1.Text = "Enable Regular Expressions";
+            this.checkBox1.UseVisualStyleBackColor = true;
+            // 
             // SensitiveData
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -574,5 +586,6 @@
         private System.Windows.Forms.CheckBox checkBoxIBAN;
         private System.Windows.Forms.Button buttonSaveAll;
         private System.Windows.Forms.Label label12;
+        private System.Windows.Forms.CheckBox checkBox1;
     }
 }

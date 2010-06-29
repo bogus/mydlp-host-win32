@@ -31,6 +31,11 @@ namespace mydlpsf {
 		
 		scanInsertedLogical = true;
 		scanPluggedInRemovableDevices = true;
+		
+		filterPSD = true;
+		filterPSP = true;
+		filterCDR = true;
+		filterDWG = true;
 	}
 
 	MyDLPRemoteDeviceConf ^MyDLPRemoteDeviceConf::GetInstance()
