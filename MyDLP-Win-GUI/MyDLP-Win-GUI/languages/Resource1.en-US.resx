@@ -117,6 +117,12 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="about.001" xml:space="preserve">
+    <value>Licence</value>
+  </data>
+  <data name="about.002" xml:space="preserve">
+    <value>This software's license is GNU GPLv3. Source code of this software is open to everybody.  Freedom to knowledege</value>
+  </data>
   <data name="app.savechanges" xml:space="preserve">
     <value>Save The Changes</value>
   </data>
@@ -218,6 +224,9 @@
   </data>
   <data name="def.tabregex.definition" xml:space="preserve">
     <value>Enter Rules For PCRE Compatible Regular Expressions And Specified Sentences</value>
+  </data>
+  <data name="menu.aboutus" xml:space="preserve">
+    <value>About Us</value>
   </data>
   <data name="menu.defsensdata" xml:space="preserve">
     <value>Define Valuable Data</value>

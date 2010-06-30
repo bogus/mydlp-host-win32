@@ -19,12 +19,31 @@
  */
 
 #include "StdAfx.h"
+#include <windows.h>
 #include "MyDLPWMIDeviceListener.h"
+#include "MyDLPEventLogger.h"
+#include "MyDLPRemoteConf.h"
+
+using namespace System::Runtime::InteropServices;
 
 namespace mydlpsf
 {
 	MyDLPWMIDeviceListener::MyDLPWMIDeviceListener(void)
 	{
+		sensFileSearch = gcnew System::Collections::Generic::Dictionary<String ^, MyDLPDirectoryTraverse ^>();
+		removableDrives = gcnew System::Collections::Generic::List<String ^>();
+
+		array<String ^> ^allDrives = Environment::GetLogicalDrives();
+
+		for (int i = 0; i < allDrives->Length; i++)
+        {
+			IntPtr ptr = Marshal::StringToHGlobalUni(allDrives[i]);
+			if(DRIVE_REMOVABLE == GetDriveType((LPCWSTR)ptr.ToPointer()))
+			{
+				removableDrives->Add(allDrives[i]);
+			}
+			Marshal::FreeHGlobal(ptr);
+        }
 	}
 
 	MyDLPWMIDeviceListener ^MyDLPWMIDeviceListener::GetInstance()
@@ -57,6 +76,8 @@ namespace mydlpsf
         {
             if (w != nullptr)
                 w->Stop();
+
+			MyDLPEventLogger::GetInstance()->LogError(ex->StackTrace);
         }
 
 	}
@@ -81,6 +102,8 @@ namespace mydlpsf
         {
             if (w != nullptr)
                 w->Stop();
+
+			MyDLPEventLogger::GetInstance()->LogError(ex->StackTrace);
         }
 	}
 
@@ -105,21 +128,68 @@ namespace mydlpsf
         {
             if (w != nullptr)
                 w->Stop();
+
+			MyDLPEventLogger::GetInstance()->LogError(ex->StackTrace);
         }
 	}
 
 	void MyDLPWMIDeviceListener::USBAdded(Object ^sender, EventArrivedEventArgs ^e)
 	{
-		//Console::WriteLine("USB Added");
 		if(MyDLPRemoteDeviceConf::GetInstance()->scanPluggedInRemovableDevices)
 		{
-			
+			PropertyData ^pd = e->NewEvent->Properties["TargetInstance"];
+			if (pd != nullptr)
+			{
+				ManagementBaseObject ^mbo = dynamic_cast<ManagementBaseObject ^>(pd->Value);
+				if (mbo->Properties["Antecedent"]->Value != nullptr)
+				{
+					bool found = false;
+					for each(KeyValuePair<String ^, MyDLPDirectoryTraverse ^> pair in sensFileSearch)
+					{
+						if(pair.Key == mbo->Properties["Antecedent"]->Value)
+							found = true;
+					}
+
+					if(!found) {
+						array<String ^> ^allDrives = Environment::GetLogicalDrives();
+
+						for (int i = 0; i < allDrives->Length; i++)
+						{
+							IntPtr ptr = Marshal::StringToHGlobalUni(allDrives[i]);
+							if(DRIVE_REMOVABLE == GetDriveType((LPCWSTR)ptr.ToPointer()))
+							{
+								if(!removableDrives->Contains(allDrives[i])) {
+									MyDLPDirectoryTraverse ^dirTraverse = gcnew MyDLPDirectoryTraverse();
+									sensFileSearch->Add((String ^)mbo->Properties["Antecedent"]->Value, dirTraverse);
+									dirTraverse->TraverseDir(allDrives[i]);
+								}
+							}
+						}
+					}
+
+				}
+			}
 		}
 	}
 	
 	void MyDLPWMIDeviceListener::USBRemoved(Object ^sender, EventArrivedEventArgs ^e)
 	{
-		Console::WriteLine("USB Removed");
+		PropertyData ^pd = e->NewEvent->Properties["TargetInstance"];
+		if (pd != nullptr)
+		{
+			ManagementBaseObject ^mbo = dynamic_cast<ManagementBaseObject ^>(pd->Value);
+			if (mbo->Properties["Antecedent"]->Value != nullptr)
+			{
+				for each(KeyValuePair<String ^, MyDLPDirectoryTraverse ^> pair in sensFileSearch)
+				{
+					if(pair.Key == mbo->Properties["Antecedent"]->Value)
+					{
+						((MyDLPDirectoryTraverse ^)pair.Value)->StopScan();
+					}
+				}
+				sensFileSearch->Remove((String ^)mbo->Properties["Antecedent"]->Value);
+			}
+		}
 	}
 
 	void MyDLPWMIDeviceListener::LogicalInserted(Object ^sender, EventArrivedEventArgs ^e)
@@ -130,11 +200,20 @@ namespace mydlpsf
             ManagementBaseObject ^mbo = dynamic_cast<ManagementBaseObject ^>(pd->Value);
             if (mbo->Properties["VolumeName"]->Value != nullptr)
             {
-				Console::WriteLine("A CD/DVD inserted : " + mbo->Properties["VolumeName"]->Value);
+				if(MyDLPRemoteDeviceConf::GetInstance()->scanInsertedLogical)
+				{
+					MyDLPDirectoryTraverse ^dirTraverse = gcnew MyDLPDirectoryTraverse();
+					sensFileSearch->Add(("CD-" + (String ^)mbo->Properties["Name"]->Value), dirTraverse);
+					dirTraverse->TraverseDir(mbo->Properties["Name"]->Value + "\\");
+				}
             }
             else
             {
-                Console::WriteLine("A CD/DVD ejected");
+				MyDLPDirectoryTraverse ^dirTraverse = sensFileSearch[("CD-" + (String ^)mbo->Properties["Name"]->Value)];
+				if(dirTraverse != nullptr) {
+					dirTraverse->StopScan();
+					sensFileSearch->Remove(("CD-" + (String ^)mbo->Properties["Name"]->Value));
+				}
             }
         }
 	}

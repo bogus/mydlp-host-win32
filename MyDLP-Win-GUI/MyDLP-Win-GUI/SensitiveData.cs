@@ -137,10 +137,6 @@ namespace MydlpWinGui
 
         private void SensitiveData_Load(object sender, EventArgs e)
         {
-            tabPage1.Text = Form1.resM.GetString("def.tabmd5");
-            tabPage2.Text = Form1.resM.GetString("def.tabregex");
-            tabPage3.Text = Form1.resM.GetString("def.tabpredefined");
-
             openFileDialog1.FileName = "";
 
             FillMd5List();
@@ -155,6 +151,15 @@ namespace MydlpWinGui
             maskedTextBoxTRid.Text = Form1.sensFileConf.maxTRIdCount.ToString();
             maskedTextBoxIBAN.Text = Form1.sensFileConf.maxIBANCount.ToString();
 
+            Globalize();
+
+        }
+
+        public void Globalize()
+        {
+            tabPage1.Text = Form1.resM.GetString("def.tabmd5");
+            tabPage2.Text = Form1.resM.GetString("def.tabregex");
+            tabPage3.Text = Form1.resM.GetString("def.tabpredefined");
             buttonSaveAll.Text = Form1.resM.GetString("app.savechanges");
 
             // first tab
@@ -191,7 +196,6 @@ namespace MydlpWinGui
             label9.Text = Form1.resM.GetString("def.tabpredefined.006");
             label10.Text = Form1.resM.GetString("def.tabpredefined.007");
             label11.Text = Form1.resM.GetString("def.tabpredefined.008");
-
         }
 
         private void FillMd5List()

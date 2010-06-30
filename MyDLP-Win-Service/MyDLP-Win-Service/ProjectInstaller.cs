@@ -45,7 +45,7 @@ namespace MyDLPHost
 			// serviceInstaller1
 			// 
 			this.serviceInstaller1.ServiceName = "MyDLP-Host";
-			this.serviceInstaller1.StartType = System.ServiceProcess.ServiceStartMode.Automatic;
+			this.serviceInstaller1.StartType = System.ServiceProcess.ServiceStartMode.Automatic;            
 			// 
 			// ProjectInstaller
 			// 

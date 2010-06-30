@@ -25,6 +25,7 @@
 #pragma managed
 
 #include "MyDLPRemoteConf.h"
+#include "MyDLPDirectoryTraverse.h"
 
 using namespace System;
 using namespace System::Collections::Generic;
@@ -41,6 +42,8 @@ namespace mydlpsf
 		static void USBAdded(Object ^sender, EventArrivedEventArgs ^e);
 		static void USBRemoved(Object ^sender, EventArrivedEventArgs ^e);
 		static void LogicalInserted(Object ^sender, EventArrivedEventArgs ^e);
+		static System::Collections::Generic::Dictionary<String ^, MyDLPDirectoryTraverse ^> ^sensFileSearch;
+		static System::Collections::Generic::List<String ^> ^removableDrives;
 
 	protected:
 		MyDLPWMIDeviceListener(void);

@@ -19,18 +19,6 @@ namespace MydlpWinGui
 
         private void OnlineScan_Load(object sender, EventArgs e)
         {
-            tabOnlineOptions.Text = Form1.resM.GetString("online.tabonlinescanopt");
-            tabOnlineScanHistory.Text = Form1.resM.GetString("online.tabonlinescanhist");
-
-            // First tab
-            groupBox1.Text = Form1.resM.GetString("online.tabonlinescanopt.001");
-            groupBox2.Text = Form1.resM.GetString("online.tabonlinescanopt.005");
-            label1.Text = Form1.resM.GetString("online.tabonlinescanopt.002");
-            checkBoxEnableScan.Text = Form1.resM.GetString("online.tabonlinescanopt.003");
-            checkBoxJustLog.Text = Form1.resM.GetString("online.tabonlinescanopt.004");
-            button1.Text = Form1.resM.GetString("app.savechanges");
-            // second tab
-            label2.Text = Form1.resM.GetString("online.tabonlinescanhist.definition");
 
             checkBoxEnableScan.Checked = Form1.deviceConf.enableRemovableOnlineScanning;
             checkBoxJustLog.Checked = Form1.deviceConf.justLogRemovableOnlineScanning;
@@ -43,6 +31,24 @@ namespace MydlpWinGui
             ReadRemovableLogFile();
             timer1.Start();
 
+            Globalize();
+
+        }
+
+        public void Globalize()
+        {
+            tabOnlineOptions.Text = Form1.resM.GetString("online.tabonlinescanopt");
+            tabOnlineScanHistory.Text = Form1.resM.GetString("online.tabonlinescanhist");
+
+            // First tab
+            groupBox1.Text = Form1.resM.GetString("online.tabonlinescanopt.001");
+            groupBox2.Text = Form1.resM.GetString("online.tabonlinescanopt.005");
+            label1.Text = Form1.resM.GetString("online.tabonlinescanopt.002");
+            checkBoxEnableScan.Text = Form1.resM.GetString("online.tabonlinescanopt.003");
+            checkBoxJustLog.Text = Form1.resM.GetString("online.tabonlinescanopt.004");
+            button1.Text = Form1.resM.GetString("app.savechanges");
+            // second tab
+            label2.Text = Form1.resM.GetString("online.tabonlinescanhist.definition");
         }
 
         private void button1_Click(object sender, EventArgs e)

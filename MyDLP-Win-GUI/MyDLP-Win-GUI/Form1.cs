@@ -22,11 +22,13 @@ namespace MydlpWinGui
         public static MyDLPRemoteDeviceConf deviceConf;
         public static MyDLPRemoteScreenCaptureConf screenCaptureConf;
         public static MyDLPRemoteServiceConf serviceConf;
+        public static Form1 form1Instance;
         private SensitiveData defineSensitiveData = new SensitiveData();
         private LocalScan localScan;
         private OnlineScan onlineScan;
         private ScreenCapture screenCapture;
         private Options options;
+        private About aboutUs;
         private Control currentPanelControl;
 
         public Form1()
@@ -45,6 +47,7 @@ namespace MydlpWinGui
             onlineScan = new OnlineScan();
             screenCapture = new ScreenCapture();
             options = new Options();
+            aboutUs = new About();
 
             InitializeComponent();
 
@@ -62,6 +65,8 @@ namespace MydlpWinGui
             */
 
             notifyIcon1.ContextMenuStrip = contextMenuStrip1;
+
+            form1Instance = this;
         }
 
         private void notifyIcon1_MouseDoubleClick(object sender, MouseEventArgs e)
@@ -124,50 +129,11 @@ namespace MydlpWinGui
             listView1.Items[2].Text = resM.GetString("menu.onlinescan");
             listView1.Items[3].Text = resM.GetString("menu.screencapture");
             listView1.Items[4].Text = resM.GetString("menu.options");
+            listView1.Items[5].Text = resM.GetString("menu.aboutus");
 
             panelTitle.Text = resM.GetString("menu.defsensdata");
             panel2.Controls.Add(defineSensitiveData);
             currentPanelControl = defineSensitiveData;
-        }
-
-        private void menuDefSensData_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
-        {
-            panelTitle.Text = ((LinkLabel)sender).Text;
-            panel2.Controls.Remove(currentPanelControl);
-            panel2.Controls.Add(defineSensitiveData);
-            currentPanelControl = defineSensitiveData;
-        }
-
-        private void menuScan_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
-        {
-            panelTitle.Text = ((LinkLabel)sender).Text;
-            panel2.Controls.Remove(currentPanelControl);
-            panel2.Controls.Add(localScan);
-            currentPanelControl = localScan;
-        }
-
-        private void menuOnlineScan_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
-        {
-            panelTitle.Text = ((LinkLabel)sender).Text;
-            panel2.Controls.Remove(currentPanelControl);
-            panel2.Controls.Add(onlineScan);
-            currentPanelControl = onlineScan;
-        }
-
-        private void menuScreenCapture_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
-        {
-            panelTitle.Text = ((LinkLabel)sender).Text;
-            panel2.Controls.Remove(currentPanelControl);
-            panel2.Controls.Add(screenCapture);
-            currentPanelControl = screenCapture;
-        }
-
-        private void menuOptions_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
-        {
-            panelTitle.Text = ((LinkLabel)sender).Text;
-            panel2.Controls.Remove(currentPanelControl);
-            panel2.Controls.Add(options);
-            currentPanelControl = options;
         }
 
         private void listView1_SelectedIndexChanged(object sender, EventArgs e)
@@ -210,6 +176,34 @@ namespace MydlpWinGui
                 panel2.Controls.Add(options);
                 currentPanelControl = options;
             }
+            else if (listView1.SelectedIndices[0] == 5)
+            {
+                panelTitle.Text = listView1.SelectedItems[0].Text;
+                panel2.Controls.Remove(currentPanelControl);
+                panel2.Controls.Add(aboutUs);
+                currentPanelControl = aboutUs;
+            }
+        }
+
+        public void ReloadAll()
+        {
+            this.Text = resM.GetString("app.title");
+
+            listView1.Items[0].Text = resM.GetString("menu.defsensdata");
+            listView1.Items[1].Text = resM.GetString("menu.localscan");
+            listView1.Items[2].Text = resM.GetString("menu.onlinescan");
+            listView1.Items[3].Text = resM.GetString("menu.screencapture");
+            listView1.Items[4].Text = resM.GetString("menu.options");
+            listView1.Items[5].Text = resM.GetString("menu.aboutus");
+
+            panelTitle.Text = resM.GetString("menu.options");
+
+            defineSensitiveData.Globalize();
+            localScan.Globalize();
+            onlineScan.Globalize();
+            screenCapture.Globalize();
+            options.Globalize();
+            aboutUs.Globalize();
         }
 
 

@@ -106,73 +106,79 @@ namespace mydlpsf {
 		String ^path = obj->ToString();
 		String ^originalPath = (String ^)origPath;
 
-		array<String ^> ^dirs = Directory::GetDirectories(path);
-		array<String ^> ^files = Directory::GetFiles(path);
-		System::Collections::SortedList ^all = gcnew System::Collections::SortedList();
+		try
+		{
+			array<String ^> ^dirs = Directory::GetDirectories(path);
+			array<String ^> ^files = Directory::GetFiles(path);
+			System::Collections::SortedList ^all = gcnew System::Collections::SortedList();
 
-        // Add all the directories to the list
-        for (int i = 0; i < dirs->Length; i++)
-        {
-            all[dirs[i]] = "d";
-        }
-
-        // Add all the files to the list
-        for (int i = 0; i < files->Length; i++)
-        {
-            all[files[i]] = "f";
-        }
-
-		for each(String ^key in all->Keys)
-        {
-			if(cont->Equals(FALSE)) {
-				return;
+			// Add all the directories to the list
+			for (int i = 0; i < dirs->Length; i++)
+			{
+				all[dirs[i]] = "d";
 			}
 
-            if (((String ^)all[key]) == "f")
-            {
-                try
-                {
-                    int ret = 0;                    
-					FileStream ^fs = gcnew FileStream(key, FileMode::Open, FileAccess::Read);
-                    fs->Close();
-					
-					MyDLPSensitiveFileRecognition ^fileSearch = MyDLPSensFilePool::GetInstance()->AcquireObject();
-                    ret = fileSearch->SearchSensitiveData(key);
-                    
-                    if (ret == 1)
-                    {
-						detected += key + ":" + fileSearch->GetLastResult() + System::Environment::NewLine;
-						OnDetectedChanged(EventArgs::Empty);
-                    }
-                    else if (ret == 2)
-                    {
-                        //Error in clamav
-                    }
+			// Add all the files to the list
+			for (int i = 0; i < files->Length; i++)
+			{
+				all[files[i]] = "f";
+			}
 
-					MyDLPSensFilePool::GetInstance()->ReleaseObject(fileSearch);
-                }
-                catch (...)
-                {
-                    // error in file not exist or cannot be opened
-                }
-            }
-            else if (((String ^)all[key]) == "d")
-            {
-				bool isExcluded = false;
-				if(MyDLPRemoteDeviceConf::GetInstance()->excludedDirs->Count != 0)
+			for each(String ^key in all->Keys)
+			{
+				if(cont->Equals(FALSE)) {
+					return;
+				}
+
+				if (((String ^)all[key]) == "f")
 				{
-					for each(String ^dirName in MyDLPRemoteDeviceConf::GetInstance()->excludedDirs)
+					try
 					{
-						if(dirName == key) {
-							isExcluded = true;
-							break;
+						int ret = 0;                    
+						FileStream ^fs = gcnew FileStream(key, FileMode::Open, FileAccess::Read);
+						fs->Close();
+						
+						MyDLPSensitiveFileRecognition ^fileSearch = MyDLPSensFilePool::GetInstance()->AcquireObject();
+						ret = fileSearch->SearchSensitiveData(key);
+	                    
+						if (ret == 1)
+						{
+							detected += key + ":" + fileSearch->GetLastResult() + System::Environment::NewLine;
+							OnDetectedChanged(EventArgs::Empty);
 						}
+						else if (ret == 2)
+						{
+							//Error in clamav
+						}
+
+						MyDLPSensFilePool::GetInstance()->ReleaseObject(fileSearch);
+					}
+					catch (Exception ^ex)
+					{
+						MyDLPEventLogger::GetInstance()->LogError(ex->StackTrace);
 					}
 				}
-				if(!isExcluded && cont)
-					MyDLPDirectoryTraverse::TraverseDirectory(key, origPath);
-            }
-        }
+				else if (((String ^)all[key]) == "d")
+				{
+					bool isExcluded = false;
+					if(MyDLPRemoteDeviceConf::GetInstance()->excludedDirs->Count != 0)
+					{
+						for each(String ^dirName in MyDLPRemoteDeviceConf::GetInstance()->excludedDirs)
+						{
+							if(dirName == key) {
+								isExcluded = true;
+								break;
+							}
+						}
+					}
+					if(!isExcluded && cont)
+						MyDLPDirectoryTraverse::TraverseDirectory(key, origPath);
+				}
+			}
+		} catch (Exception ^ex) {
+			cont = false;
+			MyDLPEventLogger::GetInstance()->LogError(ex->StackTrace);
+		}
 
 		if(path == originalPath)
 			OnCompleted(EventArgs::Empty);

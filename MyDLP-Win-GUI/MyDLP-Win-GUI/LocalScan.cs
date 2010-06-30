@@ -66,6 +66,42 @@ namespace MydlpWinGui
             buttonStopScan.Enabled = false;
 
             ReadSensLogFile();
+
+            Globalize();
+        }
+
+        public void Globalize()
+        {
+            tabPage1.Text = Form1.resM.GetString("scan.tabmanualscan");
+            tabPage2.Text = Form1.resM.GetString("scan.tabscanoptions");
+            tabPage3.Text = Form1.resM.GetString("scan.tabscanhistory");
+
+            // first tab
+            groupBox1.Text = Form1.resM.GetString("scan.tabmanualscan.001");
+            groupBox2.Text = Form1.resM.GetString("scan.tabmanualscan.002");
+            label1.Text = Form1.resM.GetString("scan.tabmanualscan.003");
+            label2.Text = Form1.resM.GetString("scan.tabmanualscan.004");
+            buttonScanAll.Text = Form1.resM.GetString("scan.tabmanualscan.001");
+            buttonScanDir.Text = Form1.resM.GetString("scan.tabmanualscan.002");
+            buttonDir.Text = Form1.resM.GetString("scan.tabmanualscan.005");
+            buttonStopScan.Text = Form1.resM.GetString("scan.tabmanualscan.006");
+            label3.Text = Form1.resM.GetString("scan.tabmanualscan.007");
+
+            //second tab
+            groupBox3.Text = Form1.resM.GetString("scan.tabscanoptions.001");
+            groupBox4.Text = Form1.resM.GetString("scan.tabscanoptions.007");
+            label4.Text = Form1.resM.GetString("scan.tabscanoptions.002");
+            button1.Text = Form1.resM.GetString("scan.tabscanoptions.003");
+            buttonAddExcluded.Text = Form1.resM.GetString("scan.tabscanoptions.004");
+            button2.Text = Form1.resM.GetString("scan.tabscanoptions.005");
+            listView1.Columns[0].Text = Form1.resM.GetString("scan.tabscanoptions.006");
+            label5.Text = Form1.resM.GetString("scan.tabscanoptions.008");
+            checkBoxScanUSB.Text = Form1.resM.GetString("scan.tabscanoptions.009");
+            checkBoxScanCD.Text = Form1.resM.GetString("scan.tabscanoptions.010");
+            buttonSave.Text = Form1.resM.GetString("app.savechanges");
+
+            // third tab
+            label6.Text = Form1.resM.GetString("scan.tabscanhistory.definition");
         }
 
         private void FillExcludedList()
