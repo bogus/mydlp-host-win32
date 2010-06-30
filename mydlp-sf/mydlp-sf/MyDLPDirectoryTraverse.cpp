@@ -22,6 +22,7 @@
 #include <windows.h>
 #include "MyDLPDirectoryTraverse.h"
 #include "MyDLPEventLogger.h"
+#include "MyDLPMessages.h"
 #include <vcclr.h>
 #using <mscorlib.dll>
 
@@ -180,8 +181,10 @@ namespace mydlpsf {
 			MyDLPEventLogger::GetInstance()->LogError(ex->StackTrace);
 		}
 
-		if(path == originalPath)
+		if(path == originalPath) {
 			OnCompleted(EventArgs::Empty);
+			MyDLPMessages::GetInstance()->AddMessage("Scan completed - " + path);
+		}
 	}
 
 	void MyDLPDirectoryTraverse::OnCompleted(EventArgs ^e) 

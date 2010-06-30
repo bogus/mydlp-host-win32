@@ -97,6 +97,9 @@ int cl_dlp_regex_init(unsigned int ids[], const unsigned char **regex_list, int 
 			tmpIds[valid_count] = ids[i];
 			valid_count++;
 		}
+		else {
+			//printf("%d--%s \n", erroffset, error);
+		}
 	}
 	
 	regexes = (struct regex_st *)malloc(sizeof(struct regex_st) * valid_count);

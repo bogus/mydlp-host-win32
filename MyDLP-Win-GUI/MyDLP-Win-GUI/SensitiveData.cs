@@ -97,7 +97,7 @@ namespace MydlpWinGui
             if (listViewRegex.SelectedItems.Count > 0)
             {
                 MyDLPClamRegex clamRegex = new MyDLPClamRegex();
-                clamRegex.id = UInt32.Parse(listViewRegex.SelectedItems[0].SubItems[2].Text);
+                clamRegex.id = UInt32.Parse(listViewRegex.SelectedItems[0].SubItems[1].Text);
                 
                 foreach (MyDLPClamRegex tmpClamRegex in Form1.sensFileConf.regexVal)
                 {

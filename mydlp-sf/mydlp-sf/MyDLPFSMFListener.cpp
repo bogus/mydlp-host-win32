@@ -20,6 +20,7 @@
 
 #include "StdAfx.h"
 #include "MyDLPFSMFListener.h"
+#include "MyDLPMessages.h"
 
 using namespace System::Threading;
 
@@ -235,6 +236,7 @@ BOOL ScanFile (__in_bcount(BufferSize) PUCHAR Buffer, __in ULONG BufferSize,
 			
 			if(ret == 1) {
 				mydlpsf::MyDLPEventLogger::GetInstance()->LogRemovable(gcnew String(FileName) + " -- " + recObj->GetLastResult());
+				mydlpsf::MyDLPMessages::GetInstance()->AddMessage(gcnew String(FileName) + " -- " + recObj->GetLastResult());
 				mydlpsf::MyDLPSensFilePool::GetInstance()->ReleaseObject(recObj);
 				return TRUE;
 			}	

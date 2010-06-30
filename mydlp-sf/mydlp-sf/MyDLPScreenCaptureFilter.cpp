@@ -19,6 +19,7 @@
  */
 #include "StdAfx.h"
 #include "MyDLPScreenCaptureFilter.h"
+#include "MyDLPMessages.h"
 
 using namespace System::Diagnostics;
 using namespace System::Runtime::InteropServices;
@@ -94,6 +95,7 @@ LRESULT CALLBACK KeyboardProc(int nCode, WPARAM wParam,LPARAM lParam)
 				proc->ProcessName->ToLower()->Contains("project")))
 			{
 				mydlpsf::MyDLPEventLogger::GetInstance()->LogScreenCapture("Print Screen filtered: MSOFFICE");
+				mydlpsf::MyDLPMessages::GetInstance()->AddMessage("Print Screen filtered: MSOFFICE");
 				return 1;
 			}
 
@@ -103,6 +105,7 @@ LRESULT CALLBACK KeyboardProc(int nCode, WPARAM wParam,LPARAM lParam)
 				proc->ProcessName->ToLower()->Contains("oopresent")))
 			{
 				mydlpsf::MyDLPEventLogger::GetInstance()->LogScreenCapture("Print Screen filtered: OPENOFFICE");
+				mydlpsf::MyDLPMessages::GetInstance()->AddMessage("Print Screen filtered: OPENOFFICE");
 				return 1;
 			}
 
@@ -111,6 +114,7 @@ LRESULT CALLBACK KeyboardProc(int nCode, WPARAM wParam,LPARAM lParam)
 				proc->ProcessName->ToLower()->Contains("acrobat")))
 			{
 				mydlpsf::MyDLPEventLogger::GetInstance()->LogScreenCapture("Print Screen filtered: ACROBAT READER");
+				mydlpsf::MyDLPMessages::GetInstance()->AddMessage("Print Screen filtered: ACROBAT READER");
 				return 1;
 			}
 
@@ -118,6 +122,7 @@ LRESULT CALLBACK KeyboardProc(int nCode, WPARAM wParam,LPARAM lParam)
 				proc->ProcessName->ToLower()->Contains("photoshop"))
 			{
 				mydlpsf::MyDLPEventLogger::GetInstance()->LogScreenCapture("Print Screen filtered: PHOTOSHOP");
+				mydlpsf::MyDLPMessages::GetInstance()->AddMessage("Print Screen filtered: PHOTOSHOP");
 				return 1;
 			}
 			
@@ -125,6 +130,7 @@ LRESULT CALLBACK KeyboardProc(int nCode, WPARAM wParam,LPARAM lParam)
 				proc->ProcessName->ToLower()->Contains("autocad"))
 			{
 				mydlpsf::MyDLPEventLogger::GetInstance()->LogScreenCapture("Print Screen filtered: AUTOCAD");
+				mydlpsf::MyDLPMessages::GetInstance()->AddMessage("Print Screen filtered: AUTOCAD");
 				return 1;
 			}
 		}

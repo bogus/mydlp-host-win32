@@ -213,7 +213,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\MyDLPRemoteServiceConf.cpp"
+				RelativePath=".\MyDLPConfigurationUpdateListener.cpp"
 				>
 			</File>
 			<File
@@ -251,6 +251,10 @@
 					RelativePath=".\MyDLPRemoteSensFileConf.cpp"
 					>
 				</File>
+				<File
+					RelativePath=".\MyDLPRemoteServiceConf.cpp"
+					>
+				</File>
 			</Filter>
 			<Filter
 				Name="util"
@@ -261,6 +265,10 @@
 				</File>
 				<File
 					RelativePath=".\MyDLPEventLogger.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\MyDLPMessages.cpp"
 					>
 				</File>
 			</Filter>
@@ -303,7 +311,7 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
-				RelativePath=".\MyDLPRemoteServiceConf.h"
+				RelativePath=".\MyDLPConfigurationUpdateListener.h"
 				>
 			</File>
 			<File
@@ -337,6 +345,10 @@
 					RelativePath=".\MyDLPRemoteSensFileConf.h"
 					>
 				</File>
+				<File
+					RelativePath=".\MyDLPRemoteServiceConf.h"
+					>
+				</File>
 			</Filter>
 			<Filter
 				Name="util"
@@ -347,6 +359,10 @@
 				</File>
 				<File
 					RelativePath=".\MyDLPEventLogger.h"
+					>
+				</File>
+				<File
+					RelativePath=".\MyDLPMessages.h"
 					>
 				</File>
 			</Filter>

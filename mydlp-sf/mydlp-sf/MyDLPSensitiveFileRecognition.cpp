@@ -23,6 +23,7 @@
 #include "MyDLPSensitiveFileRecognition.h"
 #include <stdio.h>
 #include <vcclr.h>
+#include "MyDLPEventLogger.h"
 #using <mscorlib.dll>
 
 using namespace System;
@@ -62,6 +63,8 @@ namespace mydlpsf {
 		unsigned char **regex_list = (unsigned char **)malloc(sizeof(unsigned char *) * count);
 		unsigned int *id_list = (unsigned int *)malloc(sizeof(int) * count);
 		char **str = (char **)malloc(sizeof(int) * count);
+		UTF8Encoding ^encoder = gcnew UTF8Encoding();
+		
 
 		if(count == 0) 
 		{
@@ -72,9 +75,35 @@ namespace mydlpsf {
 		}
 		
 		for(i = 0; i < count; i++)
-		{
-			char *tmpStr = (char *)malloc(sizeof(char) * (regex[i]->Length+1));
-			strcpy_s(tmpStr, regex[i]->Length + 1 ,ManagedToSTL(regex[i]).c_str());
+		{		
+			// PCRE Regex UTF-8 howto ?
+			/*
+			String ^utf8Regex = String::Empty;
+			try
+			{
+				Console::WriteLine(regex[i]->Length);
+				for(int j = 0; j < regex[i]->Length; j++)
+				{	
+					array<UCHAR> ^encodedBytes =  encoder->GetBytes(regex[i]->Substring(j,1));
+					if(encodedBytes->Length > 1)
+					{
+						utf8Regex += "\\x{" + BitConverter::ToString(encodedBytes)->ToLower()->Replace("-", String::Empty) + "}";
+					}
+					else
+					{
+						utf8Regex += regex[i]->Substring(j,1);
+					}					
+				}
+			} 
+			catch (Exception ^ex)
+			{
+				MyDLPEventLogger::GetInstance()->LogError(ex->StackTrace);
+			}
+			char *tmpStr = (char *)malloc(sizeof(char) * (utf8Regex->Length + 1));
+			strcpy_s(tmpStr, utf8Regex->Length + 1,ManagedToSTL(utf8Regex).c_str());
+			*/
+			char *tmpStr = (char *)malloc(sizeof(char) * (regex[i]->Length + 1));
+			strcpy_s(tmpStr, regex[i]->Length + 1,ManagedToSTL(regex[i]).c_str());
 			str[i] = tmpStr;
 			regex_list[i] = (unsigned char *)str[i];
 			id_list[i] = ids[i];
@@ -218,7 +247,7 @@ namespace mydlpsf {
 				}
 			}
 		} catch (Exception ^ex) {
-
+			MyDLPEventLogger::GetInstance()->LogError(ex->StackTrace);
 		}
 
 		return 0;

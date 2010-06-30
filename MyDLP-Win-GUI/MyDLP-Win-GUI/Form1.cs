@@ -91,7 +91,7 @@ namespace MydlpWinGui
             taskbarNotifier1.EnableSelectionRectangle = false;
             taskbarNotifier1.KeepVisibleOnMousOver = true;	// Added Rev 002
             taskbarNotifier1.ReShowOnMouseOver = false;			// Added Rev 002
-            taskbarNotifier1.Show("MyDLP Event Caught", e.Entry.Message, 300, 3000, 200);
+            taskbarNotifier1.Show("MyDLP Message", e.Entry.Message, 300, 3000, 200);
         }
 
         void CloseClick(object obj, EventArgs ea)
