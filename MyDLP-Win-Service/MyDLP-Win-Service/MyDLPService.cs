@@ -32,7 +32,7 @@ namespace MyDLPHost
 
             eventLogService.Source = "MyDLPLogs-Service";
 			eventLogService.Log ="MyDLPLog";
-
+            eventLogService.ModifyOverflowPolicy(OverflowAction.OverwriteAsNeeded, 1);
 		}
 
 		// The main entry point for the process
@@ -93,6 +93,14 @@ namespace MyDLPHost
 		protected override void OnStart(string[] args)
 		{
             eventLogService.WriteEntry("MyDLP-Host Service Started");
+            try
+            {
+                MyDLPManager.GetInstance().Start();
+            }
+            catch (Exception ex)
+            {
+                MyDLPEventLogger.GetInstance().LogService(ex.StackTrace);
+            }
 		}
  
 		/// <summary>
@@ -101,6 +109,14 @@ namespace MyDLPHost
 		protected override void OnStop()
 		{
 			eventLogService.WriteEntry("MyDLP-Host Service Stopped");
+            try
+            {
+                MyDLPManager.GetInstance().Stop();
+            }
+            catch (Exception ex)
+            {
+                MyDLPEventLogger.GetInstance().LogService(ex.StackTrace);
+            }
 		}
 		protected override void OnContinue()
 		{

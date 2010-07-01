@@ -64,10 +64,11 @@ namespace mydlpsf {
 		{
 			MyDLPDirectoryTraverse ^dirTraverse = gcnew MyDLPDirectoryTraverse();
 			dirTraverse->detected = gcnew String("Traverse Drive : " + driveLetter + System::Environment::NewLine);
-			Thread ^thread = gcnew Thread( gcnew ParameterizedThreadStart(dirTraverse, &MyDLPDirectoryTraverse::Traverse) );
-			thread->Start(driveLetter);
+			dirTraverse->thread = gcnew Thread( gcnew ParameterizedThreadStart(dirTraverse, &MyDLPDirectoryTraverse::Traverse) );
+			dirTraverse->thread->Start(driveLetter);
 			
 			dirTraverseList->Add(dirTraverse);
+			traverseList->Add(dirTraverse);
 		}
 	
 		return dirTraverseList;
@@ -76,6 +77,9 @@ namespace mydlpsf {
 	void MyDLPDirectoryTraverse::StopScan()
 	{
 		cont = false;
+		thread->Abort();
+		if(traverseList->Contains(this))
+			traverseList->Remove(this);
 	}
 
 	List<MyDLPDirectoryTraverse ^> ^MyDLPDirectoryTraverse::TraverseDir(String ^path) 
@@ -84,10 +88,11 @@ namespace mydlpsf {
 		List<MyDLPDirectoryTraverse ^> ^dirTraverseList = gcnew List<MyDLPDirectoryTraverse ^>();
 
 		dirTraverse->detected = gcnew String("TraverseDir: " + path + System::Environment::NewLine);
-		Thread ^thread = gcnew Thread( gcnew ParameterizedThreadStart(dirTraverse, &MyDLPDirectoryTraverse::Traverse) );
-		thread->Start(path);
+		dirTraverse->thread = gcnew Thread( gcnew ParameterizedThreadStart(dirTraverse, &MyDLPDirectoryTraverse::Traverse) );
+		dirTraverse->thread->Start(path);
 
 		dirTraverseList->Add(dirTraverse);
+		traverseList->Add(dirTraverse);
 		return dirTraverseList;
 	}
 
@@ -189,6 +194,8 @@ namespace mydlpsf {
 		if(path == originalPath) {
 			OnCompleted(EventArgs::Empty);
 			MyDLPMessages::GetInstance()->AddMessage("Scan completed - " + path);
+			if(traverseList->Contains(this))
+				traverseList->Remove(this);
 		}
 	}
 
@@ -206,5 +213,14 @@ namespace mydlpsf {
     {
 		this->DetectedChanged(this, e);
 	}
+	
+	void MyDLPDirectoryTraverse::StopAllScans()
+	{
+		for each(MyDLPDirectoryTraverse ^traverse in traverseList)
+			traverse->StopScan();
+
+		traverseList->Clear();
+	}
+
 
 }

@@ -60,11 +60,6 @@ typedef struct _TEMPFILE_INFO {
 	CHAR *filename;
 } TEMPFILE_INFO;
 
-typedef std::map<PWCHAR, TEMPFILE_INFO *> MWchTmpMap;
-typedef std::pair<PWCHAR, TEMPFILE_INFO *> MWchTmpPair;
-
-MWchTmpMap mMap;
-
 // Function prototypes
 DWORD ScannerWorker(__in PSCANNER_THREAD_CONTEXT Context);
 BOOL ScanFile (__in_bcount(BufferSize) PUCHAR Buffer, __in ULONG BufferSize,

@@ -58,6 +58,10 @@ namespace mydlpsf
 
 	void MyDLPSensFilePool::UpdatePool()
 	{		
+		for each (MyDLPSensitiveFileRecognition ^obj in objQueue)
+		{
+			obj->Close();
+		}
 		objectPool->objQueue = gcnew Queue(objectPool->poolSize);
 		InitPool();
 	}
@@ -74,6 +78,7 @@ namespace mydlpsf
 
 	void MyDLPSensFilePool::DeleteObject(MyDLPSensitiveFileRecognition ^object)
 	{
+		object->Close();
 		delete object;
 		AddObjectToQueue(1);		
 	}

@@ -226,19 +226,6 @@ namespace mydlpsf {
 		
 		try 
 		{
-			IntPtr ptr = Marshal::StringToHGlobalUni(filename);
-			length = GetShortPathName((LPCWSTR)ptr.ToPointer(), NULL, 0);
-			if (length == 0)
-				return 2;
-
-			buffer = new TCHAR[length];
-
-			length = GetShortPathName((LPCWSTR)ptr.ToPointer(), buffer, length);
-			if (length == 0) 
-				return 2;
-
-			Marshal::FreeHGlobal(ptr);
-
 			if((ret = cl_scanfile((const char *)ManagedToSTL(filename).c_str(), &virname, &size, this->engine, scanOptions)) == CL_VIRUS) {
 				this->result = STLToManaged(virname);
 				return 1;
@@ -254,7 +241,8 @@ namespace mydlpsf {
 					writer->Write(reader->ReadToEnd()); 
 					reader->Close();
 					writer->Close();
-				} else if (ret == CL_RESCAN_PDF) { 
+				} else if (ret == CL_RESCAN_PDF) {
+					Console::WriteLine("----------");
 					PDFParser ^parser = gcnew PDFParser(); 
 					StreamWriter ^writer = gcnew StreamWriter(tempFilePath, false, System::Text::Encoding::UTF8);
 					writer->WriteLine(parser->parseUsingPDFBox(filename)); 

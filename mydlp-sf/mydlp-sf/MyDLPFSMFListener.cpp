@@ -21,8 +21,14 @@
 #include "StdAfx.h"
 #include "MyDLPFSMFListener.h"
 #include "MyDLPMessages.h"
+#include "MyDLPRemoteConf.h"
 
 using namespace System::Threading;
+
+typedef std::map<PWCHAR, TEMPFILE_INFO *> MWchTmpMap;
+typedef std::pair<PWCHAR, TEMPFILE_INFO *> MWchTmpPair;
+
+MWchTmpMap mMap;
 
 namespace mydlpsf
 {
@@ -200,58 +206,83 @@ BOOL ScanFile (__in_bcount(BufferSize) PUCHAR Buffer, __in ULONG BufferSize,
 	FILE *fp;
 	TEMPFILE_INFO *tempFileInfo;
 	std::string tempFileName;
-	
+
 	tempFileInfo = ScanMMap(FileName, FileNameLength, false);
-
-	if(Phase == 1) {
-		
-		if(tempFileInfo == NULL) {
-			CHAR buf[MAX_PATH];
-			GetTempPathA(MAX_PATH, buf);
-			tempFileInfo = (TEMPFILE_INFO *)malloc(sizeof(TEMPFILE_INFO));
-			// Revise temp file creation
-			tempFileName = _tempnam(buf, "mydlptmp");
-			tempFileName += (std::string)(const char*)(System::Runtime::InteropServices::Marshal::StringToHGlobalAnsi(Guid::NewGuid().ToString() 
-				+ System::IO::Path::GetExtension(gcnew System::String(FileName)))).ToPointer();
-			tempFileInfo->filename = (char *) malloc(sizeof(char) * tempFileName.length());
-			strcpy(tempFileInfo->filename, tempFileName.c_str());
-			fopen_s(&fp,tempFileInfo->filename, "wb");
-			tempFileInfo->tmpfd = fp;
-			mMap.insert(MWchTmpPair(FileName, tempFileInfo));
-		} else {
-			fopen_s(&fp,tempFileInfo->filename, "ab");
-			tempFileInfo->tmpfd = fp;
-		}
-		fwrite(Buffer, sizeof(UCHAR), BufferSize, tempFileInfo->tmpfd);
-		fflush(tempFileInfo->tmpfd);
-		fclose(tempFileInfo->tmpfd);
-
-		struct stat filestatus;
-		stat( tempFileInfo->filename , &filestatus );
-
-		if(Buffer[BufferSize - 1] == 0 || (cl_istext(Buffer, BufferSize) != 5)) {
+	try
+	{
+		if(Phase == 1) {
 			
-			mydlpsf::MyDLPSensitiveFileRecognition ^recObj =  mydlpsf::MyDLPSensFilePool::GetInstance()->AcquireObject();
-			int ret = recObj->SearchSensitiveData(gcnew System::String(tempFileInfo->filename));
+			if(tempFileInfo == NULL) {
 			
-			if(ret == 1) {
-				mydlpsf::MyDLPEventLogger::GetInstance()->LogRemovable(gcnew String(FileName) + " -- " + recObj->GetLastResult());
-				mydlpsf::MyDLPMessages::GetInstance()->AddMessage(gcnew String(FileName) + " -- " + recObj->GetLastResult());
-				mydlpsf::MyDLPSensFilePool::GetInstance()->ReleaseObject(recObj);
-				return TRUE;
-			}	
-
-			mydlpsf::MyDLPSensFilePool::GetInstance()->ReleaseObject(recObj);
-		} 
-	} else if(Phase == 2) {
-		
-		if(tempFileInfo != NULL) {
+				CHAR buf[MAX_PATH];
+				GetTempPathA(MAX_PATH, buf);
+				tempFileInfo = (TEMPFILE_INFO *)malloc(sizeof(TEMPFILE_INFO));
+				// Revise temp file creation
+				tempFileName = _tempnam(buf, "mydlptmp");
+				tempFileName += (std::string)(const char*)(System::Runtime::InteropServices::Marshal::StringToHGlobalAnsi(Guid::NewGuid().ToString() 
+					+ System::IO::Path::GetExtension(gcnew System::String(FileName)))).ToPointer();
+				tempFileInfo->filename = (char *) malloc(sizeof(char) * tempFileName.length());
+				strcpy(tempFileInfo->filename, tempFileName.c_str());
+				fopen_s(&fp,tempFileInfo->filename, "wb");
+				tempFileInfo->tmpfd = fp;
+				mMap.insert(MWchTmpPair(FileName, tempFileInfo));
+			
+			} else {
+				fopen_s(&fp,tempFileInfo->filename, "ab");
+				tempFileInfo->tmpfd = fp;
+			}
+			fwrite(Buffer, sizeof(UCHAR), BufferSize, tempFileInfo->tmpfd);
+			fflush(tempFileInfo->tmpfd);
 			fclose(tempFileInfo->tmpfd);
-			_unlink(tempFileInfo->filename);
-			tempFileInfo = ScanMMap(FileName, FileNameLength, true);
-		}
-	}
+			
+			if(Buffer[BufferSize - 1] == 0 ||
+				(Buffer[BufferSize - 1] == 10 && Buffer[BufferSize - 2] == 70 && Buffer[BufferSize - 3] == 79) ||
+				(cl_istext(Buffer, BufferSize) != 5)) {
+				
+				mydlpsf::MyDLPSensitiveFileRecognition ^recObj =  mydlpsf::MyDLPSensFilePool::GetInstance()->AcquireObject();
+				int ret = recObj->SearchSensitiveData(gcnew System::String(tempFileInfo->filename));
+				
+				if(ret == 1) {
+					bool retVal = TRUE;
 
+					if(mydlpsf::MyDLPRemoteDeviceConf::GetInstance()->filterPSD.Equals(FALSE) &&
+						recObj->GetLastResult()->ToLower()->Contains("photoshop"))
+						retVal = FALSE;
+					if(mydlpsf::MyDLPRemoteDeviceConf::GetInstance()->filterDWG.Equals(FALSE) &&
+						recObj->GetLastResult()->ToLower()->Contains("autcad"))
+						retVal = FALSE;
+					if(mydlpsf::MyDLPRemoteDeviceConf::GetInstance()->filterPSP.Equals(FALSE) &&
+						recObj->GetLastResult()->ToLower()->Contains("paintshop"))
+						retVal = FALSE;
+					if(mydlpsf::MyDLPRemoteDeviceConf::GetInstance()->filterCDR.Equals(FALSE) &&
+						recObj->GetLastResult()->ToLower()->Contains("corel"))
+						retVal = FALSE;
+				
+					if(retVal) {
+						mydlpsf::MyDLPEventLogger::GetInstance()->LogRemovable(gcnew String(FileName) + " -- " + recObj->GetLastResult());
+						mydlpsf::MyDLPMessages::GetInstance()->AddMessage(gcnew String(FileName) + " -- " + recObj->GetLastResult());
+					}
+
+					mydlpsf::MyDLPSensFilePool::GetInstance()->ReleaseObject(recObj);
+					
+					return retVal;
+				}	
+
+				mydlpsf::MyDLPSensFilePool::GetInstance()->ReleaseObject(recObj);
+			} 
+		} else if(Phase == 2) {
+			
+			if(tempFileInfo != NULL) {
+				fclose(tempFileInfo->tmpfd);
+				_unlink(tempFileInfo->filename);
+				tempFileInfo = ScanMMap(FileName, FileNameLength, true);
+			}
+		}
+	} 
+	catch(Exception ^ex)
+	{
+		mydlpsf::MyDLPEventLogger::GetInstance()->LogError(ex->StackTrace);
+	}
 	return FALSE;
 }
 

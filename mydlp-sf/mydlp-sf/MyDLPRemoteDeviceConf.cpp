@@ -81,6 +81,7 @@ namespace mydlpsf {
 			XmlReader ^reader = gcnew XmlTextReader(fs);
 			MyDLPRemoteDeviceConf::SetInstance(dynamic_cast<MyDLPRemoteDeviceConf ^> (serializer->Deserialize(reader)));
 			fs->Close();
+			reader->Close();
 		} 
 		catch(Exception ^ex)
 		{

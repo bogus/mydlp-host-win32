@@ -218,6 +218,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\MyDLPManager.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\Stdafx.cpp"
 				>
 				<FileConfiguration
@@ -316,7 +320,7 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
-				RelativePath=".\MyDLPPSParse.h"
+				RelativePath=".\MyDLPManager.h"
 				>
 			</File>
 			<File
@@ -396,6 +400,10 @@
 				</File>
 				<File
 					RelativePath=".\MyDLPFSMFListener.h"
+					>
+				</File>
+				<File
+					RelativePath=".\MyDLPPSParse.h"
 					>
 				</File>
 				<File

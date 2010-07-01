@@ -32,6 +32,7 @@ namespace mydlpsf
 	{
 		sensFileSearch = gcnew System::Collections::Generic::Dictionary<String ^, MyDLPDirectoryTraverse ^>();
 		removableDrives = gcnew System::Collections::Generic::List<String ^>();
+		watcherList = gcnew List<ManagementEventWatcher ^>();
 
 		array<String ^> ^allDrives = Environment::GetLogicalDrives();
 
@@ -59,6 +60,7 @@ namespace mydlpsf
 	void MyDLPWMIDeviceListener::AddRemoveUSBHandler()
 	{
 		WqlEventQuery ^q;
+		ManagementEventWatcher ^w;
         ManagementScope ^scope = gcnew ManagementScope("root\\CIMV2");
         scope->Options->EnablePrivileges = true;
 
@@ -71,6 +73,7 @@ namespace mydlpsf
             w = gcnew ManagementEventWatcher(scope, q);
             w->EventArrived += gcnew EventArrivedEventHandler(USBRemoved);
             w->Start();
+			watcherList->Add(w);
         }
         catch (Exception ^ex)
         {
@@ -85,6 +88,7 @@ namespace mydlpsf
 	void MyDLPWMIDeviceListener::AddInsertUSBHandler()
 	{
 		WqlEventQuery ^q;
+		ManagementEventWatcher ^w;
         ManagementScope ^scope = gcnew ManagementScope("root\\CIMV2");
         scope->Options->EnablePrivileges = true;
 
@@ -97,6 +101,7 @@ namespace mydlpsf
             w = gcnew ManagementEventWatcher(scope, q);
             w->EventArrived += gcnew EventArrivedEventHandler(USBAdded);
             w->Start();
+			watcherList->Add(w);
         }
         catch (Exception ^ex)
         {
@@ -110,6 +115,7 @@ namespace mydlpsf
 	void MyDLPWMIDeviceListener::AddInsertLogicalDeviceHandler()
 	{
 		WqlEventQuery ^q;
+		ManagementEventWatcher ^w;
         ManagementScope ^scope = gcnew ManagementScope("root\\CIMV2");
         scope->Options->EnablePrivileges = true;
 
@@ -123,6 +129,7 @@ namespace mydlpsf
             w = gcnew ManagementEventWatcher(scope, q);
             w->EventArrived += gcnew EventArrivedEventHandler(LogicalInserted);
             w->Start();
+			watcherList->Add(w);
         }
         catch (Exception ^ex)
         {
@@ -215,6 +222,15 @@ namespace mydlpsf
 					sensFileSearch->Remove(("CD-" + (String ^)mbo->Properties["Name"]->Value));
 				}
             }
-        }
+        }		
+	}
+
+	void MyDLPWMIDeviceListener::StopWatchers()
+	{
+		for each(ManagementEventWatcher ^w in watcherList)
+		{
+			w->Stop();
+		}
+		watcherList->Clear();
 	}
 }

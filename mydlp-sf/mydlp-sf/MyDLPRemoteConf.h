@@ -23,6 +23,7 @@
 
 #include "MyDLPRemoteSensFileConf.h"
 #include "MyDLPRemoteDeviceConf.h"
+#include "MyDLPRemoteServiceConf.h"
 #include "MyDLPRemoteScreenCaptureConf.h"
 
 #endif

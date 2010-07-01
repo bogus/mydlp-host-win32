@@ -38,7 +38,7 @@ namespace mydlpsf
 	{
 	private:
 		static MyDLPWMIDeviceListener ^deviceListener;
-		ManagementEventWatcher ^w;
+		List<ManagementEventWatcher ^> ^watcherList;
 		static void USBAdded(Object ^sender, EventArrivedEventArgs ^e);
 		static void USBRemoved(Object ^sender, EventArrivedEventArgs ^e);
 		static void LogicalInserted(Object ^sender, EventArrivedEventArgs ^e);
@@ -54,6 +54,8 @@ namespace mydlpsf
 		void AddRemoveUSBHandler();
 		void AddInsertUSBHandler();
 		void AddInsertLogicalDeviceHandler();
+
+		void StopWatchers();
 	};
 }
 

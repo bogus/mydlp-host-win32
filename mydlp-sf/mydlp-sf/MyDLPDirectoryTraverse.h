@@ -28,6 +28,7 @@
 
 using namespace System;
 using namespace System::Collections::Generic;
+using namespace System::Threading;
 
 namespace mydlpsf
 {
@@ -37,8 +38,11 @@ namespace mydlpsf
 		void TraverseDirectory(Object ^obj, Object ^origPath);
 		void Traverse(Object ^obj);
 
+		static List<MyDLPDirectoryTraverse ^> ^traverseList = gcnew List<MyDLPDirectoryTraverse ^>();
+
 		Boolean ^cont;
 		Boolean ^completed;
+		Thread ^thread;
 	
 	protected:
 		virtual void OnCompleted(EventArgs ^e); 
@@ -50,6 +54,7 @@ namespace mydlpsf
 		void StopScan();
 		static List<MyDLPDirectoryTraverse ^> ^TraverseAllDrives();
 		static List<MyDLPDirectoryTraverse ^> ^TraverseDir(String ^path);
+		static void StopAllScans();
 
 		String ^detected;
 

@@ -63,6 +63,11 @@ namespace mydlpsf
 			Config::BasicConfigurator::Configure(LogManager::CreateDomain("error"), 
 				gcnew Appender::FileAppender(patternLayout, eventLogger->errorLogPath, true));
 			eventLogger->logError = LogManager::GetLogger("error", "Error Logging");
+
+			eventLogger->serviceLogPath = key->GetValue("Log_Dir") + "\\" + "service.log";
+			Config::BasicConfigurator::Configure(LogManager::CreateDomain("service"), 
+				gcnew Appender::FileAppender(patternLayout, eventLogger->serviceLogPath, true));
+			eventLogger->logError = LogManager::GetLogger("service", "Service Logging");
 			
 		}
 		return eventLogger;
@@ -74,7 +79,7 @@ namespace mydlpsf
 		{
 			eventLogger->logSensFile->Info(log);
 		} catch (System::Exception ^ex) {
-
+			LogError(ex->StackTrace);
 		}
 	}
 
@@ -84,6 +89,7 @@ namespace mydlpsf
 		{
 			eventLogger->logDevice->Info(log);
 		} catch (System::Exception ^ex) {
+			LogError(ex->StackTrace);
 		}
 	}
 
@@ -93,6 +99,7 @@ namespace mydlpsf
 		{
 			eventLogger->logRemovable->Warn(log);
 		} catch (System::Exception ^ex) {
+			LogError(ex->StackTrace);
 		}
 	}
 
@@ -102,6 +109,7 @@ namespace mydlpsf
 		{
 			eventLogger->logScreenCapture->Warn(log);
 		} catch (System::Exception ^ex) {
+			LogError(ex->StackTrace);
 		}
 	}
 
@@ -114,8 +122,13 @@ namespace mydlpsf
 		}
 	}
 
-	void MyDLPEventLogger::LogLib(String ^log)
+	void MyDLPEventLogger::LogService(String ^log)
 	{
-
+		try
+		{
+			eventLogger->logService->Info(log);
+		} catch (System::Exception ^ex) {
+			LogError(ex->StackTrace);
+		}
 	}
 }

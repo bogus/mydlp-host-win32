@@ -18,21 +18,21 @@
  *  MA 02110-1301, USA.
  */
 #pragma once
-
-using namespace System;
+#pragma managed
 
 namespace mydlpsf
 {
-	public ref class MyDLPConfigurationUpdateListener
+	public ref class MyDLPManager
 	{
 	private:
-		static MyDLPConfigurationUpdateListener ^listener;
-		System::IO::FileSystemWatcher ^watcher;
-		MyDLPConfigurationUpdateListener(void);
+		MyDLPManager(void);
+		static MyDLPManager ^manager;
+		void Configure();
 
 	public:
-		static MyDLPConfigurationUpdateListener ^GetInstance();
-		void StartListener();
-		void OnChanged(Object^ o, System::IO::FileSystemEventArgs^ e);
+		static MyDLPManager ^GetInstance();
+		void Start();
+		void Update(String ^filename);
+		void Stop();
 	};
 }
