@@ -50,6 +50,7 @@ namespace mydlpsf
 		static MyDLPSensFilePool ^objectPool;
 		Int32 poolSize;
 		Queue ^objQueue;
+		void AddObjectToQueue(int count);
 
 	public:
 		static MyDLPSensFilePool ^GetInstance();
@@ -57,6 +58,7 @@ namespace mydlpsf
 		void UpdatePool();
 		MyDLPSensitiveFileRecognition ^AcquireObject();
 		void ReleaseObject(MyDLPSensitiveFileRecognition ^object);
+		void DeleteObject(MyDLPSensitiveFileRecognition ^object);
 		void SetMaxPoolSize(int size);
 	};
 

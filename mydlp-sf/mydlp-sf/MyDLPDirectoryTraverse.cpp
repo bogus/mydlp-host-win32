@@ -149,8 +149,13 @@ namespace mydlpsf {
 						}
 						else if (ret == 2)
 						{
-							//Error in clamav
+							MyDLPEventLogger::GetInstance()->LogError(key + " -- EARG ");
 						}
+						else if (ret == 3)
+						{
+							MyDLPEventLogger::GetInstance()->LogError(key + " -- Error ");
+						}
+						
 
 						MyDLPSensFilePool::GetInstance()->ReleaseObject(fileSearch);
 					}

@@ -201,6 +201,11 @@
 			AssemblyName="log4net, Version=1.2.10.0, PublicKeyToken=1b44e1d426115821, processorArchitecture=MSIL"
 			MinFrameworkVersion="131072"
 		/>
+		<AssemblyReference
+			RelativePath="..\..\IFilterParser\IFilterParser\bin\Release\IFilterParser.dll"
+			AssemblyName="IFilterParser, Version=1.0.0.0, processorArchitecture=MSIL"
+			MinFrameworkVersion="131072"
+		/>
 	</References>
 	<Files>
 		<Filter
@@ -210,10 +215,6 @@
 			>
 			<File
 				RelativePath=".\AssemblyInfo.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\MyDLPConfigurationUpdateListener.cpp"
 				>
 			</File>
 			<File
@@ -239,6 +240,10 @@
 			<Filter
 				Name="conf"
 				>
+				<File
+					RelativePath=".\MyDLPConfigurationUpdateListener.cpp"
+					>
+				</File>
 				<File
 					RelativePath=".\MyDLPRemoteDeviceConf.cpp"
 					>
@@ -311,7 +316,7 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
-				RelativePath=".\MyDLPConfigurationUpdateListener.h"
+				RelativePath=".\MyDLPPSParse.h"
 				>
 			</File>
 			<File
@@ -329,6 +334,10 @@
 			<Filter
 				Name="conf"
 				>
+				<File
+					RelativePath=".\MyDLPConfigurationUpdateListener.h"
+					>
+				</File>
 				<File
 					RelativePath=".\MyDLPRemoteConf.h"
 					>

@@ -458,14 +458,11 @@ int dlp_is_valid_tr_id(const unsigned char *buffer, int length)
     int i = 0;
     int val = 0;
     char cc_digits[11];
-	int tr_id_digits[11];
+	int tr_id_digits[11], total = 0;
     
     if(buffer == NULL || length < 11)
         return 0;
-    /* if the first digit is greater than 6 it isn't one of the major
-     * credit cards
-     * reference => http://www.beachnet.com/~hstiles/cardtype.html
-     */
+    
     if(!isdigit(buffer[0]) || buffer[0] == '0')
         return 0;
         
@@ -478,7 +475,12 @@ int dlp_is_valid_tr_id(const unsigned char *buffer, int length)
 			tr_id_digits[i] = buffer[i] - '0';
 		} else
 			return 0;
+
+		total += tr_id_digits[i];
     }
+
+	if(total == 0)
+		return 0;
 
     if(length == 11) 
     {

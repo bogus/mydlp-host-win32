@@ -19,7 +19,7 @@
  */
 
 #include "stdafx.h"
-#include <Windows.h>
+#include <windows.h>
 #include "MyDLPSensitiveFileRecognition.h"
 #include <stdio.h>
 #include <vcclr.h>
@@ -29,6 +29,8 @@
 using namespace System;
 using namespace System::Text;
 using namespace System::Runtime::InteropServices;
+using namespace System::IO;
+using namespace IFilterParser;
 
 namespace mydlpsf {
 
@@ -76,18 +78,18 @@ namespace mydlpsf {
 		
 		for(i = 0; i < count; i++)
 		{		
-			// PCRE Regex UTF-8 howto ?
-			/*
 			String ^utf8Regex = String::Empty;
 			try
 			{
-				Console::WriteLine(regex[i]->Length);
 				for(int j = 0; j < regex[i]->Length; j++)
 				{	
-					array<UCHAR> ^encodedBytes =  encoder->GetBytes(regex[i]->Substring(j,1));
+					array<unsigned char> ^encodedBytes =  encoder->GetBytes(regex[i]->Substring(j,1));
 					if(encodedBytes->Length > 1)
 					{
-						utf8Regex += "\\x{" + BitConverter::ToString(encodedBytes)->ToLower()->Replace("-", String::Empty) + "}";
+						String ^splitChar = "-";
+						array<String ^> ^arr = BitConverter::ToString(encodedBytes)->ToLower()->Split( splitChar->ToCharArray() );
+						for each (String ^byteRep in arr)
+							utf8Regex += "\\x" + byteRep;
 					}
 					else
 					{
@@ -99,11 +101,10 @@ namespace mydlpsf {
 			{
 				MyDLPEventLogger::GetInstance()->LogError(ex->StackTrace);
 			}
+			
 			char *tmpStr = (char *)malloc(sizeof(char) * (utf8Regex->Length + 1));
 			strcpy_s(tmpStr, utf8Regex->Length + 1,ManagedToSTL(utf8Regex).c_str());
-			*/
-			char *tmpStr = (char *)malloc(sizeof(char) * (regex[i]->Length + 1));
-			strcpy_s(tmpStr, regex[i]->Length + 1,ManagedToSTL(regex[i]).c_str());
+			
 			str[i] = tmpStr;
 			regex_list[i] = (unsigned char *)str[i];
 			id_list[i] = ids[i];
@@ -131,8 +132,11 @@ namespace mydlpsf {
 
 		if((ret = cl_load(md5db_file, this->engine, &sigs, CL_DB_STDOPT)) != CL_SUCCESS) {
 			cl_engine_free(engine);
+			cl_dlp_md5db_unlink();
 			return -2;
 		}
+
+		cl_dlp_md5db_unlink();
 
 		return sigs;
 	}
@@ -205,7 +209,7 @@ namespace mydlpsf {
 			}
 		}
 */
-		scanOptions = scanOptions | CL_SCAN_ARCHIVE | CL_SCAN_MAIL | CL_SCAN_OLE2 | CL_SCAN_PDF | CL_SCAN_HTML | CL_SCAN_PE | CL_SCAN_PS;
+		scanOptions = scanOptions | CL_SCAN_ARCHIVE | CL_SCAN_MAIL | CL_SCAN_OLE2 | CL_SCAN_PDF | CL_SCAN_HTML | CL_SCAN_PS;
 		
 		return 0;
 	}
@@ -214,7 +218,7 @@ namespace mydlpsf {
 	{
 		const char *virname;
 		unsigned long int size = 0; 
-		int ret;
+		int ret = 0;
 		long     length = 0;
 		TCHAR*   buffer = NULL;
 
@@ -235,22 +239,64 @@ namespace mydlpsf {
 
 			Marshal::FreeHGlobal(ptr);
 
-			if((ret = cl_scanfile((const char *)ManagedToSTL(gcnew String(buffer)).c_str(), &virname, &size, this->engine, scanOptions)) == CL_VIRUS) {
+			if((ret = cl_scanfile((const char *)ManagedToSTL(filename).c_str(), &virname, &size, this->engine, scanOptions)) == CL_VIRUS) {
 				this->result = STLToManaged(virname);
 				return 1;
-			} else {
-				if(ret == CL_CLEAN) {
-					return 0;
+			} 
+			
+			if (ret == CL_RESCAN_OLE2 || ret == CL_RESCAN_PDF || ret==CL_RESCAN_PS) {
+
+				String ^tempFilePath = System::IO::Path::GetTempFileName();
+				if(ret == CL_RESCAN_OLE2)
+				{
+					StreamWriter ^writer = gcnew StreamWriter(tempFilePath, false, System::Text::Encoding::UTF8);
+					TextReader ^reader = gcnew FilterReader(filename);
+					writer->Write(reader->ReadToEnd()); 
+					reader->Close();
+					writer->Close();
+				} else if (ret == CL_RESCAN_PDF) { 
+					PDFParser ^parser = gcnew PDFParser(); 
+					StreamWriter ^writer = gcnew StreamWriter(tempFilePath, false, System::Text::Encoding::UTF8);
+					writer->WriteLine(parser->parseUsingPDFBox(filename)); 
+					writer->Close();
 				} else {
-					cl_engine_free(engine);
-					return 2;
+					tempFilePath = String::Empty;
+					ret = CL_CLEAN;
+				}
+ 
+				if(tempFilePath != String::Empty) 
+				{
+					if((ret = cl_scanfile((const char *)ManagedToSTL(tempFilePath).c_str(), &virname, &size, this->engine, scanOptions)) == CL_VIRUS) {
+						this->result = STLToManaged(virname);
+						ret = 1;
+					}
+					if(File::Exists(tempFilePath))
+					{
+						File::Delete(tempFilePath);
+						array<String ^> ^pdfBoxFiles = Directory::GetFiles(System::IO::Path::GetDirectoryName(Path::GetTempFileName()), "pdfbox*");
+						for each (String ^file in pdfBoxFiles) {
+							File::Delete(file);
+						}
+					}
+
+					return ret;
 				}
 			}
+
+			if(ret == CL_CLEAN) {
+				return 0;
+			} else if (ret == CL_EARG) {
+				cl_engine_free(engine);
+				return 2;
+			} else {
+				cl_engine_free(engine);
+				return 3;
+			}
 		} catch (Exception ^ex) {
-			MyDLPEventLogger::GetInstance()->LogError(ex->StackTrace);
+			MyDLPEventLogger::GetInstance()->LogError(length.ToString() + "--" + gcnew String(buffer) + System::Environment::NewLine + ex->StackTrace);
 		}
 
-		return 0;
+		return ret;
 	}
 
 	String^ MyDLPSensitiveFileRecognition::GetLastResult()

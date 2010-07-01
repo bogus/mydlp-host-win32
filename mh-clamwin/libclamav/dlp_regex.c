@@ -91,7 +91,7 @@ int cl_dlp_regex_init(unsigned int ids[], const unsigned char **regex_list, int 
 	}
 
 	for(i = 0; i < length; i++) {
-		temp_re = pcre_compile(regex_list[i], 0, &error, &erroffset, NULL);
+		temp_re = pcre_compile(regex_list[i], PCRE_CASELESS, &error, &erroffset, NULL);
 		if(erroffset == 0) {
 			tmpPcres[valid_count] = temp_re;
 			tmpIds[valid_count] = ids[i];

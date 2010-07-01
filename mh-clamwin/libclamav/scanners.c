@@ -1229,128 +1229,43 @@ static int cli_scanole2(cli_ctx *ctx)
 
 static int cli_scanole2_structured(cli_ctx *ctx)
 {
-	char *tempfile;
-	int ret = CL_CLEAN, i = 0;
-	const int ole2Types = 2;
-#ifdef WIN32	
-	const char *ole2cat[] = {"catdoc /dutf-8 ", "catppt /dutf-8 "};
-#else
-	const char *ole2cat[] = {"catdoc -dutf-8 ", "catppt -dutf-8 "};
-#endif
-	char *command;
-	int retSystem = 1;
-
-    cli_dbgmsg("in cli_scanole2_structured()\n");
+	int ret = CL_CLEAN;
 
     if(ctx->engine->maxreclevel && ctx->recursion >= ctx->engine->maxreclevel)
         return CL_EMAXREC;
 
-	/* generate the temporary file */
-    if(!(tempfile = cli_gentemp(ctx->engine->tmpdir)))
-		return CL_EMEM;
+	cli_dbgmsg("in cli_scanole2_structured()\n");
+	
+	ret = CL_RESCAN_OLE2;
 
-	if(scan_filename != NULL) {
-		for(i = 0; (i < ole2Types) && (retSystem != 0); i++)
-		{
-			command = (char *)malloc(DEFAULT_COMMAND_LENGTH * sizeof(char));			
-			strcpy(command, ole2cat[i]);
-			strcat(command, "\"");
-			strcat(command, scan_filename);
-			strcat(command, "\"");
-			strcat(command, " > ");
-			strcat(command, tempfile);
-			retSystem = system(command);
-		}
-		//printf("scan_filename = %s, ret = %d\n, tmpfile = %s", scan_filename, retSystem, tempfile);
-		if(retSystem == 0)
-		{
-			ret = cli_scanfile(tempfile, ctx);
-		}
-	} else {
-		// scan_filename not set
-	}
-
-	cli_unlink(tempfile);
-	free(tempfile);
-	free(command);
 	return ret;
 }
 
 static int cli_scanpdf_structured(cli_ctx *ctx)
 {
-	char *tempfile;
 	int ret = CL_CLEAN;
-	char *command;
-	int retSystem;
-
+	
     cli_dbgmsg("in cli_scanpdf_structured()\n");
 
     if(ctx->engine->maxreclevel && ctx->recursion >= ctx->engine->maxreclevel)
         return CL_EMAXREC;
 
-	/* generate the temporary file */
-    if(!(tempfile = cli_gentemp(ctx->engine->tmpdir)))
-		return CL_EMEM;
+	ret = CL_RESCAN_PDF;
 	
-	if(scan_filename != NULL) {
-		command = (char *)malloc(DEFAULT_COMMAND_LENGTH * sizeof(char));
-#ifdef WIN32
-		strcpy(command, "pdftotext -q -nopgbrk ");
-#else
-		strcpy(command, "pdftotext -q -nopgbrk ");
-#endif
-		strcat(command, "\"");
-		strcat(command, scan_filename);
-		strcat(command, "\"");
-		strcat(command, " ");
-		strcat(command, tempfile);
-		retSystem = system(command);
-		if(retSystem == 0) {
-			ret = cli_scanfile(tempfile, ctx);
-		}
-	} else {
-		// scan_filename not set
-	}
-	cli_unlink(tempfile);
-	free(tempfile);
-	free(command);
 	return ret;
 }
 
 static int cli_scanps_structured(cli_ctx *ctx)
 {
-	char *tempfile;
 	int ret = CL_CLEAN;
-	char *command;
-	int retSystem;
-
+	
     cli_dbgmsg("in cli_scanps_structured()\n");
 
     if(ctx->engine->maxreclevel && ctx->recursion >= ctx->engine->maxreclevel)
         return CL_EMAXREC;
 
-	/* generate the temporary file */
-    if(!(tempfile = cli_gentemp(ctx->engine->tmpdir)))
-		return CL_EMEM;
-	
-	if(scan_filename != NULL) {
-		command = (char *)malloc(DEFAULT_COMMAND_LENGTH * sizeof(char));
-		strcpy(command, "ps2txt ");
-		strcat(command, "\"");
-		strcat(command, scan_filename);
-		strcat(command, "\"");
-		strcat(command, " > ");
-		strcat(command, tempfile);
-		retSystem = system(command);
-		if(retSystem == 0) {
-			ret = cli_scanfile(tempfile, ctx);
-		}
-	} else {
-		// scan_filename not set
-	}
-	cli_unlink(tempfile);
-	free(tempfile);
-	free(command);
+	ret = CL_RESCAN_PS;
+		
 	return ret;
 }
 
@@ -1693,7 +1608,7 @@ static int cli_scan_structured(int desc, cli_ctx *ctx)
 {
 	char buf[8192];
 	static char regex_reply[100];
-	int result = 0;
+	int result = 0, text_type;
 	unsigned int cc_count = 0;
 	unsigned int ssn_count = 0;
 	unsigned int regex_count = 0;
@@ -1780,6 +1695,8 @@ static int cli_scan_structured(int desc, cli_ctx *ctx)
 	}
 
     while(!done && ((result = cli_readn(desc, buf, 8191)) > 0)) {
+	if(cl_istext(buf, result) == 5)
+		continue;
 	if(cc_enabled && (cc_count += ccfunc((const unsigned char *)buf, result)) >= ctx->engine->min_cc_count)
 	    done = 1;
 

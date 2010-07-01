@@ -69,7 +69,12 @@ typedef enum {
     CL_EMAXSIZE,
     CL_EMAXFILES,
     CL_EFORMAT,
-    CL_EBYTECODE
+    CL_EBYTECODE,
+
+	/* rescan request */
+	CL_RESCAN_OLE2,
+	CL_RESCAN_PDF,
+	CL_RESCAN_PS
 } cl_error_t;
 
 /* db options */
