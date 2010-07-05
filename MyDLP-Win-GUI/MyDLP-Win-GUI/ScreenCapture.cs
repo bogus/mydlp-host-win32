@@ -52,11 +52,15 @@ namespace MydlpWinGui
 
                 MyDLPRemoteScreenCaptureConf.Serialize();
 
-                MessageBox.Show("Changes Saved", "Success");
+                MessageBox.Show(Form1.resM.GetString("save.text"),
+                    Form1.resM.GetString("save.caption"),
+                    MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Operation failed!", "Error");
+                MessageBox.Show(Form1.resM.GetString("save.error.text"),
+                    Form1.resM.GetString("save.error.caption"),
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
     }

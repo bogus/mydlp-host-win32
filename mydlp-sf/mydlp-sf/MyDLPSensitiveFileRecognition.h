@@ -36,6 +36,8 @@
 #include "MyDLPRemoteSensFileConf.h"
 
 using namespace System;
+using namespace System::Text;
+using namespace System::Runtime::InteropServices;
 
 namespace mydlpsf {
 
@@ -47,6 +49,7 @@ namespace mydlpsf {
 			std::string ManagedToSTL(String ^managed);
 			String^ STLToManaged(std::string stl);
 			UInt32 scanOptions;
+			String ^GetShortFileName(String ^longName);
 
 		public:
 			int Init();
@@ -58,6 +61,7 @@ namespace mydlpsf {
 			String^ GetLastResult();
 			int Close();
 			static System::Collections::Hashtable ^clamFileGroupOptions;
+
 	};
 }
 

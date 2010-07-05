@@ -20,6 +20,7 @@
 #include "StdAfx.h"
 #include "MyDLPSensFilePool.h"
 #include "MyDLPSensitiveFileRecognition.h"
+#include "MyDLPEventLogger.h"
 
 using namespace System;
 using namespace Microsoft::Win32;
@@ -53,7 +54,11 @@ namespace mydlpsf
 
 	void MyDLPSensFilePool::InitPool()
 	{
-		AddObjectToQueue(poolSize);
+		array<MyDLPSensitiveFileRecognition ^> ^objArray = CreateObject(poolSize);
+		for each(MyDLPSensitiveFileRecognition ^obj in objArray)
+		{
+			objQueue->Enqueue(obj);
+		}
 	}
 
 	void MyDLPSensFilePool::UpdatePool()
@@ -68,30 +73,42 @@ namespace mydlpsf
 
 	MyDLPSensitiveFileRecognition^ MyDLPSensFilePool::AcquireObject()
 	{
-		return (MyDLPSensitiveFileRecognition ^)objQueue->Dequeue();
+		try {
+			if(objQueue->Count != 0)
+				return (MyDLPSensitiveFileRecognition ^)objQueue->Dequeue();
+		} 
+		catch (InvalidOperationException ^ex) 
+		{
+			MyDLPEventLogger::GetInstance()->LogError(ex->StackTrace);
+		} 
+		
+		return CreateObject(1)[0];
+		
 	}
 
 	void MyDLPSensFilePool::ReleaseObject(MyDLPSensitiveFileRecognition ^object)
 	{
-		objQueue->Enqueue(object);
+		if(object != nullptr)
+			objQueue->Enqueue(object);
 	}
 
 	void MyDLPSensFilePool::DeleteObject(MyDLPSensitiveFileRecognition ^object)
 	{
 		object->Close();
 		delete object;
-		AddObjectToQueue(1);		
+		objQueue->Enqueue(CreateObject(1)[0]);		
 	}
 
-	void MyDLPSensFilePool::AddObjectToQueue(int count)
+	array<MyDLPSensitiveFileRecognition ^> ^MyDLPSensFilePool::CreateObject(int count)
 	{
 		int i = 0;
 		RegistryKey ^key = Registry::LocalMachine->OpenSubKey( "Software\\MyDLP" );
-
+		
 		MyDLPRemoteSensFileConf::Deserialize();
 
 		array<System::UInt32> ^ids = gcnew array<System::UInt32>(mydlpsf::MyDLPRemoteSensFileConf::GetInstance()->regexVal->Count);
 		array<System::String ^> ^regex = gcnew array<System::String ^>(mydlpsf::MyDLPRemoteSensFileConf::GetInstance()->regexVal->Count);
+		array<MyDLPSensitiveFileRecognition ^> ^objArray = gcnew array<MyDLPSensitiveFileRecognition ^>(count);
 		MyDLPSensitiveFileRecognition ^sensFileObject;
 		
 		for each(MyDLPClamRegex ^clamRegex in mydlpsf::MyDLPRemoteSensFileConf::GetInstance()->regexVal)
@@ -109,8 +126,10 @@ namespace mydlpsf
 			sensFileObject->AddMD5s(mydlpsf::MyDLPRemoteSensFileConf::GetInstance()->md5Val);
 			sensFileObject->AddIBAN();
 			sensFileObject->CompileClamEngine();
-			objQueue->Enqueue(sensFileObject);
+			objArray[i] = sensFileObject;
 		}
+
+		return objArray;
 	}
 
 	void MyDLPSensFilePool::SetMaxPoolSize(int size)

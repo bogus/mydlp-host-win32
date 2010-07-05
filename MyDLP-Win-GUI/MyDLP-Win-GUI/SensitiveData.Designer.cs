@@ -45,6 +45,7 @@
             this.textBox1 = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
             this.tabPage2 = new System.Windows.Forms.TabPage();
+            this.checkBox1 = new System.Windows.Forms.CheckBox();
             this.button5 = new System.Windows.Forms.Button();
             this.label7 = new System.Windows.Forms.Label();
             this.listViewRegex = new System.Windows.Forms.ListView();
@@ -72,7 +73,8 @@
             this.checkBoxCC = new System.Windows.Forms.CheckBox();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.buttonSaveAll = new System.Windows.Forms.Button();
-            this.checkBox1 = new System.Windows.Forms.CheckBox();
+            this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.checkBox2 = new System.Windows.Forms.CheckBox();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.groupAddMd5.SuspendLayout();
@@ -80,6 +82,7 @@
             this.groupRegex.SuspendLayout();
             this.tabPage3.SuspendLayout();
             this.groupBoxPredefined.SuspendLayout();
+            this.groupBox1.SuspendLayout();
             this.SuspendLayout();
             // 
             // tabControl1
@@ -251,6 +254,16 @@
             this.tabPage2.Text = "Regular Expressions";
             this.tabPage2.UseVisualStyleBackColor = true;
             // 
+            // checkBox1
+            // 
+            this.checkBox1.AutoSize = true;
+            this.checkBox1.Location = new System.Drawing.Point(21, 35);
+            this.checkBox1.Name = "checkBox1";
+            this.checkBox1.Size = new System.Drawing.Size(158, 17);
+            this.checkBox1.TabIndex = 5;
+            this.checkBox1.Text = "Enable Regular Expressions";
+            this.checkBox1.UseVisualStyleBackColor = true;
+            // 
             // button5
             // 
             this.button5.Location = new System.Drawing.Point(450, 334);
@@ -343,6 +356,7 @@
             // 
             // tabPage3
             // 
+            this.tabPage3.Controls.Add(this.groupBox1);
             this.tabPage3.Controls.Add(this.label12);
             this.tabPage3.Controls.Add(this.groupBoxPredefined);
             this.tabPage3.Location = new System.Drawing.Point(4, 22);
@@ -504,15 +518,25 @@
             this.buttonSaveAll.UseVisualStyleBackColor = true;
             this.buttonSaveAll.Click += new System.EventHandler(this.buttonSaveAll_Click);
             // 
-            // checkBox1
+            // groupBox1
             // 
-            this.checkBox1.AutoSize = true;
-            this.checkBox1.Location = new System.Drawing.Point(21, 35);
-            this.checkBox1.Name = "checkBox1";
-            this.checkBox1.Size = new System.Drawing.Size(158, 17);
-            this.checkBox1.TabIndex = 5;
-            this.checkBox1.Text = "Enable Regular Expressions";
-            this.checkBox1.UseVisualStyleBackColor = true;
+            this.groupBox1.Controls.Add(this.checkBox2);
+            this.groupBox1.Location = new System.Drawing.Point(21, 245);
+            this.groupBox1.Name = "groupBox1";
+            this.groupBox1.Size = new System.Drawing.Size(481, 51);
+            this.groupBox1.TabIndex = 2;
+            this.groupBox1.TabStop = false;
+            this.groupBox1.Text = "Other";
+            // 
+            // checkBox2
+            // 
+            this.checkBox2.AutoSize = true;
+            this.checkBox2.Location = new System.Drawing.Point(19, 20);
+            this.checkBox2.Name = "checkBox2";
+            this.checkBox2.Size = new System.Drawing.Size(183, 17);
+            this.checkBox2.TabIndex = 0;
+            this.checkBox2.Text = "Enable encrypted archive filtering";
+            this.checkBox2.UseVisualStyleBackColor = true;
             // 
             // SensitiveData
             // 
@@ -536,6 +560,8 @@
             this.tabPage3.ResumeLayout(false);
             this.groupBoxPredefined.ResumeLayout(false);
             this.groupBoxPredefined.PerformLayout();
+            this.groupBox1.ResumeLayout(false);
+            this.groupBox1.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -587,5 +613,7 @@
         private System.Windows.Forms.Button buttonSaveAll;
         private System.Windows.Forms.Label label12;
         private System.Windows.Forms.CheckBox checkBox1;
+        private System.Windows.Forms.GroupBox groupBox1;
+        private System.Windows.Forms.CheckBox checkBox2;
     }
 }

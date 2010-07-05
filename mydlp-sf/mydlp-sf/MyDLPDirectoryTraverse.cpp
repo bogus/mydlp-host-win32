@@ -138,13 +138,13 @@ namespace mydlpsf {
 
 				if (((String ^)all[key]) == "f")
 				{
+					MyDLPSensitiveFileRecognition ^fileSearch = MyDLPSensFilePool::GetInstance()->AcquireObject();
 					try
 					{
 						int ret = 0;                    
 						FileStream ^fs = gcnew FileStream(key, FileMode::Open, FileAccess::Read);
 						fs->Close();
 						
-						MyDLPSensitiveFileRecognition ^fileSearch = MyDLPSensFilePool::GetInstance()->AcquireObject();
 						ret = fileSearch->SearchSensitiveData(key);
 	                    
 						if (ret == 1)
@@ -160,13 +160,14 @@ namespace mydlpsf {
 						{
 							MyDLPEventLogger::GetInstance()->LogError(key + " -- Error ");
 						}
-						
-
-						MyDLPSensFilePool::GetInstance()->ReleaseObject(fileSearch);
 					}
 					catch (Exception ^ex)
 					{
 						MyDLPEventLogger::GetInstance()->LogError(ex->StackTrace);
+					}
+					finally
+					{
+						MyDLPSensFilePool::GetInstance()->ReleaseObject(fileSearch);
 					}
 				}
 				else if (((String ^)all[key]) == "d")

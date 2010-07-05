@@ -64,7 +64,7 @@ namespace MydlpWinGui
             taskbarNotifier1.CloseClick += new EventHandler(CloseClick);
             */
 
-            notifyIcon1.ContextMenuStrip = contextMenuStrip1;
+            notifyIcon1.ContextMenuStrip = eventsMenuStrip;
 
             form1Instance = this;
         }
@@ -85,28 +85,16 @@ namespace MydlpWinGui
 
         private void eventLogSensFile_EntryWritten(object sender, System.Diagnostics.EntryWrittenEventArgs e)
         {
-            taskbarNotifier1.CloseClickable = true;
-            taskbarNotifier1.TitleClickable = false;
-            taskbarNotifier1.ContentClickable = true;
-            taskbarNotifier1.EnableSelectionRectangle = false;
-            taskbarNotifier1.KeepVisibleOnMousOver = true;	// Added Rev 002
-            taskbarNotifier1.ReShowOnMouseOver = false;			// Added Rev 002
-            taskbarNotifier1.Show("MyDLP Message", e.Entry.Message, 300, 3000, 200);
-        }
-
-        void CloseClick(object obj, EventArgs ea)
-        {
-            MessageBox.Show("Closed was Clicked");
-        }
-
-        void TitleClick(object obj, EventArgs ea)
-        {
-            MessageBox.Show("Title was Clicked");
-        }
-
-        void ContentClick(object obj, EventArgs ea)
-        {
-            MessageBox.Show("Content was Clicked");
+            if (serviceConf.showPopupNotification)
+            {
+                taskbarNotifier1.CloseClickable = true;
+                taskbarNotifier1.TitleClickable = false;
+                taskbarNotifier1.ContentClickable = true;
+                taskbarNotifier1.EnableSelectionRectangle = false;
+                taskbarNotifier1.KeepVisibleOnMousOver = true;	// Added Rev 002
+                taskbarNotifier1.ReShowOnMouseOver = false;			// Added Rev 002
+                taskbarNotifier1.Show(resM.GetString("notification.caption"), e.Entry.Message, 300, 3000, 200);
+            }
         }
 
         private void Form1_Shown(object sender, EventArgs e)
@@ -114,7 +102,7 @@ namespace MydlpWinGui
             /*
             WindowState = FormWindowState.Minimized;
             Hide();
-             */ 
+             */
         }
 
         private void Form1_Load(object sender, EventArgs e)
@@ -132,6 +120,8 @@ namespace MydlpWinGui
             listView1.Items[5].Text = resM.GetString("menu.aboutus");
 
             panelTitle.Text = resM.GetString("menu.defsensdata");
+            openConfigurationMenuToolStripMenuItem.Text = resM.GetString("rightclick.show");
+
             panel2.Controls.Add(defineSensitiveData);
             currentPanelControl = defineSensitiveData;
         }
@@ -198,6 +188,8 @@ namespace MydlpWinGui
 
             panelTitle.Text = resM.GetString("menu.options");
 
+            openConfigurationMenuToolStripMenuItem.Text = resM.GetString("rightclick.show");
+
             defineSensitiveData.Globalize();
             localScan.Globalize();
             onlineScan.Globalize();
@@ -205,6 +197,20 @@ namespace MydlpWinGui
             options.Globalize();
             aboutUs.Globalize();
         }
+
+        private void openConfigurationMenuToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (WindowState == FormWindowState.Minimized)
+            {
+                Show();
+                WindowState = FormWindowState.Normal;
+            }
+            else
+            {
+                
+            }
+        }
+
 
 
     }

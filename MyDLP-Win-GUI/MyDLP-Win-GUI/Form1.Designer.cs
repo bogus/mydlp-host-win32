@@ -36,25 +36,23 @@ namespace MydlpWinGui
         {
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
-            System.Windows.Forms.ListViewItem listViewItem7 = new System.Windows.Forms.ListViewItem(new string[] {
+            System.Windows.Forms.ListViewItem listViewItem1 = new System.Windows.Forms.ListViewItem(new string[] {
             "Define Sensitive Data"}, 4, System.Drawing.Color.Empty, System.Drawing.Color.Empty, new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0))));
-            System.Windows.Forms.ListViewItem listViewItem8 = new System.Windows.Forms.ListViewItem(new string[] {
+            System.Windows.Forms.ListViewItem listViewItem2 = new System.Windows.Forms.ListViewItem(new string[] {
             "Local Scan"}, 0, System.Drawing.Color.Empty, System.Drawing.Color.Empty, new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0))));
-            System.Windows.Forms.ListViewItem listViewItem9 = new System.Windows.Forms.ListViewItem(new string[] {
+            System.Windows.Forms.ListViewItem listViewItem3 = new System.Windows.Forms.ListViewItem(new string[] {
             "Online Scan"}, 2, System.Drawing.Color.Empty, System.Drawing.Color.Empty, new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0))));
-            System.Windows.Forms.ListViewItem listViewItem10 = new System.Windows.Forms.ListViewItem(new string[] {
+            System.Windows.Forms.ListViewItem listViewItem4 = new System.Windows.Forms.ListViewItem(new string[] {
             "Screen Capture"}, 3, System.Drawing.Color.Empty, System.Drawing.Color.Empty, new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0))));
-            System.Windows.Forms.ListViewItem listViewItem11 = new System.Windows.Forms.ListViewItem(new string[] {
+            System.Windows.Forms.ListViewItem listViewItem5 = new System.Windows.Forms.ListViewItem(new string[] {
             "Options",
             ""}, 1, System.Drawing.Color.Empty, System.Drawing.Color.Empty, new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0))));
-            System.Windows.Forms.ListViewItem listViewItem12 = new System.Windows.Forms.ListViewItem(new string[] {
+            System.Windows.Forms.ListViewItem listViewItem6 = new System.Windows.Forms.ListViewItem(new string[] {
             "About Us"}, 5, System.Drawing.Color.Empty, System.Drawing.Color.Empty, new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0))));
             this.notifyIcon1 = new System.Windows.Forms.NotifyIcon(this.components);
             this.eventLogSensFile = new System.Diagnostics.EventLog();
-            this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.eventsMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.openConfigurationMenuToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.disableOnLineScanningToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.enableOnLineScannigToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.panel1 = new System.Windows.Forms.Panel();
             this.listView1 = new System.Windows.Forms.ListView();
             this.columnHeader1 = new System.Windows.Forms.ColumnHeader();
@@ -62,7 +60,7 @@ namespace MydlpWinGui
             this.panel2 = new System.Windows.Forms.Panel();
             this.panelTitle = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.eventLogSensFile)).BeginInit();
-            this.contextMenuStrip1.SuspendLayout();
+            this.eventsMenuStrip.SuspendLayout();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -81,32 +79,20 @@ namespace MydlpWinGui
             this.eventLogSensFile.SynchronizingObject = this;
             this.eventLogSensFile.EntryWritten += new System.Diagnostics.EntryWrittenEventHandler(this.eventLogSensFile_EntryWritten);
             // 
-            // contextMenuStrip1
+            // eventsMenuStrip
             // 
-            this.contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.openConfigurationMenuToolStripMenuItem,
-            this.disableOnLineScanningToolStripMenuItem,
-            this.enableOnLineScannigToolStripMenuItem});
-            this.contextMenuStrip1.Name = "contextMenuStrip1";
-            this.contextMenuStrip1.Size = new System.Drawing.Size(209, 70);
+            this.eventsMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.openConfigurationMenuToolStripMenuItem});
+            this.eventsMenuStrip.Name = "contextMenuStrip1";
+            this.eventsMenuStrip.ShowImageMargin = false;
+            this.eventsMenuStrip.Size = new System.Drawing.Size(184, 48);
             // 
             // openConfigurationMenuToolStripMenuItem
             // 
             this.openConfigurationMenuToolStripMenuItem.Name = "openConfigurationMenuToolStripMenuItem";
             this.openConfigurationMenuToolStripMenuItem.Size = new System.Drawing.Size(208, 22);
             this.openConfigurationMenuToolStripMenuItem.Text = "Open Configuration Menu";
-            // 
-            // disableOnLineScanningToolStripMenuItem
-            // 
-            this.disableOnLineScanningToolStripMenuItem.Name = "disableOnLineScanningToolStripMenuItem";
-            this.disableOnLineScanningToolStripMenuItem.Size = new System.Drawing.Size(208, 22);
-            this.disableOnLineScanningToolStripMenuItem.Text = "Disable On-Line Scanning";
-            // 
-            // enableOnLineScannigToolStripMenuItem
-            // 
-            this.enableOnLineScannigToolStripMenuItem.Name = "enableOnLineScannigToolStripMenuItem";
-            this.enableOnLineScannigToolStripMenuItem.Size = new System.Drawing.Size(208, 22);
-            this.enableOnLineScannigToolStripMenuItem.Text = "Enable On-Line Scannig";
+            this.openConfigurationMenuToolStripMenuItem.Click += new System.EventHandler(this.openConfigurationMenuToolStripMenuItem_Click);
             // 
             // panel1
             // 
@@ -128,18 +114,18 @@ namespace MydlpWinGui
             this.columnHeader1});
             this.listView1.FullRowSelect = true;
             this.listView1.GridLines = true;
-            listViewItem7.IndentCount = 1;
-            listViewItem8.IndentCount = 2;
-            listViewItem9.IndentCount = 3;
-            listViewItem10.IndentCount = 4;
-            listViewItem11.IndentCount = 5;
+            listViewItem1.IndentCount = 1;
+            listViewItem2.IndentCount = 2;
+            listViewItem3.IndentCount = 3;
+            listViewItem4.IndentCount = 4;
+            listViewItem5.IndentCount = 5;
             this.listView1.Items.AddRange(new System.Windows.Forms.ListViewItem[] {
-            listViewItem7,
-            listViewItem8,
-            listViewItem9,
-            listViewItem10,
-            listViewItem11,
-            listViewItem12});
+            listViewItem1,
+            listViewItem2,
+            listViewItem3,
+            listViewItem4,
+            listViewItem5,
+            listViewItem6});
             this.listView1.LargeImageList = this.imageList1;
             this.listView1.Location = new System.Drawing.Point(12, 13);
             this.listView1.Margin = new System.Windows.Forms.Padding(10);
@@ -199,7 +185,7 @@ namespace MydlpWinGui
             this.Load += new System.EventHandler(this.Form1_Load);
             this.Shown += new System.EventHandler(this.Form1_Shown);
             ((System.ComponentModel.ISupportInitialize)(this.eventLogSensFile)).EndInit();
-            this.contextMenuStrip1.ResumeLayout(false);
+            this.eventsMenuStrip.ResumeLayout(false);
             this.panel1.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -211,10 +197,8 @@ namespace MydlpWinGui
         private System.Windows.Forms.NotifyIcon notifyIcon1;
         TaskbarNotifier taskbarNotifier1; 
         private System.Diagnostics.EventLog eventLogSensFile;
-        private ContextMenuStrip contextMenuStrip1;
+        private ContextMenuStrip eventsMenuStrip;
         private ToolStripMenuItem openConfigurationMenuToolStripMenuItem;
-        private ToolStripMenuItem disableOnLineScanningToolStripMenuItem;
-        private ToolStripMenuItem enableOnLineScannigToolStripMenuItem;
         private Panel panel1;
         private Panel panel2;
         private Label panelTitle;

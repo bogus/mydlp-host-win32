@@ -50,7 +50,7 @@ namespace mydlpsf
 		static MyDLPSensFilePool ^objectPool;
 		Int32 poolSize;
 		Queue ^objQueue;
-		void AddObjectToQueue(int count);
+		array<MyDLPSensitiveFileRecognition ^> ^ CreateObject(int count);
 
 	public:
 		static MyDLPSensFilePool ^GetInstance();

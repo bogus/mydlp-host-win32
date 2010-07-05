@@ -195,6 +195,12 @@
   <data name="def.tabpredefined.009" xml:space="preserve">
     <value>Öntanımlı İfade Değerleri</value>
   </data>
+  <data name="def.tabpredefined.010" xml:space="preserve">
+    <value>Diğer</value>
+  </data>
+  <data name="def.tabpredefined.011" xml:space="preserve">
+    <value>Şifreli arşivleri fitlrele</value>
+  </data>
   <data name="def.tabpredefined.definition" xml:space="preserve">
     <value>Kredi kartı numaraları, Sosyal Güvenlik Numaraları (sadece ABD), TC Kimlik Numaraları (sadece Türkiye) ve IBAN değerlerine göre kurallar oluşturun</value>
   </data>
@@ -225,6 +231,15 @@
   <data name="def.tabregex.definition" xml:space="preserve">
     <value>Belirlediğiniz cümleler ve PCRE uyumlu düzenli ifadeler için kurallar girin</value>
   </data>
+  <data name="error.caption" xml:space="preserve">
+    <value>Hata</value>
+  </data>
+  <data name="input.warn.caption" xml:space="preserve">
+    <value>Uyarı</value>
+  </data>
+  <data name="input.warn.text" xml:space="preserve">
+    <value>Lütfen girdi alanlarını kontrol ediniz.</value>
+  </data>
   <data name="menu.aboutus" xml:space="preserve">
     <value>Hakkımızda</value>
   </data>
@@ -242,6 +257,9 @@
   </data>
   <data name="menu.screencapture" xml:space="preserve">
     <value>Ekran Yakalama Engelleme </value>
+  </data>
+  <data name="notification.caption" xml:space="preserve">
+    <value>MyDLP Mesaj</value>
   </data>
   <data name="online.tabonlinescanhist" xml:space="preserve">
     <value>Kayıp Engelleme Geçmişi</value>
@@ -282,8 +300,32 @@
   <data name="options.taboptions.003" xml:space="preserve">
     <value>Seçenekler</value>
   </data>
+  <data name="options.taboptions.004" xml:space="preserve">
+    <value>Uyarı penceresini göster</value>
+  </data>
+  <data name="options.taboptions.005" xml:space="preserve">
+    <value>Etkin</value>
+  </data>
   <data name="options.taboptions.definition" xml:space="preserve">
     <value>Uygulama ve servis ayarları ile ilgili ayarlamaları yapabilirsiniz.</value>
+  </data>
+  <data name="rightclick.lastevents" xml:space="preserve">
+    <value>Son Olaylar</value>
+  </data>
+  <data name="rightclick.show" xml:space="preserve">
+    <value>MyDLP Yönetim Konsolunu Göster</value>
+  </data>
+  <data name="save.caption" xml:space="preserve">
+    <value>Bilgi</value>
+  </data>
+  <data name="save.error.caption" xml:space="preserve">
+    <value>Hata</value>
+  </data>
+  <data name="save.error.text" xml:space="preserve">
+    <value>Güncelleme işlemi başarısız.</value>
+  </data>
+  <data name="save.text" xml:space="preserve">
+    <value>Uygulama ayarları başarıyla güncellendi.</value>
   </data>
   <data name="scan.tabmanualscan" xml:space="preserve">
     <value>Tarama</value>

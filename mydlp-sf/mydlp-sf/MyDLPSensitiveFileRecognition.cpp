@@ -24,6 +24,7 @@
 #include <stdio.h>
 #include <vcclr.h>
 #include "MyDLPEventLogger.h"
+#include "MyDLPPSParse.h"
 #using <mscorlib.dll>
 
 using namespace System;
@@ -87,9 +88,17 @@ namespace mydlpsf {
 					if(encodedBytes->Length > 1)
 					{
 						String ^splitChar = "-";
+						encodedBytes =  encoder->GetBytes(regex[i]->Substring(j,1)->ToLower());
+						utf8Regex += "(";
 						array<String ^> ^arr = BitConverter::ToString(encodedBytes)->ToLower()->Split( splitChar->ToCharArray() );
 						for each (String ^byteRep in arr)
 							utf8Regex += "\\x" + byteRep;
+						utf8Regex += "|";
+						encodedBytes =  encoder->GetBytes(regex[i]->Substring(j,1)->ToUpper());
+						arr = BitConverter::ToString(encodedBytes)->ToLower()->Split( splitChar->ToCharArray() );
+						for each (String ^byteRep in arr)
+							utf8Regex += "\\x" + byteRep;
+						utf8Regex += ")";
 					}
 					else
 					{
@@ -231,7 +240,8 @@ namespace mydlpsf {
 				return 1;
 			} 
 			
-			if (ret == CL_RESCAN_OLE2 || ret == CL_RESCAN_PDF || ret==CL_RESCAN_PS) {
+			if (ret == CL_RESCAN_OLE2 || ret == CL_RESCAN_PDF || ret==CL_RESCAN_PS
+				|| ret==CL_RESCAN_RTF) {
 
 				String ^tempFilePath = System::IO::Path::GetTempFileName();
 				if(ret == CL_RESCAN_OLE2)
@@ -242,17 +252,22 @@ namespace mydlpsf {
 					reader->Close();
 					writer->Close();
 				} else if (ret == CL_RESCAN_PDF) {
-					Console::WriteLine("----------");
 					PDFParser ^parser = gcnew PDFParser(); 
 					StreamWriter ^writer = gcnew StreamWriter(tempFilePath, false, System::Text::Encoding::UTF8);
 					writer->WriteLine(parser->parseUsingPDFBox(filename)); 
 					writer->Close();
+				} else if (ret == CL_RESCAN_RTF) {
+					(gcnew RTFParser())->ParseRTF(filename, tempFilePath);
+				} else if (ret == CL_RESCAN_PS) {
+					const char *inputFile = (const char *)(void *)Marshal::StringToHGlobalAnsi(GetShortFileName(filename));
+					const char *outputFile = (const char *)(void *)Marshal::StringToHGlobalAnsi(GetShortFileName(tempFilePath));
+					PSParse(inputFile, outputFile);
 				} else {
 					tempFilePath = String::Empty;
 					ret = CL_CLEAN;
 				}
  
-				if(tempFilePath != String::Empty) 
+				if(tempFilePath != String::Empty && File::Exists(tempFilePath)) 
 				{
 					if((ret = cl_scanfile((const char *)ManagedToSTL(tempFilePath).c_str(), &virname, &size, this->engine, scanOptions)) == CL_VIRUS) {
 						this->result = STLToManaged(virname);
@@ -261,10 +276,16 @@ namespace mydlpsf {
 					if(File::Exists(tempFilePath))
 					{
 						File::Delete(tempFilePath);
-						array<String ^> ^pdfBoxFiles = Directory::GetFiles(System::IO::Path::GetDirectoryName(Path::GetTempFileName()), "pdfbox*");
-						for each (String ^file in pdfBoxFiles) {
+						array<String ^> ^tmpFiles = Directory::GetFiles(System::IO::Path::GetDirectoryName(Path::GetTempFileName()), "pdfbox*");
+						for each (String ^file in tmpFiles) {
 							File::Delete(file);
 						}
+						/*
+						tmpFiles = Directory::GetFiles(System::IO::Path::GetDirectoryName(Path::GetTempFileName()), "tmp*.tmp");
+						for each (String ^file in tmpFiles) {
+							File::Delete(file);
+						}
+						*/
 					}
 
 					return ret;
@@ -300,5 +321,29 @@ namespace mydlpsf {
 		/* free memory */
 		cl_engine_free(this->engine);
 		return 0;
+	}
+
+	String ^MyDLPSensitiveFileRecognition::GetShortFileName(String ^longName)
+	{
+		long     length = 0;
+		TCHAR*   buffer = NULL;
+		IntPtr ^ptr = System::Runtime::InteropServices::Marshal::StringToHGlobalUni(longName);
+		
+		length = GetShortPathName((LPCWSTR)ptr->ToPointer(), NULL, 0);
+		if (length == 0) 
+			return String::Empty;
+
+		buffer = new TCHAR[length];
+
+		length = GetShortPathName((LPCWSTR)ptr->ToPointer(), buffer, length);
+		if (length == 0) 
+			return String::Empty;
+	    
+		String ^str = gcnew String(buffer);
+		
+		delete [] buffer;
+		
+		return str;
+
 	}
 }

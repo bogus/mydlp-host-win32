@@ -50,7 +50,9 @@ namespace MydlpWinGui
             }
             else
             {
-                MessageBox.Show("Input is not validated!!");
+                MessageBox.Show(Form1.resM.GetString("input.warn.text"),
+                    Form1.resM.GetString("input.warn.caption"),
+                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
         }
 
@@ -124,14 +126,19 @@ namespace MydlpWinGui
                 MyDLPRemoteSensFileConf.GetInstance().maxTRIdCount = UInt32.Parse(maskedTextBoxTRid.Text);
                 MyDLPRemoteSensFileConf.GetInstance().maxIBANCount = UInt32.Parse(maskedTextBoxIBAN.Text);
                 MyDLPRemoteSensFileConf.GetInstance().enableRegex = checkBox1.Checked;
+                MyDLPRemoteSensFileConf.GetInstance().blockEncrypted = checkBox2.Checked;
 
                 MyDLPRemoteSensFileConf.Serialize();
 
-                MessageBox.Show("Changes Saved", "Success");
+                MessageBox.Show(Form1.resM.GetString("save.text"),
+                    Form1.resM.GetString("save.caption"),
+                    MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Operation failed!", "Error");
+                MessageBox.Show(Form1.resM.GetString("save.error.text"),
+                    Form1.resM.GetString("save.error.caption"),
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
@@ -150,6 +157,8 @@ namespace MydlpWinGui
             maskedTextBoxSSN.Text = Form1.sensFileConf.maxSSNCount.ToString();
             maskedTextBoxTRid.Text = Form1.sensFileConf.maxTRIdCount.ToString();
             maskedTextBoxIBAN.Text = Form1.sensFileConf.maxIBANCount.ToString();
+
+            checkBox2.Checked = Form1.sensFileConf.blockEncrypted;
 
             Globalize();
 
@@ -196,6 +205,8 @@ namespace MydlpWinGui
             label9.Text = Form1.resM.GetString("def.tabpredefined.006");
             label10.Text = Form1.resM.GetString("def.tabpredefined.007");
             label11.Text = Form1.resM.GetString("def.tabpredefined.008");
+            groupBox1.Text = Form1.resM.GetString("def.tabpredefined.010");
+            checkBox2.Text = Form1.resM.GetString("def.tabpredefined.011");
         }
 
         private void FillMd5List()

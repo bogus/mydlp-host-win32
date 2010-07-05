@@ -23,6 +23,7 @@ namespace mydlpsf
 
 		String ^language;
 		String ^remoteServer;
+		Boolean showPopupNotification;
 
 		static const String ^confFileName = "service.conf";
 	};

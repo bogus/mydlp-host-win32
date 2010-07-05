@@ -26,6 +26,11 @@ namespace MydlpWinGui
             else
                 radioButton1.Checked = true;
 
+            if (Form1.serviceConf.showPopupNotification)
+                checkBox1.Checked = true;
+            else
+                checkBox1.Checked = false;
+
             Globalize();
         }
 
@@ -36,6 +41,8 @@ namespace MydlpWinGui
             label1.Text = Form1.resM.GetString("options.taboptions.001");
             label2.Text = Form1.resM.GetString("options.taboptions.002");
             groupBox1.Text = Form1.resM.GetString("options.taboptions.003");
+            label4.Text = Form1.resM.GetString("options.taboptions.004");
+            checkBox1.Text = Form1.resM.GetString("options.taboptions.005");
         }
 
         private void radioButton2_CheckedChanged(object sender, EventArgs e)
@@ -54,6 +61,19 @@ namespace MydlpWinGui
             Form1.resM = new ResourceManager("MydlpWinGui.languages.Resource1", Type.GetType("MydlpWinGui.Form1").Assembly);
             Form1.form1Instance.ReloadAll();
 
+            MyDLPRemoteServiceConf.Serialize();
+        }
+
+        private void checkBox1_CheckedChanged(object sender, EventArgs e)
+        {
+            if (checkBox1.Checked)
+            {
+                MyDLPRemoteServiceConf.GetInstance().showPopupNotification = true;
+            }
+            else
+            {
+                MyDLPRemoteServiceConf.GetInstance().showPopupNotification = false;
+            }
             MyDLPRemoteServiceConf.Serialize();
         }
     }

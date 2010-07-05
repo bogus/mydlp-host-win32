@@ -51,7 +51,7 @@ Description      = %ServiceDescription%
 ServiceBinary    = %12%\%DriverName%.sys        ;%windir%\system32\drivers\
 Dependencies     = 
 ServiceType      = 2                            ;SERVICE_FILE_SYSTEM_DRIVER
-StartType        = 2                            ;SERVICE_AUTOMATIC_START ; 0 = Boot, 1 = System, 2 = Automatic, 3 = Manual, 4 = Disabled
+StartType        = 1                            ;SERVICE_AUTOMATIC_START ; 0 = Boot, 1 = System, 2 = Automatic, 3 = Manual, 4 = Disabled
 
 ErrorControl     = 1                            ;SERVICE_ERROR_NORMAL
 LoadOrderGroup   = "FSFilter Content Screener"

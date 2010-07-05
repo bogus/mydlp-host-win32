@@ -23,39 +23,46 @@
 #define  TRUE     1
 #define  FALSE    0
 
-void psparse(char *source, char *destination)     							
+void PSParse(const char *src, const char *dst)     							
 {
 FILE *source, *destination;
-char *str;
 char junk[80];
 int ch, para=0, last=0;
+
+if(src != NULL && dst != NULL) {
+	fopen_s(&source, src,"rb");
+	fopen_s(&destination, dst, "w");
+}
+
 while ((ch=fgetc(source)) != EOF)
   {
     switch (ch)
       {
       case '%'  : if (para==0) fgets(junk, 80, source);
-      else putchar(ch);
-      case '\n' : if (last==1) { puts(""); last=0; } break;
-      case '('  : if (para++>0) putchar(ch); break;
-      case ')'  : if (para-->1) putchar(ch);
-      else putchar(' ');
-	last=1; break;
+      else fputc(ch, destination);
+      case '\n' : if (last==1) { fputs("", destination); last=0; } break;
+      case '('  : if (para++>0) fputc(ch, destination); break;
+      case ')'  : if (para-->1) fputc(ch, destination);
+					else fputc(' ', destination); last=1; break;
 
       case '\\' : if (para>0)
 	switch(ch=fgetc(source))
 	  {
 	  case '(' :
-	  case ')' :  putchar(ch); break;
-	  case 't' :  putchar('\t'); break;
-	  case 'n' :  putchar('\n'); break;
-	  case '\\':  putchar('\\'); break;
+	  case ')' :  fputc(ch, destination); break;
+	  case 't' :  fputc('\t', destination); break;
+	  case 'n' :  fputc('\n', destination); break;
+	  case '\\':  fputc('\\', destination); break;
 	  case '0' :  case '1' : case '2' : case '3' :
 	  case '4' :  case '5' : case '6' : case '7' :
-	    putchar('\\');
-	  default:  putchar(ch); break;
+	    fputc('\\', destination);		  
+	  default:  fputc(ch, destination); break;
 	  }
 	break;
-      default:	if (para>0) putchar(ch);
+      default:	if (para>0) fputc(ch, destination);
       }
   }
+
+fclose(source);
+fclose(destination);
 }

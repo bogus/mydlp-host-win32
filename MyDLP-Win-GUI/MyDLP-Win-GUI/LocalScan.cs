@@ -142,13 +142,12 @@ namespace MydlpWinGui
         {
             MyDLPSensFilePool.GetInstance().UpdatePool();
 
-            progressBar1.Style = ProgressBarStyle.Marquee;
-            progressBar1.MarqueeAnimationSpeed = 50;
-            progressBar1.Value = 0;
-
             // Add servicec routine for directory scanning
             if (textBox1.Text.Length != 0 && Directory.Exists(textBox1.Text))
             {
+                progressBar1.Style = ProgressBarStyle.Marquee;
+                progressBar1.MarqueeAnimationSpeed = 50;
+                progressBar1.Value = 0;
                 dirTraverseList = MyDLPDirectoryTraverse.TraverseDir(textBox1.Text);
                 dirTraverseList[0].Completed += new EventHandler(TraverseComplete);
                 dirTraverseList[0].DetectedChanged += new EventHandler(UpdateDetectedFileList); 
@@ -160,7 +159,9 @@ namespace MydlpWinGui
             }
             else
             {
-                MessageBox.Show("Not a valid directory or empty field", "Warning");
+                MessageBox.Show(Form1.resM.GetString("input.warn.text"),
+                    Form1.resM.GetString("input.warn.caption"), 
+                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
         }
 
@@ -222,11 +223,15 @@ namespace MydlpWinGui
 
                 MyDLPRemoteDeviceConf.Serialize();
 
-                MessageBox.Show("Changes Saved", "Success");
+                MessageBox.Show(Form1.resM.GetString("save.text"),
+                    Form1.resM.GetString("save.caption"),
+                    MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Operation Failed");
+                MessageBox.Show(Form1.resM.GetString("save.error.text"),
+                    Form1.resM.GetString("save.error.caption"),
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
 
         }
@@ -308,7 +313,9 @@ namespace MydlpWinGui
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message);
+                MessageBox.Show(ex.Message,
+                    Form1.resM.GetString("error.caption"),
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
 
         }

@@ -9,6 +9,7 @@ namespace mydlpsf
 	{
 		language = "en-US";
 		remoteServer = "10.0.0.1";
+		showPopupNotification = true;
 	}
 
 	MyDLPRemoteServiceConf ^MyDLPRemoteServiceConf::GetInstance()

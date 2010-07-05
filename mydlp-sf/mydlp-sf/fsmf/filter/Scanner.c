@@ -18,13 +18,14 @@ Environment:
     Kernel mode
 
 --*/
-
 #include <fltKernel.h>
 #include <dontuse.h>
 #include <suppress.h>
 #include "MyDLPScannerInc.h"
 #include "Scanner.h"
+#include <Ntddstor.h>
 #include <stdio.h>
+
 
 #pragma prefast(disable:__WARNING_ENCODE_MEMBER_FUNCTION_POINTER, "Not valid for kernel mode drivers")
 
@@ -418,6 +419,14 @@ Return Value:
 	PFLT_VOLUME_PROPERTIES VolumeProperties;
 	ULONG returnedLength;
 
+	PIRP NewIrp;
+	STORAGE_PROPERTY_QUERY Query;
+	PSTORAGE_DEVICE_DESCRIPTOR Descriptor;
+	KEVENT WaitEvent;
+	NTSTATUS Status;
+	IO_STATUS_BLOCK IoStatus;
+	PDEVICE_OBJECT DeviceObject;
+
     UNREFERENCED_PARAMETER( FltObjects );
     UNREFERENCED_PARAMETER( Flags );
     UNREFERENCED_PARAMETER( VolumeFilesystemType );
@@ -425,6 +434,47 @@ Return Value:
     PAGED_CODE();
 
     ASSERT( FltObjects->Filter == ScannerData.Filter );
+
+	Query.PropertyId = StorageDeviceProperty;
+	Query.QueryType = PropertyStandardQuery;
+	KeInitializeEvent(&WaitEvent, NotificationEvent, FALSE);
+	Descriptor = ExAllocatePoolWithTag(NonPagedPool,
+			sizeof(STORAGE_DEVICE_DESCRIPTOR)+512, 500);
+
+	FltGetDiskDeviceObject( FltObjects->Volume, &DeviceObject );   
+
+	NewIrp = IoBuildDeviceIoControlRequest(IOCTL_STORAGE_QUERY_PROPERTY,
+		DeviceObject,
+		(PVOID)&Query, sizeof(STORAGE_PROPERTY_QUERY),
+		(PVOID)Descriptor, sizeof(STORAGE_DEVICE_DESCRIPTOR)+512,
+		FALSE, &WaitEvent, &IoStatus);
+
+	if (!NewIrp)
+	{
+		DbgPrint("Failed to create new IRP, IOCTL_STORAGE_QUERY_PROPERTY");
+		ExFreePoolWithTag(Descriptor, 500);
+		return STATUS_FLT_DO_NOT_ATTACH;
+	}
+
+	// send this irp to the storage device
+	Status = IoCallDriver(DeviceObject, NewIrp);
+
+	
+	if (Status == STATUS_PENDING)
+	{
+		Status = KeWaitForSingleObject(&WaitEvent, Executive, KernelMode, FALSE, NULL);
+		Status = IoStatus.Status;
+	}
+
+	if (!NT_SUCCESS(Status))
+	{
+		DbgPrint("Query IOCTL_STORAGE_QUERY_PROPERTY failed, status =0x%x", Status);
+		ExFreePoolWithTag(Descriptor, 500);
+		return STATUS_FLT_DO_NOT_ATTACH;
+	}
+
+	DbgPrint("%u\n", Descriptor->Size);
+
 
 	//
 	// Attach only disk volumes

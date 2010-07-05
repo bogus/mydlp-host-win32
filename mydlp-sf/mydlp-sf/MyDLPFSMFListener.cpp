@@ -206,8 +206,9 @@ BOOL ScanFile (__in_bcount(BufferSize) PUCHAR Buffer, __in ULONG BufferSize,
 	FILE *fp;
 	TEMPFILE_INFO *tempFileInfo;
 	std::string tempFileName;
-
+	mydlpsf::MyDLPSensitiveFileRecognition ^recObj = nullptr;
 	tempFileInfo = ScanMMap(FileName, FileNameLength, false);
+
 	try
 	{
 		if(Phase == 1) {
@@ -239,7 +240,7 @@ BOOL ScanFile (__in_bcount(BufferSize) PUCHAR Buffer, __in ULONG BufferSize,
 				(Buffer[BufferSize - 1] == 10 && Buffer[BufferSize - 2] == 70 && Buffer[BufferSize - 3] == 79) ||
 				(cl_istext(Buffer, BufferSize) != 5)) {
 				
-				mydlpsf::MyDLPSensitiveFileRecognition ^recObj =  mydlpsf::MyDLPSensFilePool::GetInstance()->AcquireObject();
+				recObj =  mydlpsf::MyDLPSensFilePool::GetInstance()->AcquireObject();
 				int ret = recObj->SearchSensitiveData(gcnew System::String(tempFileInfo->filename));
 				
 				if(ret == 1) {
@@ -267,8 +268,6 @@ BOOL ScanFile (__in_bcount(BufferSize) PUCHAR Buffer, __in ULONG BufferSize,
 					
 					return retVal;
 				}	
-
-				mydlpsf::MyDLPSensFilePool::GetInstance()->ReleaseObject(recObj);
 			} 
 		} else if(Phase == 2) {
 			
@@ -282,6 +281,11 @@ BOOL ScanFile (__in_bcount(BufferSize) PUCHAR Buffer, __in ULONG BufferSize,
 	catch(Exception ^ex)
 	{
 		mydlpsf::MyDLPEventLogger::GetInstance()->LogError(ex->StackTrace);
+	}
+	finally
+	{
+		if(recObj != nullptr)
+			mydlpsf::MyDLPSensFilePool::GetInstance()->ReleaseObject(recObj);
 	}
 	return FALSE;
 }

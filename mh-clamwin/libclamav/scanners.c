@@ -1241,6 +1241,20 @@ static int cli_scanole2_structured(cli_ctx *ctx)
 	return ret;
 }
 
+static int cli_scanrtf_structured(cli_ctx *ctx)
+{
+	int ret = CL_CLEAN;
+
+    if(ctx->engine->maxreclevel && ctx->recursion >= ctx->engine->maxreclevel)
+        return CL_EMAXREC;
+
+	cli_dbgmsg("in cli_scanrtf_structured()\n");
+	
+	ret = CL_RESCAN_RTF;
+
+	return ret;
+}
+
 static int cli_scanpdf_structured(cli_ctx *ctx)
 {
 	int ret = CL_CLEAN;
@@ -1924,7 +1938,6 @@ static int cli_scanraw(cli_ctx *ctx, cli_file_t type, uint8_t typercg, cli_file_
 			break;
 
 			case CL_TYPE_AUTOCAD:
-				printf("AUTOCAD File FOUND in RAW");
 				nret = CL_CLEAN;
 			break;
 
@@ -2225,6 +2238,8 @@ int cli_magic_scandesc(int desc, cli_ctx *ctx)
 	    ctx->container_size = sb.st_size;
 	    if(SCAN_ARCHIVE && (DCONF_DOC & DOC_CONF_RTF))
 		ret = cli_scanrtf(desc, ctx);
+		if((ret == CL_CLEAN) && SCAN_STRUCTURED && (DCONF_OTHER & OTHER_CONF_DLP))
+			ret = cli_scanrtf_structured(ctx);
 	    break;
 
 	case CL_TYPE_MAIL:

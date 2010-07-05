@@ -74,7 +74,8 @@ typedef enum {
 	/* rescan request */
 	CL_RESCAN_OLE2,
 	CL_RESCAN_PDF,
-	CL_RESCAN_PS
+	CL_RESCAN_PS,
+	CL_RESCAN_RTF,
 } cl_error_t;
 
 /* db options */

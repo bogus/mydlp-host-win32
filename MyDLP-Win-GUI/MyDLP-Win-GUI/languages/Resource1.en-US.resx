@@ -195,6 +195,12 @@
   <data name="def.tabpredefined.009" xml:space="preserve">
     <value>Default Expression Values</value>
   </data>
+  <data name="def.tabpredefined.010" xml:space="preserve">
+    <value>Other</value>
+  </data>
+  <data name="def.tabpredefined.011" xml:space="preserve">
+    <value>Filter encrypted archives</value>
+  </data>
   <data name="def.tabpredefined.definition" xml:space="preserve">
     <value>According To Credit Card Numbers, Social Security Numbers (only USA), TR ID Numbers (only Turkey) and IBAN Values Create Rules</value>
   </data>
@@ -225,6 +231,15 @@
   <data name="def.tabregex.definition" xml:space="preserve">
     <value>Enter Rules For PCRE Compatible Regular Expressions And Specified Sentences</value>
   </data>
+  <data name="error.caption" xml:space="preserve">
+    <value>Error</value>
+  </data>
+  <data name="input.warn.caption" xml:space="preserve">
+    <value>Warning</value>
+  </data>
+  <data name="input.warn.text" xml:space="preserve">
+    <value>Please check input areas</value>
+  </data>
   <data name="menu.aboutus" xml:space="preserve">
     <value>About Us</value>
   </data>
@@ -242,6 +257,9 @@
   </data>
   <data name="menu.screencapture" xml:space="preserve">
     <value>Prevent Screen Capture</value>
+  </data>
+  <data name="notification.caption" xml:space="preserve">
+    <value>MyDLP Mesagge</value>
   </data>
   <data name="online.tabonlinescanhist" xml:space="preserve">
     <value>Loss Prevention History</value>
@@ -282,8 +300,32 @@
   <data name="options.taboptions.003" xml:space="preserve">
     <value>Options</value>
   </data>
+  <data name="options.taboptions.004" xml:space="preserve">
+    <value>Show notification popup</value>
+  </data>
+  <data name="options.taboptions.005" xml:space="preserve">
+    <value>Enabled</value>
+  </data>
   <data name="options.taboptions.definition" xml:space="preserve">
     <value>Adjustments for the application and service settings</value>
+  </data>
+  <data name="rightclick.lastevents" xml:space="preserve">
+    <value>Last Events</value>
+  </data>
+  <data name="rightclick.show" xml:space="preserve">
+    <value>Show MyDLP Management Console</value>
+  </data>
+  <data name="save.caption" xml:space="preserve">
+    <value>Information</value>
+  </data>
+  <data name="save.error.caption" xml:space="preserve">
+    <value>Error</value>
+  </data>
+  <data name="save.error.text" xml:space="preserve">
+    <value>Settings save operation failed</value>
+  </data>
+  <data name="save.text" xml:space="preserve">
+    <value>Application settings updated successfully.</value>
   </data>
   <data name="scan.tabmanualscan" xml:space="preserve">
     <value>Scan</value>
