@@ -421,11 +421,12 @@ Return Value:
 
 	PIRP NewIrp;
 	STORAGE_PROPERTY_QUERY Query;
-	PSTORAGE_DEVICE_DESCRIPTOR Descriptor;
+	PSTORAGE_DEVICE_DESCRIPTOR Descriptor = NULL;
 	KEVENT WaitEvent;
 	NTSTATUS Status;
 	IO_STATUS_BLOCK IoStatus;
 	PDEVICE_OBJECT DeviceObject;
+	UNICODE_STRING volumeDosName = {0}; 
 
     UNREFERENCED_PARAMETER( FltObjects );
     UNREFERENCED_PARAMETER( Flags );
@@ -441,78 +442,56 @@ Return Value:
 	Descriptor = ExAllocatePoolWithTag(NonPagedPool,
 			sizeof(STORAGE_DEVICE_DESCRIPTOR)+512, 500);
 
-	FltGetDiskDeviceObject( FltObjects->Volume, &DeviceObject );   
+	Status = FltGetDiskDeviceObject( FltObjects->Volume, &DeviceObject );   
 
-	NewIrp = IoBuildDeviceIoControlRequest(IOCTL_STORAGE_QUERY_PROPERTY,
-		DeviceObject,
-		(PVOID)&Query, sizeof(STORAGE_PROPERTY_QUERY),
-		(PVOID)Descriptor, sizeof(STORAGE_DEVICE_DESCRIPTOR)+512,
-		FALSE, &WaitEvent, &IoStatus);
-
-	if (!NewIrp)
+	if(NT_SUCCESS(Status) && Descriptor != NULL)
 	{
-		DbgPrint("Failed to create new IRP, IOCTL_STORAGE_QUERY_PROPERTY");
+		NewIrp = IoBuildDeviceIoControlRequest(IOCTL_STORAGE_QUERY_PROPERTY,
+			DeviceObject,
+			(PVOID)&Query, sizeof(STORAGE_PROPERTY_QUERY),
+			(PVOID)Descriptor, sizeof(STORAGE_DEVICE_DESCRIPTOR)+512,
+			FALSE, &WaitEvent, &IoStatus);
+
+		if (!NewIrp)
+		{
+			DbgPrint("Failed to create new IRP, IOCTL_STORAGE_QUERY_PROPERTY");
+			ExFreePoolWithTag(Descriptor, 500);
+			return STATUS_FLT_DO_NOT_ATTACH;
+		}
+
+		// send this irp to the storage device
+		Status = IoCallDriver(DeviceObject, NewIrp);
+
+		
+		if (Status == STATUS_PENDING)
+		{
+			Status = KeWaitForSingleObject(&WaitEvent, Executive, KernelMode, FALSE, NULL);
+			Status = IoStatus.Status;
+		}
+
+		if (!NT_SUCCESS(Status))
+		{
+			DbgPrint("Query IOCTL_STORAGE_QUERY_PROPERTY failed, status =0x%x", Status);
+			ExFreePoolWithTag(Descriptor, 500);
+			return STATUS_FLT_DO_NOT_ATTACH;
+		}
+
+		if(Descriptor->BusType != BusTypeUsb && Descriptor->BusType != BusType1394)
+		{
+			DbgPrint("Device is not USB or 1394");
+			ExFreePoolWithTag(Descriptor, 500);
+			return STATUS_FLT_DO_NOT_ATTACH;
+		}
+
 		ExFreePoolWithTag(Descriptor, 500);
-		return STATUS_FLT_DO_NOT_ATTACH;
 	}
-
-	// send this irp to the storage device
-	Status = IoCallDriver(DeviceObject, NewIrp);
-
-	
-	if (Status == STATUS_PENDING)
+	else
 	{
-		Status = KeWaitForSingleObject(&WaitEvent, Executive, KernelMode, FALSE, NULL);
-		Status = IoStatus.Status;
-	}
-
-	if (!NT_SUCCESS(Status))
-	{
-		DbgPrint("Query IOCTL_STORAGE_QUERY_PROPERTY failed, status =0x%x", Status);
-		ExFreePoolWithTag(Descriptor, 500);
-		return STATUS_FLT_DO_NOT_ATTACH;
-	}
-
-	DbgPrint("%u\n", Descriptor->Size);
-
-
-	//
-	// Attach only disk volumes
-	//
-	if (VolumeDeviceType != FILE_DEVICE_DISK_FILE_SYSTEM) {
-		return STATUS_FLT_DO_NOT_ATTACH;
-	}
-
-	// Allocate memory for FLT_VOLUME_PROPERTIES
-	VolumeProperties = (PFLT_VOLUME_PROPERTIES)ExAllocatePoolWithTag(NonPagedPool, 
-					sizeof(FLT_VOLUME_PROPERTIES) + 512, 'cfm');
-
-	if (NULL == VolumeProperties) {
-		DbgPrint("Not enough memory for FLT_VOLUME_PROPERTIES");
-		return STATUS_FLT_DO_NOT_ATTACH;
-	}
-
-	// Get volume properties
-	returnedLength = 0;
-	status = FltGetVolumeProperties(FltObjects->Volume, VolumeProperties, 
-		sizeof(FLT_VOLUME_PROPERTIES) + 512, &returnedLength);
-	if ( !NT_SUCCESS(status) ) {
-		DbgPrint("Error getting volume properties");
-		return STATUS_FLT_DO_NOT_ATTACH;
-	}
-
-	if (FILE_DEVICE_DISK_FILE_SYSTEM != VolumeProperties->DeviceType) {
-		DbgPrint("Volme device type is not FILE_DEVICE_DISK_FILE_SYSTEM");
-		return STATUS_FLT_DO_NOT_ATTACH;
-	}
-
-	if (!FlagOn(FILE_REMOVABLE_MEDIA, VolumeProperties->DeviceCharacteristics)) {
-		DbgPrint("Volme device type is not FILE_REMOVABLE_MEDIA");
 		return STATUS_FLT_DO_NOT_ATTACH;
 	}
 
 	DbgPrint("Device attached");
-		
+	
     return STATUS_SUCCESS;
 }
 
