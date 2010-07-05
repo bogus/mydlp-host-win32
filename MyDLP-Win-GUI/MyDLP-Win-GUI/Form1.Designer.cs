@@ -59,6 +59,7 @@ namespace MydlpWinGui
             this.imageList1 = new System.Windows.Forms.ImageList(this.components);
             this.panel2 = new System.Windows.Forms.Panel();
             this.panelTitle = new System.Windows.Forms.Label();
+            this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.eventLogSensFile)).BeginInit();
             this.eventsMenuStrip.SuspendLayout();
             this.panel1.SuspendLayout();
@@ -82,15 +83,16 @@ namespace MydlpWinGui
             // eventsMenuStrip
             // 
             this.eventsMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.openConfigurationMenuToolStripMenuItem});
+            this.openConfigurationMenuToolStripMenuItem,
+            this.exitToolStripMenuItem});
             this.eventsMenuStrip.Name = "contextMenuStrip1";
             this.eventsMenuStrip.ShowImageMargin = false;
-            this.eventsMenuStrip.Size = new System.Drawing.Size(184, 48);
+            this.eventsMenuStrip.Size = new System.Drawing.Size(184, 70);
             // 
             // openConfigurationMenuToolStripMenuItem
             // 
             this.openConfigurationMenuToolStripMenuItem.Name = "openConfigurationMenuToolStripMenuItem";
-            this.openConfigurationMenuToolStripMenuItem.Size = new System.Drawing.Size(208, 22);
+            this.openConfigurationMenuToolStripMenuItem.Size = new System.Drawing.Size(183, 22);
             this.openConfigurationMenuToolStripMenuItem.Text = "Open Configuration Menu";
             this.openConfigurationMenuToolStripMenuItem.Click += new System.EventHandler(this.openConfigurationMenuToolStripMenuItem_Click);
             // 
@@ -168,6 +170,13 @@ namespace MydlpWinGui
             this.panelTitle.TabIndex = 3;
             this.panelTitle.Text = "label1";
             // 
+            // exitToolStripMenuItem
+            // 
+            this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
+            this.exitToolStripMenuItem.Size = new System.Drawing.Size(183, 22);
+            this.exitToolStripMenuItem.Text = "Exit";
+            this.exitToolStripMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -184,6 +193,7 @@ namespace MydlpWinGui
             this.Text = "Form1";
             this.Load += new System.EventHandler(this.Form1_Load);
             this.Shown += new System.EventHandler(this.Form1_Shown);
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Form1_FormClosing);
             ((System.ComponentModel.ISupportInitialize)(this.eventLogSensFile)).EndInit();
             this.eventsMenuStrip.ResumeLayout(false);
             this.panel1.ResumeLayout(false);
@@ -205,6 +215,7 @@ namespace MydlpWinGui
         private ListView listView1;
         private ImageList imageList1;
         private ColumnHeader columnHeader1;
+        private ToolStripMenuItem exitToolStripMenuItem;
     }
 }
 

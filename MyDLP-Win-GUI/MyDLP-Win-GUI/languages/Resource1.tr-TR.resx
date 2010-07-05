@@ -234,6 +234,12 @@
   <data name="error.caption" xml:space="preserve">
     <value>Hata</value>
   </data>
+  <data name="exit.caption" xml:space="preserve">
+    <value>Onay</value>
+  </data>
+  <data name="exit.text" xml:space="preserve">
+    <value>Çıkmak istediğinizden emin misiniz?</value>
+  </data>
   <data name="input.warn.caption" xml:space="preserve">
     <value>Uyarı</value>
   </data>
@@ -308,6 +314,9 @@
   </data>
   <data name="options.taboptions.definition" xml:space="preserve">
     <value>Uygulama ve servis ayarları ile ilgili ayarlamaları yapabilirsiniz.</value>
+  </data>
+  <data name="rightclick.exit" xml:space="preserve">
+    <value>Çıkış</value>
   </data>
   <data name="rightclick.lastevents" xml:space="preserve">
     <value>Son Olaylar</value>

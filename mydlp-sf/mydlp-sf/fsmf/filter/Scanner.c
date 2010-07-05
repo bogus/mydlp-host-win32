@@ -293,9 +293,9 @@ Return Value
 
     ScannerData.UserProcess = PsGetCurrentProcess();
     ScannerData.ClientPort = ClientPort;
-
+#ifdef DBG_PRINT
     DbgPrint( "!!! mydlp-scanner.sys --- connected, port=0x%p\n", ClientPort );
-
+#endif
     return STATUS_SUCCESS;
 }
 
@@ -324,8 +324,9 @@ Return value
     UNREFERENCED_PARAMETER( ConnectionCookie );
 
     PAGED_CODE();
-
+#ifdef DBG_PRINT
     DbgPrint( "!!! mydlp-scanner.sys --- disconnected, port=0x%p\n", ScannerData.ClientPort );
+#endif
 
     //
     //  Close our handle to the connection: note, since we limited max connections to 1,
@@ -454,7 +455,9 @@ Return Value:
 
 		if (!NewIrp)
 		{
+#ifdef DBG_PRINT
 			DbgPrint("Failed to create new IRP, IOCTL_STORAGE_QUERY_PROPERTY");
+#endif
 			ExFreePoolWithTag(Descriptor, 500);
 			return STATUS_FLT_DO_NOT_ATTACH;
 		}
@@ -471,14 +474,18 @@ Return Value:
 
 		if (!NT_SUCCESS(Status))
 		{
+#ifdef DBG_PRINT
 			DbgPrint("Query IOCTL_STORAGE_QUERY_PROPERTY failed, status =0x%x", Status);
+#endif
 			ExFreePoolWithTag(Descriptor, 500);
 			return STATUS_FLT_DO_NOT_ATTACH;
 		}
 
 		if(Descriptor->BusType != BusTypeUsb && Descriptor->BusType != BusType1394)
 		{
+#ifdef DBG_PRINT
 			DbgPrint("Device is not USB or 1394");
+#endif
 			ExFreePoolWithTag(Descriptor, 500);
 			return STATUS_FLT_DO_NOT_ATTACH;
 		}
@@ -490,8 +497,10 @@ Return Value:
 		return STATUS_FLT_DO_NOT_ATTACH;
 	}
 
+#ifdef DBG_PRINT
 	DbgPrint("Device attached");
-	
+#endif
+
     return STATUS_SUCCESS;
 }
 
@@ -575,9 +584,9 @@ Return Value:
     //
 
     if (IoThreadToProcess( Data->Thread ) == ScannerData.UserProcess) {
-
+#ifdef DBG_PRINT
         DbgPrint( "!!! mydlp-scanner.sys -- allowing create for trusted process \n" );
-
+#endif
         return FLT_PREOP_SUCCESS_NO_CALLBACK;
     }
 
@@ -690,11 +699,11 @@ Return Value:
         //
         //  Ask the filter manager to undo the create.
         //
-
+#ifdef DBG_PRINT
         DbgPrint( "!!! mydlp-scanner.sys -- foul language detected in postcreate !!!\n" );
 
         DbgPrint( "!!! mydlp-scanner.sys -- undoing create \n" );
-
+#endif
         FltCancelFileOpen( FltObjects->Instance, FltObjects->FileObject );
 
         Data->IoStatus.Status = STATUS_ACCESS_DENIED;
@@ -804,8 +813,9 @@ Return Value:
                                                &safe );
 
             if (!safe) {
-
+#ifdef DBG_PRINT
                 DbgPrint( "!!! mydlp-scanner.sys -- foul language detected in precleanup !!!\n" );
+#endif
             }
         }
 
@@ -1026,8 +1036,9 @@ Return Value:
                //
                //  Couldn't send message. This sample will let the i/o through.
                //
-
+#ifdef DBG_PRINT
                DbgPrint( "!!! mydlp-scanner.sys --- couldn't send message to user-mode to scan file, status 0x%X\n", status );
+#endif
            }
         
 
@@ -1040,13 +1051,13 @@ Return Value:
 				//  To handle memory mapped writes - we should be scanning at close time (which is when we can really establish that the file object
 				//  is not going to be used for any more writes)
 				//
-
+#ifdef DBG_PRINT
 				DbgPrint( "!!! mydlp-scanner.sys -- foul language detected in write !!!\n" );
-
+#endif
 				if (!FlagOn( Data->Iopb->IrpFlags, IRP_PAGING_IO )) {
-
+#ifdef DBG_PRINT
 					DbgPrint( "!!! mydlp-scanner.sys -- blocking the write !!!\n" );
-
+#endif
 					Data->IoStatus.Status = STATUS_ACCESS_DENIED;
 					Data->IoStatus.Information = 0;
 					isFound = TRUE;
@@ -1194,8 +1205,9 @@ Return Value:
                 //
                 //  Couldn't send message
                 //
-
+#ifdef DBG_PRINT
                 DbgPrint( "!!! mydlp-scanner.sys --- couldn't send message to user-mode to scan file, status 0x%X\n", status );
+#endif
             }
         }
 

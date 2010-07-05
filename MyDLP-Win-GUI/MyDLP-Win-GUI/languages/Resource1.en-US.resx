@@ -234,6 +234,12 @@
   <data name="error.caption" xml:space="preserve">
     <value>Error</value>
   </data>
+  <data name="exit.caption" xml:space="preserve">
+    <value>Confirm</value>
+  </data>
+  <data name="exit.text" xml:space="preserve">
+    <value>Are you sure you want to exit?</value>
+  </data>
   <data name="input.warn.caption" xml:space="preserve">
     <value>Warning</value>
   </data>
@@ -308,6 +314,9 @@
   </data>
   <data name="options.taboptions.definition" xml:space="preserve">
     <value>Adjustments for the application and service settings</value>
+  </data>
+  <data name="rightclick.exit" xml:space="preserve">
+    <value>Exit</value>
   </data>
   <data name="rightclick.lastevents" xml:space="preserve">
     <value>Last Events</value>

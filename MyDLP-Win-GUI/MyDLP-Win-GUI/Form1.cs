@@ -8,9 +8,13 @@ using System.Windows.Forms;
 using System.Resources;
 using System.Threading;
 using System.Globalization;
+using System.Diagnostics;
+using System.Runtime.InteropServices;
+using System.Security.Principal;
 using CustomUIControls;
 using mydlpsf;
 using Microsoft.Win32;
+using Microsoft.Win32.SafeHandles;
 
 namespace MydlpWinGui
 {
@@ -50,6 +54,16 @@ namespace MydlpWinGui
             aboutUs = new About();
 
             InitializeComponent();
+
+            if (!IsAdministrator())
+            {
+                defineSensitiveData.Enabled = false;
+                localScan.Enabled = false;
+                onlineScan.Enabled = false;
+                screenCapture.Enabled = false;
+                options.Enabled = false;
+                exitToolStripMenuItem.Enabled = false;
+            }
 
             taskbarNotifier1 = new TaskbarNotifier();
             taskbarNotifier1.SetBackgroundBitmap(new Bitmap(GetType(), "images.skin.bmp"), Color.FromArgb(255, 0, 255));
@@ -121,6 +135,7 @@ namespace MydlpWinGui
 
             panelTitle.Text = resM.GetString("menu.defsensdata");
             openConfigurationMenuToolStripMenuItem.Text = resM.GetString("rightclick.show");
+            exitToolStripMenuItem.Text = resM.GetString("rightclick.exit");
 
             panel2.Controls.Add(defineSensitiveData);
             currentPanelControl = defineSensitiveData;
@@ -189,6 +204,7 @@ namespace MydlpWinGui
             panelTitle.Text = resM.GetString("menu.options");
 
             openConfigurationMenuToolStripMenuItem.Text = resM.GetString("rightclick.show");
+            exitToolStripMenuItem.Text = resM.GetString("rightclick.exit");
 
             defineSensitiveData.Globalize();
             localScan.Globalize();
@@ -200,17 +216,35 @@ namespace MydlpWinGui
 
         private void openConfigurationMenuToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (WindowState == FormWindowState.Minimized)
+            Show();
+            WindowState = FormWindowState.Normal;    
+        }
+
+        private void Form1_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            if (e.CloseReason == CloseReason.UserClosing 
+                || e.CloseReason == CloseReason.TaskManagerClosing)
             {
-                Show();
-                WindowState = FormWindowState.Normal;
-            }
-            else
-            {
-                
+                this.Hide();
+                e.Cancel = true;
             }
         }
 
+        internal bool IsAdministrator()
+        {
+            WindowsIdentity identity = WindowsIdentity.GetCurrent();
+            WindowsPrincipal principal = new WindowsPrincipal(identity);
+            return principal.IsInRole(WindowsBuiltInRole.Administrator);
+
+        }
+
+        private void exitToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if(DialogResult.Yes == MessageBox.Show(Form1.resM.GetString("exit.text"),
+                    Form1.resM.GetString("exit.caption"),
+                    MessageBoxButtons.YesNo, MessageBoxIcon.Question))
+                Application.Exit();
+        }
 
 
     }
