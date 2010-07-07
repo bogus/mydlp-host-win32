@@ -21,11 +21,8 @@
 #include "stdafx.h"
 #include <windows.h>
 #include "MyDLPSensitiveFileRecognition.h"
-#include <stdio.h>
-#include <vcclr.h>
 #include "MyDLPEventLogger.h"
 #include "MyDLPPSParse.h"
-#using <mscorlib.dll>
 
 using namespace System;
 using namespace System::Text;

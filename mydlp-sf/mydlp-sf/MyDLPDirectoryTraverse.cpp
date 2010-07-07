@@ -18,7 +18,7 @@
  *  MA 02110-1301, USA.
  */
 
-#include "StdAfx.h"
+#include "StdAfx.h" 
 #include <windows.h>
 #include "MyDLPDirectoryTraverse.h"
 #include "MyDLPEventLogger.h"
@@ -177,7 +177,7 @@ namespace mydlpsf {
 					{
 						for each(String ^dirName in MyDLPRemoteDeviceConf::GetInstance()->excludedDirs)
 						{
-							if(dirName == key) {
+							if(dirName->ToLower() == key->ToLower()) {
 								isExcluded = true;
 								break;
 							}

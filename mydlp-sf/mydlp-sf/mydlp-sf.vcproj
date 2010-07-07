@@ -125,11 +125,12 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				PreprocessorDefinitions="WIN32;NDEBUG"
+				AdditionalIncludeDirectories="C:\WinDDK\7600.16385.1\inc\ddk;&quot;..\..\mh-clamwin\libclamav&quot;"
+				PreprocessorDefinitions="WIN32"
 				RuntimeLibrary="2"
 				UsePrecompiledHeader="2"
 				WarningLevel="3"
-				DebugInformationFormat="3"
+				DebugInformationFormat="0"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -142,10 +143,10 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="$(NoInherit)"
+				AdditionalDependencies="libclamav.lib fltlib.lib user32.lib $(NOINHERIT)"
 				LinkIncremental="1"
-				GenerateDebugInformation="true"
-				TargetMachine="1"
+				AdditionalLibraryDirectories="C:\WinDDK\7600.16385.1\lib\wxp\i386;&quot;..\..\mh-clamwin\contrib\msvc\Release\Win32&quot;"
+				GenerateDebugInformation="false"
 			/>
 			<Tool
 				Name="VCALinkTool"
@@ -190,11 +191,6 @@
 			RelativePath="System.Management.dll"
 			AssemblyName="System.Management, Version=2.0.0.0, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL"
 			MinFrameworkVersion="131072"
-		/>
-		<AssemblyReference
-			RelativePath="System.Management.Instrumentation.dll"
-			AssemblyName="System.Management.Instrumentation, Version=3.5.0.0, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL"
-			MinFrameworkVersion="196613"
 		/>
 		<AssemblyReference
 			RelativePath="..\..\..\..\Documents and Settings\Administrator\Desktop\log4net-1.2.10\bin\net\2.0\debug\log4net.dll"

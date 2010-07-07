@@ -95,6 +95,7 @@
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
+				CommandLine="C:\WinDDK\7600.16385.1\bin\setenv.bat C:\WinDDK\7600.16385.1\ chk x86 WXP no_oacr &amp;&amp; cd &quot;C:\workspace\mydlp-host-win32\mydlp-sf\mydlp-sf\fsmf&quot; &amp;&amp; build -ceZ&#x0D;&#x0A;C:\WinDDK\7600.16385.1\bin\setenv.bat C:\WinDDK\7600.16385.1\ chk x64 WLH no_oacr &amp;&amp; cd &quot;C:\workspace\mydlp-host-win32\mydlp-sf\mydlp-sf\fsmf&quot; &amp;&amp; build -ceZ&#x0D;&#x0A;C:\WinDDK\7600.16385.1\bin\setenv.bat C:\WinDDK\7600.16385.1\ chk ia64 WLH no_oacr &amp;&amp; cd &quot;C:\workspace\mydlp-host-win32\mydlp-sf\mydlp-sf\fsmf&quot; &amp;&amp; build -ceZ"
 			/>
 			<Tool
 				Name="VCXMLDataGeneratorTool"
@@ -171,7 +172,16 @@
 					>
 					<Tool
 						Name="VCCustomBuildTool"
-						CommandLine="C:\WinDDK\7600.16385.1\bin\setenv.bat C:\WinDDK\7600.16385.1\ chk x86 WXP no_oacr &amp;&amp; cd &quot;C:\workspace\mydlp-host-win32\mydlp-sf\mydlp-sf\fsmf&quot; &amp;&amp; build -ceZ"
+						CommandLine="C:\WinDDK\7600.16385.1\bin\setenv.bat C:\WinDDK\7600.16385.1\ chk x86 WXP no_oacr &amp;&amp; cd &quot;C:\workspace\mydlp-host-win32\mydlp-sf\mydlp-sf\fsmf&quot; &amp;&amp; build -ceZ&#x0D;&#x0A;"
+						Outputs="mydlpscanner.sys"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+						CommandLine="..\mydlp-sf\fsmf\driver.bat"
 						Outputs="mydlpscanner.sys"
 					/>
 				</FileConfiguration>

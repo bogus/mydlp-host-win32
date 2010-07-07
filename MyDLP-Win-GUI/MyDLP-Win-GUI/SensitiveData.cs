@@ -216,11 +216,14 @@ namespace MydlpWinGui
             foreach (String str in md5List)
             {
                 String[] md5InnerArr = str.Split(new char[] { ':' });
-                ListViewItem item = new ListViewItem();
-                item.Text = md5InnerArr[2];
-                item.SubItems.Add(md5InnerArr[1]);
-                item.SubItems.Add(md5InnerArr[0]);
-                listView1.Items.Add(item);
+                if (md5InnerArr.Length == 3)
+                {
+                    ListViewItem item = new ListViewItem();
+                    item.Text = md5InnerArr[2];
+                    item.SubItems.Add(md5InnerArr[1]);
+                    item.SubItems.Add(md5InnerArr[0]);
+                    listView1.Items.Add(item);
+                }
             }
         }
 

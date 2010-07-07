@@ -127,7 +127,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="../..;../../include;../../gnulib;../../../..;../../../../libclamav;../../../../libclamav/regex;../../../../libclamav/nsis;../../../../libclamav/lzma;../../../../win32/3rdparty/bzip2;../../../../win32/3rdparty/pthreads;../../../../win32/3rdparty/zlib"
+				AdditionalIncludeDirectories="../..;../../pcre;../../include;../../gnulib;../../../..;../../../../libclamav;../../../../libclamav/regex;../../../../libclamav/nsis;../../../../libclamav/lzma;../../../../win32/3rdparty/bzip2;../../../../win32/3rdparty/pthreads;../../../../win32/3rdparty/zlib"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;HAVE_CONFIG_H;PTW32_STATIC_LIB"
 				ExceptionHandling="0"
 				SmallerTypeCheck="false"
@@ -150,9 +150,10 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="ws2_32.lib"
+				AdditionalDependencies="ws2_32.lib pcre.lib"
 				ShowProgress="0"
 				LinkIncremental="1"
+				AdditionalLibraryDirectories="../../pcre"
 				IgnoreDefaultLibraryNames=""
 				ModuleDefinitionFile="..\..\$(ProjectName).def"
 				GenerateDebugInformation="true"
