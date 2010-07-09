@@ -23,12 +23,9 @@
 #include "MyDLPMessages.h"
 #include "MyDLPRemoteConf.h"
 
+using namespace System::IO;
 using namespace System::Threading;
-
-typedef std::map<PWCHAR, TEMPFILE_INFO *> MWchTmpMap;
-typedef std::pair<PWCHAR, TEMPFILE_INFO *> MWchTmpPair;
-
-MWchTmpMap mMap;
+using namespace System::Runtime::CompilerServices;
 
 namespace mydlpsf
 {
@@ -102,8 +99,17 @@ namespace mydlpsf
 
 	void MyDLPFSMFListener::StartCommunicationPort()
 	{
-		MyDLPFSMFListener ^listener = gcnew MyDLPFSMFListener();
-		listener->Init();
+		try
+		{
+			
+			listener = gcnew MyDLPFSMFListener();
+			listener->Init();
+		
+		} 
+		catch(Exception ^ex)
+		{
+			mydlpsf::MyDLPEventLogger::GetInstance()->LogError( "StartCommunicationPort " + ex->StackTrace );
+		}
 	}
 
 	void MyDLPFSMFListener::RunFilter()
@@ -120,13 +126,15 @@ namespace mydlpsf
 	{
 		if(isRunning)
 		{
-			for(int i = 0; i < SCANNER_MAX_THREAD_COUNT; i++ )
-				CloseHandle(threads[i]);
-		
+			isRunning = false;
+
 			CloseHandle( port );
 			CloseHandle( completion );
 
-			isRunning = false;
+			for(int i = 0; i < SCANNER_MAX_THREAD_COUNT; i++ )
+				CloseHandle(threads[i]);
+
+			delete listener;
 		}
 	}
 	
@@ -142,59 +150,67 @@ DWORD ScannerWorker(__in PSCANNER_THREAD_CONTEXT Context)
 	DWORD outSize;
 	HRESULT hr;
 	ULONG_PTR key;
-
+	
+	try
+	{
 #pragma warning(push)
 #pragma warning(disable:4127) // conditional expression is constant
-	while (TRUE) {
+		while (TRUE) {
 #pragma warning(pop)
-		result = GetQueuedCompletionStatus( Context->Completion, &outSize, &key, &pOvlp, INFINITE );
-		message = CONTAINING_RECORD( pOvlp, SCANNER_MESSAGE, Ovlp );
+			result = GetQueuedCompletionStatus( Context->Completion, &outSize, &key, &pOvlp, INFINITE );
+			message = CONTAINING_RECORD( pOvlp, SCANNER_MESSAGE, Ovlp );
 
-		if (!result) {
-			hr = HRESULT_FROM_WIN32( GetLastError() );
-			break;
+			if (!result) {
+				hr = HRESULT_FROM_WIN32( GetLastError() );
+				break;
+			}
+			notification = &message->Notification;
+
+			result = ScanFile( notification->Contents, notification->BytesToScan, 
+				notification->FileName, notification->FileNameLength, notification->Phase);
+
+			replyMessage.ReplyHeader.Status = 0;
+			replyMessage.ReplyHeader.MessageId = message->MessageHeader.MessageId;
+			replyMessage.Reply.SafeToOpen = !result;
+
+			//if(replyMessage.Reply.SafeToOpen == 0)
+			//	printf( "Replying message, SafeToOpen: %d\n", replyMessage.Reply.SafeToOpen );
+			
+			hr = FilterReplyMessage( Context->Port,
+									 (PFILTER_REPLY_HEADER) &replyMessage,
+									 sizeof( SCANNER_REPLY_MESSAGE ) );
+
+			if (SUCCEEDED( hr )) {
+				//printf( "Replied message\n" );
+			} else {
+				mydlpsf::MyDLPEventLogger::GetInstance()->LogError( "Scanner: Error replying message. Error = " + hr.ToString() );
+				break;
+			}
+
+			memset( &message->Ovlp, 0, sizeof( OVERLAPPED ) );
+
+			hr = FilterGetMessage( Context->Port, &message->MessageHeader, 
+									FIELD_OFFSET( SCANNER_MESSAGE, Ovlp ), &message->Ovlp );
+
+			if (hr != HRESULT_FROM_WIN32( ERROR_IO_PENDING )) {
+				break;
+			}
 		}
-		notification = &message->Notification;
-
-		result = ScanFile( notification->Contents, notification->BytesToScan, 
-			notification->FileName, notification->FileNameLength, notification->Phase);
-
-		replyMessage.ReplyHeader.Status = 0;
-		replyMessage.ReplyHeader.MessageId = message->MessageHeader.MessageId;
-		replyMessage.Reply.SafeToOpen = !result;
-
-		//if(replyMessage.Reply.SafeToOpen == 0)
-		//	printf( "Replying message, SafeToOpen: %d\n", replyMessage.Reply.SafeToOpen );
-		
-		hr = FilterReplyMessage( Context->Port,
-								 (PFILTER_REPLY_HEADER) &replyMessage,
-								 sizeof( SCANNER_REPLY_MESSAGE ) );
-
-		if (SUCCEEDED( hr )) {
-			//printf( "Replied message\n" );
-		} else {
-			mydlpsf::MyDLPEventLogger::GetInstance()->LogError( "Scanner: Error replying message. Error = " + hr.ToString() );
-			break;
-		}
-
-		memset( &message->Ovlp, 0, sizeof( OVERLAPPED ) );
-
-		hr = FilterGetMessage( Context->Port, &message->MessageHeader, 
-								FIELD_OFFSET( SCANNER_MESSAGE, Ovlp ), &message->Ovlp );
-
-		if (hr != HRESULT_FROM_WIN32( ERROR_IO_PENDING )) {
-			break;
-		}
+	}
+	catch(Exception ^ex) {
+		mydlpsf::MyDLPEventLogger::GetInstance()->LogError(ex->StackTrace);
 	}
 
 	if (!SUCCEEDED( hr )) {
-
+		System::String ^logStr;
 		if (hr == HRESULT_FROM_WIN32( ERROR_INVALID_HANDLE )) {
-			mydlpsf::MyDLPEventLogger::GetInstance()->LogError("Scanner: Port is disconnected, probably due to scanner filter unloading.\n" );
+			logStr = "Scanner: Port is disconnected, probably due to scanner filter unloading." + System::Environment::NewLine;
 		} else {
-			mydlpsf::MyDLPEventLogger::GetInstance()->LogError( "Scanner: Unknown error occured. Error = 0x%X\n" + hr.ToString() );
+			logStr = "Scanner: Unknown error occured. Error = " + hr.ToString() + System::Environment::NewLine;
 		}
+		mydlpsf::MyDLPEventLogger::GetInstance()->LogError(logStr);
 	}
+
 	free( message );
 	return hr;
 }
@@ -203,45 +219,43 @@ BOOL ScanFile (__in_bcount(BufferSize) PUCHAR Buffer, __in ULONG BufferSize,
 			   __in_bcount(FileNameLength) PWCHAR FileName, __in ULONG FileNameLength, 
 			   __in USHORT Phase)
 {
-	FILE *fp;
-	TEMPFILE_INFO *tempFileInfo;
-	std::string tempFileName;
 	mydlpsf::MyDLPSensitiveFileRecognition ^recObj = nullptr;
-	tempFileInfo = ScanMMap(FileName, FileNameLength, false);
+	String ^filename = gcnew String(FileName);
+	String ^tempFileName = String::Empty;
+	FileStream ^fs;
 
+	System::Threading::Monitor::Enter(mydlpsf::MyDLPFSMFListener::listener);
 	try
 	{
 		if(Phase == 1) {
 			
-			if(tempFileInfo == NULL) {
-			
-				CHAR buf[MAX_PATH];
-				GetTempPathA(MAX_PATH, buf);
-				tempFileInfo = (TEMPFILE_INFO *)malloc(sizeof(TEMPFILE_INFO));
-				// Revise temp file creation
-				tempFileName = _tempnam(buf, "mydlptmp");
-				tempFileName += (std::string)(const char*)(System::Runtime::InteropServices::Marshal::StringToHGlobalAnsi(Guid::NewGuid().ToString() 
-					+ System::IO::Path::GetExtension(gcnew System::String(FileName)))).ToPointer();
-				tempFileInfo->filename = (char *) malloc(sizeof(char) * tempFileName.length());
-				strcpy(tempFileInfo->filename, tempFileName.c_str());
-				fopen_s(&fp,tempFileInfo->filename, "wb");
-				tempFileInfo->tmpfd = fp;
-				mMap.insert(MWchTmpPair(FileName, tempFileInfo));
-			
+			if(!mydlpsf::MyDLPFSMFListener::tempFileMap->ContainsKey(filename)) {
+				String ^tempStr = System::IO::Path::GetTempFileName();
+				if(File::Exists(tempStr))
+					File::Delete(tempStr);
+				tempFileName = Path::GetDirectoryName(tempStr) + "\\mydlp-" + System::IO::Path::GetFileNameWithoutExtension(tempStr) + System::IO::Path::GetExtension(filename);				
+				mydlpsf::MyDLPEventLogger::GetInstance()->LogError(tempFileName);
+				fs = gcnew FileStream(tempFileName, FileMode::CreateNew, FileAccess::Write);
+				mydlpsf::MyDLPFSMFListener::tempFileMap->Add(filename, tempFileName);
 			} else {
-				fopen_s(&fp,tempFileInfo->filename, "ab");
-				tempFileInfo->tmpfd = fp;
+				tempFileName = mydlpsf::MyDLPFSMFListener::tempFileMap[filename];
+				fs = gcnew FileStream(tempFileName, FileMode::Append, FileAccess::Write);
 			}
-			fwrite(Buffer, sizeof(UCHAR), BufferSize, tempFileInfo->tmpfd);
-			fflush(tempFileInfo->tmpfd);
-			fclose(tempFileInfo->tmpfd);
+			array<unsigned char> ^buffer = gcnew array<unsigned char>(BufferSize);
+			for(unsigned int i = 0; i < BufferSize; i++)
+				buffer[i] = Buffer[i];
+
+			fs->Write(buffer, 0, BufferSize);
+			fs->Flush();
+			fs->Close();
 			
 			if(Buffer[BufferSize - 1] == 0 ||
 				(Buffer[BufferSize - 1] == 10 && Buffer[BufferSize - 2] == 70 && Buffer[BufferSize - 3] == 79) ||
-				(cl_istext(Buffer, BufferSize) != 5)) {
+				cl_istext(Buffer, BufferSize) != 5) {
 				
+				while(mydlpsf::MyDLPSensFilePool::GetInstance()->isUpdating);
 				recObj =  mydlpsf::MyDLPSensFilePool::GetInstance()->AcquireObject();
-				int ret = recObj->SearchSensitiveData(gcnew System::String(tempFileInfo->filename));
+				int ret = recObj->SearchSensitiveData(tempFileName);
 				
 				if(ret == 1) {
 					bool retVal = TRUE;
@@ -250,7 +264,7 @@ BOOL ScanFile (__in_bcount(BufferSize) PUCHAR Buffer, __in ULONG BufferSize,
 						recObj->GetLastResult()->ToLower()->Contains("photoshop"))
 						retVal = FALSE;
 					if(mydlpsf::MyDLPRemoteDeviceConf::GetInstance()->filterDWG.Equals(FALSE) &&
-						recObj->GetLastResult()->ToLower()->Contains("autcad"))
+						recObj->GetLastResult()->ToLower()->Contains("autocad"))
 						retVal = FALSE;
 					if(mydlpsf::MyDLPRemoteDeviceConf::GetInstance()->filterPSP.Equals(FALSE) &&
 						recObj->GetLastResult()->ToLower()->Contains("paintshop"))
@@ -260,8 +274,8 @@ BOOL ScanFile (__in_bcount(BufferSize) PUCHAR Buffer, __in ULONG BufferSize,
 						retVal = FALSE;
 				
 					if(retVal) {
-						mydlpsf::MyDLPEventLogger::GetInstance()->LogRemovable(gcnew String(FileName) + " -- " + recObj->GetLastResult());
-						mydlpsf::MyDLPMessages::GetInstance()->AddMessage(gcnew String(FileName) + " -- " + recObj->GetLastResult());
+						mydlpsf::MyDLPEventLogger::GetInstance()->LogRemovable(filename + " -- " + recObj->GetLastResult());
+						mydlpsf::MyDLPMessages::GetInstance()->AddMessage(filename + " -- " + recObj->GetLastResult());
 					}
 
 					mydlpsf::MyDLPSensFilePool::GetInstance()->ReleaseObject(recObj);
@@ -270,43 +284,30 @@ BOOL ScanFile (__in_bcount(BufferSize) PUCHAR Buffer, __in ULONG BufferSize,
 				}	
 			} 
 		} else if(Phase == 2) {
-			
-			if(tempFileInfo != NULL) {
-				fclose(tempFileInfo->tmpfd);
-				_unlink(tempFileInfo->filename);
-				tempFileInfo = ScanMMap(FileName, FileNameLength, true);
+			if(!tempFileName->Equals(String::Empty)) {
+				if(File::Exists(tempFileName)) {
+					File::Delete(tempFileName);
+					mydlpsf::MyDLPFSMFListener::tempFileMap->Remove(filename);
+				}
 			}
 		}
-	} 
-	catch(Exception ^ex)
+	}
+	catch(IOException ^ex)
 	{
 		mydlpsf::MyDLPEventLogger::GetInstance()->LogError(ex->StackTrace);
 	}
+	catch(Exception ^ex)
+	{
+		mydlpsf::MyDLPEventLogger::GetInstance()->LogError(ex->StackTrace);
+		if(recObj != nullptr)
+			mydlpsf::MyDLPSensFilePool::GetInstance()->DeleteObject(recObj);
+		recObj = nullptr;
+	}
 	finally
 	{
+		System::Threading::Monitor::Exit(mydlpsf::MyDLPFSMFListener::listener);
 		if(recObj != nullptr)
 			mydlpsf::MyDLPSensFilePool::GetInstance()->ReleaseObject(recObj);
 	}
 	return FALSE;
-}
-
-TEMPFILE_INFO* ScanMMap(__in_bcount(FileNameLength) PWCHAR FileName, __in ULONG FileNameLength,
-			  __in BOOLEAN deletePair) 
-{
-	MWchTmpMap::iterator p;
-	BOOL found = false;
-
-	for(p = mMap.begin(); p!= mMap.end(); ++p)
-	{
-		if(wcsncmp(p->first, FileName, FileNameLength) == 0) {
-			if(deletePair) {
-				mMap.erase(p);
-				return NULL;
-			}
-			else
-				return p->second;
-		}
-	}
-
-	return NULL;
 }

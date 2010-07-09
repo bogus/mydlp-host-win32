@@ -140,7 +140,10 @@ namespace MydlpWinGui
 
         private void buttonScanDir_Click(object sender, EventArgs e)
         {
-            MyDLPSensFilePool.GetInstance().UpdatePool();
+            lock (this)
+            {
+                MyDLPSensFilePool.GetInstance().UpdatePool();
+            }
 
             // Add servicec routine for directory scanning
             if (textBox1.Text.Length != 0 && Directory.Exists(textBox1.Text))

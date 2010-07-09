@@ -20,15 +20,20 @@
 
 #include "stdafx.h"
 #include <windows.h>
+#include <vcclr.h>
+#include <stdio.h>
 #include "MyDLPSensitiveFileRecognition.h"
 #include "MyDLPEventLogger.h"
 #include "MyDLPPSParse.h"
+#using <mscorlib.dll>
 
 using namespace System;
 using namespace System::Text;
 using namespace System::Runtime::InteropServices;
 using namespace System::IO;
 using namespace IFilterParser;
+using namespace System::Threading;
+using namespace System::Runtime::CompilerServices;
 
 namespace mydlpsf {
 
@@ -45,7 +50,8 @@ namespace mydlpsf {
 		return Marshal::PtrToStringAnsi(IntPtr((void *) stl.c_str()));
 	}
 
-	int MyDLPSensitiveFileRecognition::Init()
+	[MethodImpl(MethodImplOptions::Synchronized)]
+	int MyDLPSensitiveFileRecognition::Init(int version)
 	{
 		int ret;
 		if((ret = cl_init(CL_INIT_DEFAULT)) != CL_SUCCESS) {
@@ -54,18 +60,30 @@ namespace mydlpsf {
 		if(!(this->engine = cl_engine_new())) {
 			return 2;
 		}
+		this->version = version;
 		return 0;
 	}
 
+	[MethodImpl(MethodImplOptions::Synchronized)]
 	int MyDLPSensitiveFileRecognition::AddRegex(array<System::UInt32> ^ids, array<System::String ^> ^regex, int count)
 	{
 		int i = 0;
-		unsigned char **regex_list = (unsigned char **)malloc(sizeof(unsigned char *) * count);
-		unsigned int *id_list = (unsigned int *)malloc(sizeof(int) * count);
-		char **str = (char **)malloc(sizeof(int) * count);
+		unsigned char **regex_list;
+		unsigned int *id_list;
+		char **str;
 		UTF8Encoding ^encoder = gcnew UTF8Encoding();
-		
-
+		try
+		{
+			regex_list = (unsigned char **)malloc(sizeof(unsigned char *) * count);
+			id_list = (unsigned int *)malloc(sizeof(int) * count);
+			str = (char **)malloc(sizeof(int) * count);
+		}
+		catch(Exception ^ex)
+		{
+			MyDLPEventLogger::GetInstance()->LogError("AddRegex - init " + ex->StackTrace);
+			return 2;
+		}
+	
 		if(count == 0) 
 		{
 			if(cl_dlp_regex_init(NULL, NULL, count) != 0) {
@@ -107,13 +125,19 @@ namespace mydlpsf {
 			{
 				MyDLPEventLogger::GetInstance()->LogError(ex->StackTrace);
 			}
-			
-			char *tmpStr = (char *)malloc(sizeof(char) * (utf8Regex->Length + 1));
-			strcpy_s(tmpStr, utf8Regex->Length + 1,ManagedToSTL(utf8Regex).c_str());
-			
-			str[i] = tmpStr;
-			regex_list[i] = (unsigned char *)str[i];
-			id_list[i] = ids[i];
+			try
+			{
+				char *tmpStr = (char *)malloc(sizeof(char) * (utf8Regex->Length + 1));
+				strcpy_s(tmpStr, utf8Regex->Length + 1,ManagedToSTL(utf8Regex).c_str());
+				
+				str[i] = tmpStr;
+				regex_list[i] = (unsigned char *)str[i];
+				id_list[i] = ids[i];
+			} 
+			catch(Exception ^ex)
+			{
+				MyDLPEventLogger::GetInstance()->LogError("AddRegex - tmpStr " + ex->StackTrace);
+			}
 		}
 
 		if(cl_dlp_regex_init(id_list, (const unsigned char **)regex_list, count) != 0) {
@@ -122,6 +146,7 @@ namespace mydlpsf {
 		return 0;
 	}
 
+	[MethodImpl(MethodImplOptions::Synchronized)]
 	int MyDLPSensitiveFileRecognition::AddMD5s(String^ md5)
 	{
 		unsigned int sigs, ret;
@@ -142,11 +167,10 @@ namespace mydlpsf {
 			return -2;
 		}
 
-		cl_dlp_md5db_unlink();
-
 		return sigs;
 	}
 
+	[MethodImpl(MethodImplOptions::Synchronized)]
 	int MyDLPSensitiveFileRecognition::AddIBAN()
 	{
 		int ret = 0;
@@ -159,6 +183,7 @@ namespace mydlpsf {
 		return 0;
 	}
 
+	[MethodImpl(MethodImplOptions::Synchronized)]
 	int MyDLPSensitiveFileRecognition::CompileClamEngine()
 	{
 		int ret = 0; 
@@ -168,29 +193,29 @@ namespace mydlpsf {
 			return 2;
 		}
 
-		if(mydlpsf::MyDLPRemoteSensFileConf::GetInstance()->enableCC)
+		if(mydlpsf::MyDLPRemoteSensFileConf::GetInstance()->enableCC.Equals(TRUE))
 			cl_engine_set_num(this->engine, CL_ENGINE_MIN_CC_COUNT, mydlpsf::MyDLPRemoteSensFileConf::GetInstance()->maxCCCount);
 		else
 			cl_engine_set_num(this->engine, CL_ENGINE_MIN_CC_COUNT, 0);
 
-		if(mydlpsf::MyDLPRemoteSensFileConf::GetInstance()->enableSSN)
+		if(mydlpsf::MyDLPRemoteSensFileConf::GetInstance()->enableSSN.Equals(TRUE))
 			cl_engine_set_num(this->engine, CL_ENGINE_MIN_SSN_COUNT, mydlpsf::MyDLPRemoteSensFileConf::GetInstance()->maxSSNCount);
 		else
 			cl_engine_set_num(this->engine, CL_ENGINE_MIN_SSN_COUNT, 0);
 
-		if(mydlpsf::MyDLPRemoteSensFileConf::GetInstance()->enableRegex)
+		if(mydlpsf::MyDLPRemoteSensFileConf::GetInstance()->enableRegex.Equals(TRUE))
 			cl_engine_set_num(this->engine, CL_ENGINE_MIN_REGEX_COUNT, mydlpsf::MyDLPRemoteSensFileConf::GetInstance()->maxRegexCount);
 		else
 			cl_engine_set_num(this->engine, CL_ENGINE_MIN_REGEX_COUNT, 0);
 
-		if(mydlpsf::MyDLPRemoteSensFileConf::GetInstance()->enableIBAN)
+		if(mydlpsf::MyDLPRemoteSensFileConf::GetInstance()->enableIBAN.Equals(TRUE))
 			cl_engine_set_num(this->engine, CL_ENGINE_MIN_IBAN_COUNT, mydlpsf::MyDLPRemoteSensFileConf::GetInstance()->maxIBANCount);
 		else
 			cl_engine_set_num(this->engine, CL_ENGINE_MIN_IBAN_COUNT, 0);				
 
-		if(mydlpsf::MyDLPRemoteSensFileConf::GetInstance()->enableTRId)
-			cl_engine_set_num(this->engine, CL_ENGINE_MIN_TRID_COUNT, mydlpsf::MyDLPRemoteSensFileConf::GetInstance()->maxTRIdCount);
-		else
+		if(mydlpsf::MyDLPRemoteSensFileConf::GetInstance()->enableTRId.Equals(TRUE))
+			cl_engine_set_num(this->engine, CL_ENGINE_MIN_TRID_COUNT, mydlpsf::MyDLPRemoteSensFileConf::GetInstance()->maxTRIdCount);		
+		else 
 			cl_engine_set_num(this->engine, CL_ENGINE_MIN_TRID_COUNT, 0);
 
 		scanOptions = 0;
@@ -220,46 +245,55 @@ namespace mydlpsf {
 		return 0;
 	}
 
+	[MethodImpl(MethodImplOptions::Synchronized)]
 	int MyDLPSensitiveFileRecognition::SearchSensitiveData(String ^filename)
 	{
 		const char *virname;
 		unsigned long int size = 0; 
-		int ret = 0;
-		long     length = 0;
-		TCHAR*   buffer = NULL;
+		int ret = 0;		
 
 		this->result = "Clean";
-		
+
+		filename = GetShortFileName(filename);
+
 		try 
 		{
 			if((ret = cl_scanfile((const char *)ManagedToSTL(filename).c_str(), &virname, &size, this->engine, scanOptions)) == CL_VIRUS) {
 				this->result = STLToManaged(virname);
 				return 1;
 			} 
-			
+
 			if (ret == CL_RESCAN_OLE2 || ret == CL_RESCAN_PDF || ret==CL_RESCAN_PS
 				|| ret==CL_RESCAN_RTF) {
 
 				String ^tempFilePath = System::IO::Path::GetTempFileName();
-				if(ret == CL_RESCAN_OLE2)
+				tempFilePath = GetShortFileName(tempFilePath);
+				try
 				{
-					StreamWriter ^writer = gcnew StreamWriter(tempFilePath, false, System::Text::Encoding::UTF8);
-					TextReader ^reader = gcnew FilterReader(filename);
-					writer->Write(reader->ReadToEnd()); 
-					reader->Close();
-					writer->Close();
-				} else if (ret == CL_RESCAN_PDF) {
-					PDFParser ^parser = gcnew PDFParser(); 
-					StreamWriter ^writer = gcnew StreamWriter(tempFilePath, false, System::Text::Encoding::UTF8);
-					writer->WriteLine(parser->parseUsingPDFBox(filename)); 
-					writer->Close();
-				} else if (ret == CL_RESCAN_RTF) {
-					(gcnew RTFParser())->ParseRTF(filename, tempFilePath);
-				} else if (ret == CL_RESCAN_PS) {
-					const char *inputFile = (const char *)(void *)Marshal::StringToHGlobalAnsi(GetShortFileName(filename));
-					const char *outputFile = (const char *)(void *)Marshal::StringToHGlobalAnsi(GetShortFileName(tempFilePath));
-					PSParse(inputFile, outputFile);
-				} else {
+					File::Delete(tempFilePath);
+					if(ret == CL_RESCAN_OLE2)
+					{
+						StreamWriter ^writer = gcnew StreamWriter(tempFilePath, false, System::Text::Encoding::UTF8);
+						TextReader ^reader = gcnew FilterReader(filename);
+						writer->Write(reader->ReadToEnd()); 
+						reader->Close();
+						writer->Close();
+					} else if (ret == CL_RESCAN_PDF) {
+						PDFParser ^parser = gcnew PDFParser(); 
+						StreamWriter ^writer = gcnew StreamWriter(tempFilePath, false, System::Text::Encoding::UTF8);
+						writer->WriteLine(parser->parseUsingPDFBox(filename)); 
+						writer->Close();
+					} else if (ret == CL_RESCAN_RTF) {
+						(gcnew RTFParser())->ParseRTF(filename, tempFilePath);
+					} else if (ret == CL_RESCAN_PS) {
+						const char *inputFile = (const char *)(void *)Marshal::StringToHGlobalAnsi(GetShortFileName(filename));
+						const char *outputFile = (const char *)(void *)Marshal::StringToHGlobalAnsi(GetShortFileName(tempFilePath));
+						PSParse(inputFile, outputFile);
+					} 
+				}
+				catch(Exception ^ex)
+				{
+					MyDLPEventLogger::GetInstance()->LogError("ParserException : " + filename + System::Environment::NewLine + ex->StackTrace);
 					tempFilePath = String::Empty;
 					ret = CL_CLEAN;
 				}
@@ -291,15 +325,16 @@ namespace mydlpsf {
 
 			if(ret == CL_CLEAN) {
 				return 0;
-			} else if (ret == CL_EARG) {
-				cl_engine_free(engine);
-				return 2;
 			} else {
 				cl_engine_free(engine);
 				return 3;
 			}
+		} catch(IOException ^ex) {
+			MyDLPEventLogger::GetInstance()->LogError("IOException : " + filename + System::Environment::NewLine + ex->StackTrace);
 		} catch (Exception ^ex) {
-			MyDLPEventLogger::GetInstance()->LogError(length.ToString() + "--" + gcnew String(buffer) + System::Environment::NewLine + ex->StackTrace);
+			Close();
+			MyDLPEventLogger::GetInstance()->LogError(filename + System::Environment::NewLine + ex->StackTrace);
+			throw gcnew Exception("Sensitive File Search: " + filename, ex);
 		}
 
 		return ret;
@@ -337,8 +372,6 @@ namespace mydlpsf {
 			return String::Empty;
 	    
 		String ^str = gcnew String(buffer);
-		
-		delete [] buffer;
 		
 		return str;
 

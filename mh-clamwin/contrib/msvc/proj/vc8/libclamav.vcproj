@@ -136,7 +136,7 @@
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
 				Detect64BitPortabilityProblems="false"
-				DebugInformationFormat="3"
+				DebugInformationFormat="0"
 				DisableSpecificWarnings="4996"
 			/>
 			<Tool
@@ -156,7 +156,7 @@
 				AdditionalLibraryDirectories="../../pcre"
 				IgnoreDefaultLibraryNames=""
 				ModuleDefinitionFile="..\..\$(ProjectName).def"
-				GenerateDebugInformation="true"
+				GenerateDebugInformation="false"
 				SubSystem="2"
 				OptimizeReferences="2"
 				SetChecksum="true"

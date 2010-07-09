@@ -2365,10 +2365,6 @@ int cli_magic_scandesc(int desc, cli_ctx *ctx)
 		*ctx->virname = "Filetype.Paintshop";
 		ret = CL_VIRUS;
 		break;
-	case CL_TYPE_CORELDRAW:
-		*ctx->virname = "Filetype.Coreldraw";
-		ret = CL_VIRUS;
-		break;
 
 	case CL_TYPE_PS: 
 	    ctx->container_type = CL_TYPE_PS;

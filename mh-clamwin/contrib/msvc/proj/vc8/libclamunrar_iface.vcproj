@@ -129,7 +129,7 @@
 				RuntimeLibrary="2"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
-				DebugInformationFormat="3"
+				DebugInformationFormat="0"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -144,7 +144,7 @@
 				Name="VCLinkerTool"
 				LinkIncremental="1"
 				ModuleDefinitionFile="..\..\$(ProjectName).def"
-				GenerateDebugInformation="true"
+				GenerateDebugInformation="false"
 				SubSystem="2"
 				OptimizeReferences="2"
 				SetChecksum="true"

@@ -46,7 +46,7 @@ namespace MyDLPHost
 			//
 			//   ServicesToRun = New System.ServiceProcess.ServiceBase[] {new Service1(), new MySecondUserService()};
 			//
-			ServicesToRun = new System.ServiceProcess.ServiceBase[] { new MyDLPHost.MyDLPService()};
+			ServicesToRun = new System.ServiceProcess.ServiceBase[] { new MyDLPService() };
 
 			System.ServiceProcess.ServiceBase.Run(ServicesToRun);	
 		}
@@ -99,7 +99,7 @@ namespace MyDLPHost
             }
             catch (Exception ex)
             {
-                MyDLPEventLogger.GetInstance().LogService(ex.StackTrace);
+                eventLogService.WriteEntry(ex.StackTrace);
             }
 		}
  
@@ -115,7 +115,7 @@ namespace MyDLPHost
             }
             catch (Exception ex)
             {
-                MyDLPEventLogger.GetInstance().LogService(ex.StackTrace);
+                eventLogService.WriteEntry(ex.StackTrace);
             }
 		}
 		protected override void OnContinue()

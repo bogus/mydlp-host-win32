@@ -52,7 +52,7 @@ namespace mydlpsf {
 			String ^GetShortFileName(String ^longName);
 
 		public:
-			int Init();
+			int Init(int version);
 			int AddRegex(array<System::UInt32> ^ids, array<System::String ^> ^regex, int count);
 			int AddMD5s(String ^md5);
 			int AddIBAN();
@@ -61,6 +61,7 @@ namespace mydlpsf {
 			String^ GetLastResult();
 			int Close();
 			static System::Collections::Hashtable ^clamFileGroupOptions;
+			int version;
 
 	};
 }

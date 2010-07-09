@@ -2,3 +2,5 @@
 *.suo
 MyDLP-Win-Service/bin
 MyDLP-Win-Service/obj
+MyDLP-Win-Service-Controller/bin
+MyDLP-Win-Service-Controller/obj

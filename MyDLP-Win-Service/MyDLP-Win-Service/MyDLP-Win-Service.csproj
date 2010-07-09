@@ -10,7 +10,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>MyDLPHost</RootNamespace>
     <AssemblyName>MyDLP-Host</AssemblyName>
-    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <StartupObject>MyDLPHost.MainApp</StartupObject>
     <SignManifests>false</SignManifests>
@@ -80,15 +80,12 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="mydlp-sf, Version=1.0.3839.25534, Culture=neutral, processorArchitecture=x86">
+    <Reference Include="mydlp-sf, Version=1.0.3841.15746, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\mydlp-sf\Release\mydlp-sf.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Configuration.Install" />
-    <Reference Include="System.Core">
-      <RequiredTargetFramework>3.5</RequiredTargetFramework>
-    </Reference>
     <Reference Include="System.Data" />
     <Reference Include="System.Management" />
     <Reference Include="System.ServiceProcess" />

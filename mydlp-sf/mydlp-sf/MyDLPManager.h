@@ -20,6 +20,8 @@
 #pragma once
 #pragma managed
 
+using namespace System::Threading;
+
 namespace mydlpsf
 {
 	public ref class MyDLPManager

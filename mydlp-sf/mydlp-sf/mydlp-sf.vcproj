@@ -6,7 +6,7 @@
 	ProjectGUID="{AFBB7C9B-D433-4C57-B982-901B67CE6993}"
 	RootNamespace="mydlpsf"
 	Keyword="ManagedCProj"
-	TargetFrameworkVersion="196613"
+	TargetFrameworkVersion="131072"
 	>
 	<Platforms>
 		<Platform
@@ -126,10 +126,11 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				AdditionalIncludeDirectories="C:\WinDDK\7600.16385.1\inc\ddk;&quot;..\..\mh-clamwin\libclamav&quot;"
-				PreprocessorDefinitions="WIN32"
+				PreprocessorDefinitions="WIN32; NDEBUG"
 				RuntimeLibrary="2"
 				UsePrecompiledHeader="2"
 				WarningLevel="3"
+				Detect64BitPortabilityProblems="false"
 				DebugInformationFormat="0"
 			/>
 			<Tool
@@ -200,6 +201,11 @@
 		<AssemblyReference
 			RelativePath="..\..\IFilterParser\IFilterParser\bin\Release\IFilterParser.dll"
 			AssemblyName="IFilterParser, Version=1.0.0.0, processorArchitecture=MSIL"
+			MinFrameworkVersion="131072"
+		/>
+		<AssemblyReference
+			RelativePath="System.ServiceProcess.dll"
+			AssemblyName="System.ServiceProcess, Version=2.0.0.0, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL"
 			MinFrameworkVersion="131072"
 		/>
 	</References>

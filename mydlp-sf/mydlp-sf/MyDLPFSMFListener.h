@@ -39,6 +39,10 @@
 #include <map>
 #include <string>
 
+using namespace System;
+using namespace System::Threading;
+using namespace System::Collections::Generic;
+
 #define SCANNER_DEFAULT_REQUEST_COUNT       5
 #define SCANNER_DEFAULT_THREAD_COUNT        2
 #define SCANNER_MAX_THREAD_COUNT            64
@@ -55,18 +59,11 @@ typedef struct _SCANNER_MESSAGE {
 	OVERLAPPED Ovlp;
 } SCANNER_MESSAGE, *PSCANNER_MESSAGE;
 
-typedef struct _TEMPFILE_INFO {
-	FILE *tmpfd;
-	CHAR *filename;
-} TEMPFILE_INFO;
-
 // Function prototypes
 DWORD ScannerWorker(__in PSCANNER_THREAD_CONTEXT Context);
 BOOL ScanFile (__in_bcount(BufferSize) PUCHAR Buffer, __in ULONG BufferSize,
 			   __in_bcount(FileNameLength) PWCHAR FileName, __in ULONG FileNameLength, 
 			   __in USHORT Phase);
-TEMPFILE_INFO* ScanMMap(__in_bcount(FileNameLength) PWCHAR FileName, __in ULONG FileNameLength,
-			  __in BOOLEAN deletePair);
 
 static HANDLE threads[SCANNER_MAX_THREAD_COUNT];
 static HANDLE port, completion;
@@ -80,11 +77,13 @@ namespace mydlpsf
 		int Init();
 		static void StartCommunicationPort();
 		static bool isRunning = false;
+		MyDLPFSMFListener(void);
 
 	public:
-		MyDLPFSMFListener(void);
 		static void RunFilter();
-		static void StopFilter();		
+		static void StopFilter();	
+		static MyDLPFSMFListener ^listener = nullptr;
+		static Dictionary<String ^, String ^> ^tempFileMap = gcnew Dictionary<String ^, String ^>();
 	};
 }
 #endif

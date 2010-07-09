@@ -26,7 +26,7 @@ using namespace System::IO;
 using namespace Microsoft::Win32;
 using namespace System::Security::Permissions;
 using namespace System::Threading;
-
+using namespace System::Timers;
 
 namespace mydlpsf
 {
@@ -44,6 +44,11 @@ namespace mydlpsf
 			listener->watcher = gcnew FileSystemWatcher((String ^)key->GetValue("Config_Dir"), "*.conf");
 			listener->watcher->NotifyFilter = NotifyFilters::LastWrite;
 			listener->watcher->Changed += gcnew FileSystemEventHandler(listener, &OnChanged);
+
+			listener->timer = gcnew System::Timers::Timer();
+			listener->timer->Elapsed += gcnew ElapsedEventHandler(listener, &ReleaseFileName);
+			listener->timer->Interval = 1000;
+			listener->lastFileName = String::Empty;
 		}
 
 		return listener;
@@ -54,11 +59,26 @@ namespace mydlpsf
 	{
 		watcher->EnableRaisingEvents = true;
 	}
+
+	[PermissionSet(SecurityAction::Demand, Name="FullTrust")]
+	void MyDLPConfigurationUpdateListener::StopListener()
+	{
+		watcher->EnableRaisingEvents = false;
+	}
 	
 	void MyDLPConfigurationUpdateListener::OnChanged(Object^ o,FileSystemEventArgs^ e)
 	{
-		Thread::Sleep(1);
-		MyDLPManager::GetInstance()->Update(e->Name);
+		if(lastFileName->Equals(String::Empty)) {
+			lastFileName = e->Name;
+			timer->Start();
+			MyDLPManager::GetInstance()->Update(e->Name);
+		}
+	}
+
+	void MyDLPConfigurationUpdateListener::ReleaseFileName( Object ^source, ElapsedEventArgs ^e )
+	{
+		timer->Stop();
+		lastFileName = String::Empty;	
 	}
 
 }

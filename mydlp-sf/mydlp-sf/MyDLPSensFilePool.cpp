@@ -24,6 +24,8 @@
 
 using namespace System;
 using namespace Microsoft::Win32;
+using namespace System::Threading;
+using namespace System::Runtime::CompilerServices;
 
 namespace mydlpsf
 {
@@ -37,8 +39,8 @@ namespace mydlpsf
 		if(objectPool == nullptr) {
 			objectPool = gcnew MyDLPSensFilePool();
 			objectPool->poolSize = MYDLP_SENS_FILE_OBJ_POOL_SIZE;
-			objectPool->objQueue = gcnew Queue(objectPool->poolSize);
-
+			objectPool->objQueue = gcnew Queue();
+			objectPool->isUpdating = false;				 
 			MyDLPSensitiveFileRecognition::clamFileGroupOptions = gcnew Hashtable();
 			MyDLPSensitiveFileRecognition::clamFileGroupOptions->Add("ARCHIVE", CL_SCAN_ARCHIVE);
 			MyDLPSensitiveFileRecognition::clamFileGroupOptions->Add("MAIL", CL_SCAN_MAIL);
@@ -54,82 +56,115 @@ namespace mydlpsf
 
 	void MyDLPSensFilePool::InitPool()
 	{
-		array<MyDLPSensitiveFileRecognition ^> ^objArray = CreateObject(poolSize);
-		for each(MyDLPSensitiveFileRecognition ^obj in objArray)
-		{
-			objQueue->Enqueue(obj);
-		}
+		CreateObject(poolSize);
 	}
 
+	[MethodImpl(MethodImplOptions::Synchronized)]
 	void MyDLPSensFilePool::UpdatePool()
 	{		
-		for each (MyDLPSensitiveFileRecognition ^obj in objQueue)
+		try
 		{
-			obj->Close();
+			isUpdating = true;
+			version++;
+			InitPool();
+			Queue ^tmpObjQueue = gcnew Queue();
+			for each (MyDLPSensitiveFileRecognition ^obj in objQueue)
+			{
+				if(obj->version < version)
+					obj->Close();
+				else
+					tmpObjQueue->Enqueue(obj);
+			}
+			objQueue = tmpObjQueue;
 		}
-		objectPool->objQueue = gcnew Queue(objectPool->poolSize);
-		InitPool();
+		catch(Exception ^ex)
+		{
+			MyDLPEventLogger::GetInstance()->LogError(ex->StackTrace);
+		}
+		finally
+		{
+			isUpdating = false;
+		}
 	}
 
+	[MethodImpl(MethodImplOptions::Synchronized)]
 	MyDLPSensitiveFileRecognition^ MyDLPSensFilePool::AcquireObject()
 	{
+		MyDLPSensitiveFileRecognition ^obj;
 		try {
-			if(objQueue->Count != 0)
-				return (MyDLPSensitiveFileRecognition ^)objQueue->Dequeue();
+			if(objQueue->Count != 0) {
+				do
+				{
+					obj = (MyDLPSensitiveFileRecognition ^)objQueue->Dequeue();
+				}
+				while(obj->version < version && objQueue->Count != 0);
+				
+				if(obj->version == version)
+					return obj;
+			}
 		} 
 		catch (InvalidOperationException ^ex) 
 		{
 			MyDLPEventLogger::GetInstance()->LogError(ex->StackTrace);
 		} 
-		
-		return CreateObject(1)[0];
-		
+		finally
+		{
+			CreateObject(3);	
+		}
+		return (MyDLPSensitiveFileRecognition^)objQueue->Dequeue();
 	}
 
+	[MethodImpl(MethodImplOptions::Synchronized)]
 	void MyDLPSensFilePool::ReleaseObject(MyDLPSensitiveFileRecognition ^object)
 	{
-		if(object != nullptr)
+		
+		if(object != nullptr && object->version == version)
 			objQueue->Enqueue(object);
+		
+		if(object->version < version)
+			object->Close();
+
 	}
 
+	[MethodImpl(MethodImplOptions::Synchronized)]
 	void MyDLPSensFilePool::DeleteObject(MyDLPSensitiveFileRecognition ^object)
 	{
 		object->Close();
 		delete object;
-		objQueue->Enqueue(CreateObject(1)[0]);		
+		CreateObject(1);
 	}
-
-	array<MyDLPSensitiveFileRecognition ^> ^MyDLPSensFilePool::CreateObject(int count)
+	
+	void MyDLPSensFilePool::CreateObject(int count)
 	{
 		int i = 0;
-		RegistryKey ^key = Registry::LocalMachine->OpenSubKey( "Software\\MyDLP" );
-		
-		MyDLPRemoteSensFileConf::Deserialize();
 
 		array<System::UInt32> ^ids = gcnew array<System::UInt32>(mydlpsf::MyDLPRemoteSensFileConf::GetInstance()->regexVal->Count);
 		array<System::String ^> ^regex = gcnew array<System::String ^>(mydlpsf::MyDLPRemoteSensFileConf::GetInstance()->regexVal->Count);
-		array<MyDLPSensitiveFileRecognition ^> ^objArray = gcnew array<MyDLPSensitiveFileRecognition ^>(count);
 		MyDLPSensitiveFileRecognition ^sensFileObject;
 		
 		for each(MyDLPClamRegex ^clamRegex in mydlpsf::MyDLPRemoteSensFileConf::GetInstance()->regexVal)
 		{
-			ids[i] = clamRegex->id;
-			regex[i] = clamRegex->regex;
+			ids[i] = clamRegex->id; 
+			regex[i] = clamRegex->regex; 
 			i++;
 		}
 
 		for(i = 0 ; i < count ; i++)
 		{
 			sensFileObject = gcnew MyDLPSensitiveFileRecognition();
-			sensFileObject->Init();
-			sensFileObject->AddRegex(ids, regex, (int)regex->Length);
-			sensFileObject->AddMD5s(mydlpsf::MyDLPRemoteSensFileConf::GetInstance()->md5Val);
-			sensFileObject->AddIBAN();
-			sensFileObject->CompileClamEngine();
-			objArray[i] = sensFileObject;
-		}
+			if(sensFileObject->Init(version) != 0)
+				continue;
+			if(sensFileObject->AddRegex(ids, regex, (int)regex->Length) != 0)
+				continue;
+			if(sensFileObject->AddMD5s(mydlpsf::MyDLPRemoteSensFileConf::GetInstance()->md5Val) != 0)
+				continue;
+			if(sensFileObject->AddIBAN() != 0)
+				continue;
+			if(sensFileObject->CompileClamEngine() != 0)
+				continue;
 
-		return objArray;
+			objQueue->Enqueue(sensFileObject);
+		}
 	}
 
 	void MyDLPSensFilePool::SetMaxPoolSize(int size)

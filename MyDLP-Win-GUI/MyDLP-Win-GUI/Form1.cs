@@ -83,6 +83,28 @@ namespace MydlpWinGui
             form1Instance = this;
         }
 
+        protected override void WndProc(ref Message m)
+        {
+            if (m.Msg == Program.NativeMethods.WM_SHOWME)
+            {
+                ShowMe();
+            }
+            base.WndProc(ref m);
+        }
+        private void ShowMe()
+        {
+            if (WindowState == FormWindowState.Minimized)
+            {
+                Show();
+                WindowState = FormWindowState.Normal;
+            }
+            
+            bool top = TopMost;
+            TopMost = true;
+            TopMost = top;
+        }
+
+
         private void notifyIcon1_MouseDoubleClick(object sender, MouseEventArgs e)
         {
             if (WindowState == FormWindowState.Minimized)
@@ -107,7 +129,7 @@ namespace MydlpWinGui
                 taskbarNotifier1.EnableSelectionRectangle = false;
                 taskbarNotifier1.KeepVisibleOnMousOver = true;	// Added Rev 002
                 taskbarNotifier1.ReShowOnMouseOver = false;			// Added Rev 002
-                taskbarNotifier1.Show(resM.GetString("notification.caption"), e.Entry.Message, 300, 3000, 200);
+                taskbarNotifier1.Show(String.Empty, e.Entry.Message, 300, 3000, 200);
             }
         }
 
@@ -119,6 +141,9 @@ namespace MydlpWinGui
 
         private void Form1_Load(object sender, EventArgs e)
         {
+            WindowState = FormWindowState.Minimized;
+            Hide();
+
             Thread.CurrentThread.CurrentUICulture = new CultureInfo(serviceConf.language);
             Thread.CurrentThread.CurrentCulture = new CultureInfo(serviceConf.language);
 
@@ -137,6 +162,8 @@ namespace MydlpWinGui
 
             panel2.Controls.Add(defineSensitiveData);
             currentPanelControl = defineSensitiveData;
+
+            Show();
         }
 
         private void listView1_SelectedIndexChanged(object sender, EventArgs e)
@@ -243,7 +270,5 @@ namespace MydlpWinGui
                     MessageBoxButtons.YesNo, MessageBoxIcon.Question))
                 Application.Exit();
         }
-
-
     }
 }

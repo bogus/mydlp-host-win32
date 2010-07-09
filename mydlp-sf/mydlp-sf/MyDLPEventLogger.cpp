@@ -67,8 +67,7 @@ namespace mydlpsf
 			eventLogger->serviceLogPath = key->GetValue("Log_Dir") + "\\" + "service.log";
 			Config::BasicConfigurator::Configure(LogManager::CreateDomain("service"), 
 				gcnew Appender::FileAppender(patternLayout, eventLogger->serviceLogPath, true));
-			eventLogger->logError = LogManager::GetLogger("service", "Service Logging");
-			
+			eventLogger->logService = LogManager::GetLogger("service", "Service Logging");
 		}
 		return eventLogger;
 	}

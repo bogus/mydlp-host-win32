@@ -244,6 +244,7 @@
             this.groupBox4.Controls.Add(this.checkBoxScanCD);
             this.groupBox4.Controls.Add(this.checkBoxScanUSB);
             this.groupBox4.Controls.Add(this.label5);
+            this.groupBox4.Enabled = false;
             this.groupBox4.Location = new System.Drawing.Point(7, 217);
             this.groupBox4.Name = "groupBox4";
             this.groupBox4.Size = new System.Drawing.Size(519, 88);

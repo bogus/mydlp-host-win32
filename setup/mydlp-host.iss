@@ -37,6 +37,8 @@
 //#include "scripts\products\jet4sp8.iss"
 //#include "scripts\products\sql2005express.iss"
 
+#include "scripts\products\vcredist2008.iss"
+
 [Setup]
 ; NOTE: The value of AppId uniquely identifies this application.
 ; Do not use the same AppId value in installers for other applications.
@@ -68,43 +70,45 @@ Name: de; MessagesFile: compiler:Languages\German.isl
 Name: desktopicon; Description: {cm:CreateDesktopIcon}; GroupDescription: {cm:AdditionalIcons}; Flags: unchecked
 
 [Files]
-Source: ..\MyDLP-Win-GUI\MyDLP-Win-GUI\bin\Release\MyDLP-Win-GUI.exe; DestDir: {app}\bin; Flags: ignoreversion
-Source: ..\mh-clamwin\contrib\msvc\Release\Win32\libclamav.dll; DestDir: {app}\bin; Flags: ignoreversion
-;Source: ..\mh-clamwin\contrib\msvc\Release\Win32\libclamunrar_iface.dll; DestDir: {app}\bin; Flags: ignoreversion
-;Source: ..\mh-clamwin\contrib\msvc\Release\Win32\libclamunrar.dll; DestDir: {app}\bin; Flags: ignoreversion
-Source: ..\mh-clamwin\contrib\msvc\Release\Win32\libclamav_llvm.dll; DestDir: {app}\bin; Flags: ignoreversion
-Source: ..\mh-clamwin\contrib\msvc\pcre\pcre.dll; DestDir: {app}\bin; Flags: ignoreversion
-Source: ..\MyDLP-Win-Service\MyDLP-Win-Service\bin\Release\MyDLP-Host.exe; DestDir: {app}\bin; Flags: ignoreversion
-Source: ..\MyDLP-Win-Service\MyDLP-Win-Service\bin\Release\MyDLP-Host.exe; DestDir: {app}\bin; Flags: ignoreversion
-Source: ..\mydlp-sf\Release\mydlp-sf.dll; DestDir: {app}\bin; Flags: ignoreversion
-Source: ..\mydlp-sf\Release\log4net.dll; DestDir: {app}\bin; Flags: ignoreversion
-Source: ..\mydlp-sf\Release\NRtfTree.dll; DestDir: {app}\bin; Flags: ignoreversion
-Source: ..\mydlp-sf\Release\PDFBox-0.7.3.dll; DestDir: {app}\bin; Flags: ignoreversion
-Source: ..\mydlp-sf\Release\FontBox-0.1.0-dev.dll; DestDir: {app}\bin; Flags: ignoreversion
-Source: ..\mydlp-sf\Release\IFilterParser.dll; DestDir: {app}\bin; Flags: ignoreversion
-Source: ..\mydlp-sf\Release\IKVM.GNU.Classpath.dll; DestDir: {app}\bin; Flags: ignoreversion
-Source: ..\mydlp-sf\Release\IKVM.Runtime.dll; DestDir: {app}\bin; Flags: ignoreversion
-Source: ..\mydlp-sf\mydlp-sf\fsmf\MyDLPScanner.inf; DestDir: {app}\bin; Flags: ignoreversion
-Source: ..\mydlp-sf\mydlp-sf\fsmf\filter\objchk_wxp_x86\i386\mydlpscanner.sys; DestDir: {app}\bin; Flags: ignoreversion; Check: Isx86
-Source: ..\mydlp-sf\mydlp-sf\fsmf\filter\objchk_wlh_ia64\ia64\mydlpscanner.sys; DestDir: {app}\bin; Flags: ignoreversion; Check: IsIArch64
-Source: ..\mydlp-sf\mydlp-sf\fsmf\filter\objchk_wlh_amd64\amd64\mydlpscanner.sys; DestDir: {app}\bin; Flags: ignoreversion; Check: IsAMD64
-Source: ..\MyDLP-Win-GUI\MyDLP-Win-GUI\bin\Release\en-US\*; DestDir: {app}\bin\en-US; Flags: ignoreversion recursesubdirs createallsubdirs
-Source: ..\MyDLP-Win-GUI\MyDLP-Win-GUI\bin\Release\tr-TR\*; DestDir: {app}\bin\tr-TR; Flags: ignoreversion recursesubdirs createallsubdirs
-Source: ..\MyDLP-Win-GUI\MyDLP-Win-GUI\bin\Release\images\*; DestDir: {app}\bin\images; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: ..\MyDLP-Win-GUI\MyDLP-Win-GUI\bin\Release\MyDLP-Win-GUI.exe; DestDir: {app}\bin
+Source: ..\mh-clamwin\contrib\msvc\Release\Win32\libclamav.dll; DestDir: {app}\bin
+Source: ..\mh-clamwin\contrib\msvc\Release\Win32\libclamunrar_iface.dll; DestDir: {app}\bin; Flags: ignoreversion
+Source: ..\mh-clamwin\contrib\msvc\Release\Win32\libclamunrar.dll; DestDir: {app}\bin; Flags: ignoreversion
+;Source: ..\mh-clamwin\contrib\msvc\Release\Win32\libclamav_llvmd.dll; DestDir: {app}\bin
+Source: ..\mh-clamwin\contrib\msvc\pcre\pcre.dll; DestDir: {app}\bin
+Source: ..\MyDLP-Win-Service\MyDLP-Win-Service\bin\Release\MyDLP-Host.exe; DestDir: {app}\bin
+Source: ..\MyDLP-Win-Service\MyDLP-Win-Service\bin\Release\MyDLP-Host.exe; DestDir: {app}\bin
+Source: ..\mydlp-sf\Release\mydlp-sf.dll; DestDir: {app}\bin
+Source: ..\mydlp-sf\Release\log4net.dll; DestDir: {app}\bin
+Source: ..\mydlp-sf\Release\NRtfTree.dll; DestDir: {app}\bin
+Source: ..\mydlp-sf\Release\PDFBox-0.7.3.dll; DestDir: {app}\bin
+Source: ..\mydlp-sf\Release\FontBox-0.1.0-dev.dll; DestDir: {app}\bin
+Source: ..\mydlp-sf\Release\IFilterParser.dll; DestDir: {app}\bin
+Source: ..\mydlp-sf\Release\IKVM.GNU.Classpath.dll; DestDir: {app}\bin
+Source: ..\mydlp-sf\Release\IKVM.Runtime.dll; DestDir: {app}\bin
+Source: ..\mydlp-sf\mydlp-sf\fsmf\MyDLPScanner.inf; DestDir: {app}\bin
+Source: ..\mydlp-sf\mydlp-sf\fsmf\mydlpscanner_x86.sys; DestName: mydlpscanner.sys; DestDir: {app}\bin; Check: Isx86
+Source: ..\mydlp-sf\mydlp-sf\fsmf\mydlpscanner_x64.sys; DestName: mydlpscanner.sys; DestDir: {app}\bin; Check: IsAMD64
+Source: ..\mydlp-sf\mydlp-sf\fsmf\mydlpscanner_ia64.sys; DestName: mydlpscanner.sys; DestDir: {app}\bin; Check: IsIArch64
+Source: ..\MyDLP-Win-GUI\MyDLP-Win-GUI\bin\Release\en-US\*; DestDir: {app}\bin\en-US; Flags: recursesubdirs createallsubdirs
+Source: ..\MyDLP-Win-GUI\MyDLP-Win-GUI\bin\Release\tr-TR\*; DestDir: {app}\bin\tr-TR; Flags: recursesubdirs createallsubdirs
+Source: ..\MyDLP-Win-GUI\MyDLP-Win-GUI\bin\Release\images\*; DestDir: {app}\bin\images; Flags: recursesubdirs createallsubdirs
 Source: other\conf\device.conf; DestDir: {app}\conf; Flags: onlyifdoesntexist
 Source: other\conf\screencapture.conf; DestDir: {app}\conf; Flags: onlyifdoesntexist
 Source: other\conf\sensfile.conf; DestDir: {app}\conf; Flags: onlyifdoesntexist
 Source: other\conf\service.conf; DestDir: {app}\conf; Flags: onlyifdoesntexist
-Source: other\redist\vcredist_x86.exe; DestDir: {app}\temp
-Source: other\redist\msjava.dll; DestDir: {app}\bin; Flags: onlyifdoesntexist
+;Source: other\redist\vcredist_x86.exe; DestDir: {app}\temp
+Source: other\redist\msjava.dll; DestDir: {sys}; Flags: onlyifdoesntexist
+
 
 [Icons]
 Name: {group}\MyDLP; Filename: {app}\bin\MyDLP-Win-GUI.exe
 Name: {group}\{cm:UninstallProgram,MyDLP}; Filename: {uninstallexe}
+Name: {commonstartup}\MyDLP; Filename: {app}\bin\MyDLP-Win-GUI.exe
 Name: {commondesktop}\MyDLP; Filename: {app}\bin\MyDLP-Win-GUI.exe; Tasks: desktopicon
 
 [Run]
-Filename: {app}\temp\vcredist_x86.exe
+;Filename: {app}\temp\vcredist_x86.exe
 Filename: {sys}\rundll32.exe; Parameters: syssetup,SetupInfObjectInstallAction DefaultInstall 128 .\MyDLPScanner.inf; WorkingDir: {app}\bin; Flags: 32bit
 Filename: net.exe; Parameters: start mydlp-scanner
 Filename: {app}\bin\MyDLP-Host.exe; Parameters: --install
@@ -149,15 +153,18 @@ begin
 		msi31('3.1');
 		dotnetfx20sp2();
 		dotnetfx20sp2lp();
+		vcredist2008();
 	end else begin
 		if minwinversion(5, 0) and minwinspversion(5, 0, 4) then begin
 			kb835732();
 			msi31('3.0');
 			dotnetfx20sp1();
 			dotnetfx20sp1lp();
+			vcredist2008();
 		end else begin
 			dotnetfx20();
 			dotnetfx20lp();
+			vcredist2008();
 		end;
 	end;
 
@@ -178,4 +185,3 @@ function Isx86: Boolean;
 begin
 	Result := not IsWin64;
 end;
-

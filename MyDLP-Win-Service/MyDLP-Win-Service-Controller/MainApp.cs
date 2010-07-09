@@ -4,7 +4,6 @@ using System.Text;
 using System.Configuration.Install;
 using System.Reflection;
 using System.ServiceProcess;
-using mydlpsf;
 
 namespace MyDLPHost
 {
@@ -28,20 +27,19 @@ namespace MyDLPHost
                         case "--start":
                             foreach (ServiceController sc in ServiceController.GetServices())
                             {
-                                if (sc.ServiceName == "MyDLP-Host")
+                              if (sc.ServiceName == "MyDLP-Controller")
                                 {
                                     if (sc.Status != ServiceControllerStatus.Running)
                                         sc.Start();
-                                } 
-                                
+                                }
                             }
                             break;
                         case "--stop":
                             foreach (ServiceController sc in ServiceController.GetServices())
                             {
-                                if (sc.ServiceName == "MyDLP-Host")
+                                if (sc.ServiceName == "MyDLP-Controller")
                                 {
-                                    if (sc.Status == ServiceControllerStatus.Running)
+                                    if (sc.Status != ServiceControllerStatus.Running)
                                         sc.Stop();
                                 }
                             }
@@ -51,12 +49,12 @@ namespace MyDLPHost
                 }
                 catch (Exception ex)
                 {
-                    MyDLPEventLogger.GetInstance().LogService("Exception in service initialization: " + ex.StackTrace);
+                    
                 }
             }
             else
             {
-                ServiceBase.Run(new MyDLPService());
+                ServiceBase.Run(new MyDLPControllerService());
             }
         }
 

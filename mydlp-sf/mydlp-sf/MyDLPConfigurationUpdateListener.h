@@ -20,6 +20,7 @@
 #pragma once
 
 using namespace System;
+using namespace System::Timers;
 
 namespace mydlpsf
 {
@@ -29,10 +30,14 @@ namespace mydlpsf
 		static MyDLPConfigurationUpdateListener ^listener;
 		System::IO::FileSystemWatcher ^watcher;
 		MyDLPConfigurationUpdateListener(void);
+		System::Timers::Timer ^timer;
+		String ^lastFileName;
+		void ReleaseFileName( Object ^source, ElapsedEventArgs ^e );
 
 	public:
 		static MyDLPConfigurationUpdateListener ^GetInstance();
 		void StartListener();
+		void StopListener();
 		void OnChanged(Object^ o, System::IO::FileSystemEventArgs^ e);
 	};
 }

@@ -44,7 +44,9 @@ namespace MydlpWinGui
                 item.SubItems.Add(md5Value);
                 listView1.Items.Add(item);
                 md5Value += ":" + fileSize + ":" + desc;
-                Form1.sensFileConf.md5Val += "\n" + md5Value;
+                if (Form1.sensFileConf.md5Val.Length != 0)
+                    Form1.sensFileConf.md5Val += "\n";
+                Form1.sensFileConf.md5Val += md5Value;
                 textBox1.Text = "";
                 textBox2.Text = "";
             }
@@ -75,6 +77,7 @@ namespace MydlpWinGui
                     }
                 }
                 listView1.Items.RemoveAt(listView1.SelectedIndices[0]);
+                Form1.sensFileConf.md5Val = newMd5List;
             }
         }
 

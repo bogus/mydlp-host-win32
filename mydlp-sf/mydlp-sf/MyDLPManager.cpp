@@ -18,6 +18,7 @@
  *  MA 02110-1301, USA.
  */
 #include "StdAfx.h"
+#include "stdio.h"
 #include "MyDLPFSMFListener.h"
 #include "MyDLPWMIDeviceListener.h"
 #include "MyDLPScreenCaptureFilter.h"
@@ -25,6 +26,7 @@
 #include "MyDLPManager.h"
 #include "MyDLPRemoteConf.h"
 #include "MyDLPSensFilePool.h"
+#include "MyDLPConfigurationUpdateListener.h"
 
 
 namespace mydlpsf
@@ -57,21 +59,25 @@ namespace mydlpsf
 			MyDLPRemoteSensFileConf::GetInstance()->Deserialize();
 			MyDLPRemoteServiceConf::GetInstance()->Deserialize();
 
+			MyDLPConfigurationUpdateListener::GetInstance()->StartListener();
+
 			MyDLPSensFilePool::GetInstance()->InitPool();
 
-			MyDLPWMIDeviceListener::GetInstance()->AddRemoveUSBHandler();
-			MyDLPWMIDeviceListener::GetInstance()->AddInsertUSBHandler();
-			MyDLPWMIDeviceListener::GetInstance()->AddInsertLogicalDeviceHandler();
+			// TODO : Disabled until proper testing
+			//MyDLPWMIDeviceListener::GetInstance()->AddRemoveUSBHandler();
+			//MyDLPWMIDeviceListener::GetInstance()->AddInsertUSBHandler();
+			//MyDLPWMIDeviceListener::GetInstance()->AddInsertLogicalDeviceHandler();
 
 			if(MyDLPRemoteDeviceConf::GetInstance()->enableRemovableOnlineScanning.Equals(TRUE))
 				MyDLPFSMFListener::RunFilter();
 
 			if(MyDLPRemoteScreenCaptureConf::GetInstance()->enableScreenCaptureFilter.Equals(TRUE))
-				MyDLPScreenCaptureFilter::GetInstance()->StartHook();			
+				MyDLPScreenCaptureFilter::GetInstance()->StartHook();	
 
 		}
 		catch(Exception ^ex)
 		{
+			MyDLPEventLogger::GetInstance()->LogError("MyDLPManager::Start" + ex->InnerException->StackTrace);
 			throw gcnew Exception("MyDLPManager::Start", ex);
 		}
 	}
@@ -80,48 +86,51 @@ namespace mydlpsf
 	{
 		try
 		{
-			if(filename == MyDLPRemoteDeviceConf::confFileName) {
+			if(filename->Equals((String ^)MyDLPRemoteDeviceConf::confFileName)) {
 				MyDLPRemoteDeviceConf::GetInstance()->Deserialize();
 				if(MyDLPRemoteDeviceConf::GetInstance()->enableRemovableOnlineScanning.Equals(TRUE))
 					MyDLPFSMFListener::RunFilter();
-				else
-					MyDLPFSMFListener::StopFilter();
 			}
 
-			else if(filename == MyDLPRemoteScreenCaptureConf::confFileName) {
+			else if(filename->Equals((String ^)MyDLPRemoteScreenCaptureConf::confFileName)) {
 				MyDLPRemoteScreenCaptureConf::GetInstance()->Deserialize();
 				if(MyDLPRemoteScreenCaptureConf::GetInstance()->enableScreenCaptureFilter.Equals(TRUE))
 					MyDLPScreenCaptureFilter::GetInstance()->StartHook();
-				else
-					MyDLPScreenCaptureFilter::GetInstance()->StopHook();
 			}
 
-			else if(filename == MyDLPRemoteSensFileConf::confFileName) {
+			else if(filename->Equals((String ^)MyDLPRemoteSensFileConf::confFileName)) {
+				MyDLPFSMFListener::StopFilter();
 				MyDLPRemoteSensFileConf::GetInstance()->Deserialize();
 				MyDLPSensFilePool::GetInstance()->UpdatePool();
+				MyDLPFSMFListener::RunFilter();
 			}
 
-			else if(filename == MyDLPRemoteServiceConf::confFileName) 
+			else if(filename->Equals((String ^)MyDLPRemoteServiceConf::confFileName)) 
 				MyDLPRemoteServiceConf::GetInstance()->Deserialize();
-
+		
 		}
 		catch(Exception ^ex)
 		{
+			MyDLPEventLogger::GetInstance()->LogError("MyDLPManager::Update" + ex->InnerException->StackTrace);
 			throw gcnew Exception("MyDLPManager::Update", ex);
 		}
+		
 	}
 
 	void MyDLPManager::Stop()
 	{
 		try
 		{
-			MyDLPWMIDeviceListener::GetInstance()->StopWatchers();
+			// TODO: Disabled until proper testing
+			//MyDLPWMIDeviceListener::GetInstance()->StopWatchers();
+			MyDLPConfigurationUpdateListener::GetInstance()->StopListener();
 			MyDLPScreenCaptureFilter::GetInstance()->StopHook();
 			MyDLPFSMFListener::StopFilter();
 			MyDLPDirectoryTraverse::StopAllScans();
 		}
 		catch(Exception ^ex)
 		{
+			MyDLPEventLogger::GetInstance()->LogError("MyDLPManager::Stop" + ex->InnerException->StackTrace);
 			throw gcnew Exception("MyDLPManager::Stop", ex);
 		}
 	}

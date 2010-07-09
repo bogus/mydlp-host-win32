@@ -13,7 +13,6 @@ namespace MyDLPHost
     {
         private System.ServiceProcess.ServiceProcessInstaller serviceProcessInstaller1;
         private System.ServiceProcess.ServiceInstaller serviceInstaller1;
-       
         /// <summary>
         /// Required designer variable.
         /// </summary>
@@ -45,13 +44,13 @@ namespace MyDLPHost
             //
             // serviceInstaller1
             //
-            this.serviceInstaller1.ServiceName = "MyDLP-Host";
+            this.serviceInstaller1.ServiceName = "MyDLP-Controller";
             this.serviceInstaller1.StartType = System.ServiceProcess.ServiceStartMode.Automatic;
-            this.serviceInstaller1.Description = "MyDLP Host Service";
+            this.serviceInstaller1.Description = "MyDLP Host Service Configuration Controller";
             //
             // ProjectInstaller
             //
-            this.Installers.AddRange(new System.Configuration.Install.Installer[] {this.serviceProcessInstaller1, this.serviceInstaller1});
+            this.Installers.AddRange(new System.Configuration.Install.Installer[] { this.serviceProcessInstaller1, this.serviceInstaller1 });
 
         }
         #endregion

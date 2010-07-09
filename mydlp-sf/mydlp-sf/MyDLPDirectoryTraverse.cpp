@@ -111,6 +111,7 @@ namespace mydlpsf {
 		
 		String ^path = obj->ToString();
 		String ^originalPath = (String ^)origPath;
+		MyDLPSensitiveFileRecognition ^fileSearch = nullptr;
 
 		try
 		{
@@ -138,7 +139,8 @@ namespace mydlpsf {
 
 				if (((String ^)all[key]) == "f")
 				{
-					MyDLPSensitiveFileRecognition ^fileSearch = MyDLPSensFilePool::GetInstance()->AcquireObject();
+					while(MyDLPSensFilePool::GetInstance()->isUpdating);
+					fileSearch = MyDLPSensFilePool::GetInstance()->AcquireObject();
 					try
 					{
 						int ret = 0;                    
@@ -177,7 +179,7 @@ namespace mydlpsf {
 					{
 						for each(String ^dirName in MyDLPRemoteDeviceConf::GetInstance()->excludedDirs)
 						{
-							if(dirName->ToLower() == key->ToLower()) {
+							if(dirName->ToLower()->Equals((String ^)key->ToLower())) {
 								isExcluded = true;
 								break;
 							}
@@ -190,6 +192,8 @@ namespace mydlpsf {
 		} catch (Exception ^ex) {
 			cont = false;
 			MyDLPEventLogger::GetInstance()->LogError(ex->StackTrace);
+			if(fileSearch != nullptr)
+				MyDLPSensFilePool::GetInstance()->DeleteObject(fileSearch);
 		}
 
 		if(path == originalPath) {
