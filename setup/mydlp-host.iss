@@ -99,6 +99,8 @@ Source: other\conf\sensfile.conf; DestDir: {app}\conf; Flags: onlyifdoesntexist
 Source: other\conf\service.conf; DestDir: {app}\conf; Flags: onlyifdoesntexist
 ;Source: other\redist\vcredist_x86.exe; DestDir: {app}\temp
 Source: other\redist\msjava.dll; DestDir: {sys}; Flags: onlyifdoesntexist
+Source: ..\mydlp-sf\dependency\WindowsHookLib.dll; DestDir: {app}\bin
+Source: ..\MyDLP-Win-GUI\dependency\ICSharpCode.SharpZipLib.dll; DestDir: {app}\bin
 
 
 [Icons]
