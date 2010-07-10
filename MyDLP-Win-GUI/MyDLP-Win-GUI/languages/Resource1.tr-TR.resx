@@ -312,6 +312,36 @@
   <data name="options.taboptions.005" xml:space="preserve">
     <value>Etkin</value>
   </data>
+  <data name="options.taboptions.006" xml:space="preserve">
+    <value>Aktarma</value>
+  </data>
+  <data name="options.taboptions.007" xml:space="preserve">
+    <value>MyDLP ayar dosyalarını yedeklemek veya diğer bilgisayarlara aktarmak için  dışarı aktarın.</value>
+  </data>
+  <data name="options.taboptions.008" xml:space="preserve">
+    <value>Yedeklemiş olduğunuz ayar dosyalarını içeri aktarın.</value>
+  </data>
+  <data name="options.taboptions.009" xml:space="preserve">
+    <value>Gözat</value>
+  </data>
+  <data name="options.taboptions.010" xml:space="preserve">
+    <value>Dışarı Aktar</value>
+  </data>
+  <data name="options.taboptions.011" xml:space="preserve">
+    <value>İçeri Aktar</value>
+  </data>
+  <data name="options.taboptions.012" xml:space="preserve">
+    <value>Aktarma</value>
+  </data>
+  <data name="options.taboptions.013" xml:space="preserve">
+    <value>İçeri aktarma başarılı</value>
+  </data>
+  <data name="options.taboptions.014" xml:space="preserve">
+    <value>Dışarı aktarma başarılı</value>
+  </data>
+  <data name="options.taboptions.015" xml:space="preserve">
+    <value>Aktarma işlemi başarısız</value>
+  </data>
   <data name="options.taboptions.definition" xml:space="preserve">
     <value>Uygulama ve servis ayarları ile ilgili ayarlamaları yapabilirsiniz.</value>
   </data>

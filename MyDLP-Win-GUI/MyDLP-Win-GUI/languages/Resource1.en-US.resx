@@ -312,6 +312,36 @@
   <data name="options.taboptions.005" xml:space="preserve">
     <value>Enabled</value>
   </data>
+  <data name="options.taboptions.006" xml:space="preserve">
+    <value>Export / Import</value>
+  </data>
+  <data name="options.taboptions.007" xml:space="preserve">
+    <value>You can export MyDLP configuration in order to backup or apply configuration to other computers</value>
+  </data>
+  <data name="options.taboptions.008" xml:space="preserve">
+    <value>Import configuration </value>
+  </data>
+  <data name="options.taboptions.009" xml:space="preserve">
+    <value>Browse</value>
+  </data>
+  <data name="options.taboptions.010" xml:space="preserve">
+    <value>Export</value>
+  </data>
+  <data name="options.taboptions.011" xml:space="preserve">
+    <value>Import</value>
+  </data>
+  <data name="options.taboptions.012" xml:space="preserve">
+    <value>Import / Export</value>
+  </data>
+  <data name="options.taboptions.013" xml:space="preserve">
+    <value>Import successful</value>
+  </data>
+  <data name="options.taboptions.014" xml:space="preserve">
+    <value>Export successful</value>
+  </data>
+  <data name="options.taboptions.015" xml:space="preserve">
+    <value>Import / Export operation unsuccessful</value>
+  </data>
   <data name="options.taboptions.definition" xml:space="preserve">
     <value>Adjustments for the application and service settings</value>
   </data>

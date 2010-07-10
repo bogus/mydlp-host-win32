@@ -57,6 +57,8 @@
             this.label6 = new System.Windows.Forms.Label();
             this.label5 = new System.Windows.Forms.Label();
             this.tabPage3 = new System.Windows.Forms.TabPage();
+            this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.checkBox2 = new System.Windows.Forms.CheckBox();
             this.label12 = new System.Windows.Forms.Label();
             this.groupBoxPredefined = new System.Windows.Forms.GroupBox();
             this.maskedTextBoxIBAN = new System.Windows.Forms.MaskedTextBox();
@@ -73,16 +75,14 @@
             this.checkBoxCC = new System.Windows.Forms.CheckBox();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.buttonSaveAll = new System.Windows.Forms.Button();
-            this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.checkBox2 = new System.Windows.Forms.CheckBox();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.groupAddMd5.SuspendLayout();
             this.tabPage2.SuspendLayout();
             this.groupRegex.SuspendLayout();
             this.tabPage3.SuspendLayout();
-            this.groupBoxPredefined.SuspendLayout();
             this.groupBox1.SuspendLayout();
+            this.groupBoxPredefined.SuspendLayout();
             this.SuspendLayout();
             // 
             // tabControl1
@@ -367,6 +367,26 @@
             this.tabPage3.Text = "Predefined Expressions";
             this.tabPage3.UseVisualStyleBackColor = true;
             // 
+            // groupBox1
+            // 
+            this.groupBox1.Controls.Add(this.checkBox2);
+            this.groupBox1.Location = new System.Drawing.Point(21, 245);
+            this.groupBox1.Name = "groupBox1";
+            this.groupBox1.Size = new System.Drawing.Size(481, 51);
+            this.groupBox1.TabIndex = 2;
+            this.groupBox1.TabStop = false;
+            this.groupBox1.Text = "Other";
+            // 
+            // checkBox2
+            // 
+            this.checkBox2.AutoSize = true;
+            this.checkBox2.Location = new System.Drawing.Point(19, 20);
+            this.checkBox2.Name = "checkBox2";
+            this.checkBox2.Size = new System.Drawing.Size(183, 17);
+            this.checkBox2.TabIndex = 0;
+            this.checkBox2.Text = "Enable encrypted archive filtering";
+            this.checkBox2.UseVisualStyleBackColor = true;
+            // 
             // label12
             // 
             this.label12.Location = new System.Drawing.Point(18, 14);
@@ -504,10 +524,6 @@
             this.checkBoxCC.Text = "Enable Credit Card Search";
             this.checkBoxCC.UseVisualStyleBackColor = true;
             // 
-            // openFileDialog1
-            // 
-            this.openFileDialog1.FileName = "openFileDialog1";
-            // 
             // buttonSaveAll
             // 
             this.buttonSaveAll.Location = new System.Drawing.Point(8, 393);
@@ -517,26 +533,6 @@
             this.buttonSaveAll.Text = "Save Changes";
             this.buttonSaveAll.UseVisualStyleBackColor = true;
             this.buttonSaveAll.Click += new System.EventHandler(this.buttonSaveAll_Click);
-            // 
-            // groupBox1
-            // 
-            this.groupBox1.Controls.Add(this.checkBox2);
-            this.groupBox1.Location = new System.Drawing.Point(21, 245);
-            this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(481, 51);
-            this.groupBox1.TabIndex = 2;
-            this.groupBox1.TabStop = false;
-            this.groupBox1.Text = "Other";
-            // 
-            // checkBox2
-            // 
-            this.checkBox2.AutoSize = true;
-            this.checkBox2.Location = new System.Drawing.Point(19, 20);
-            this.checkBox2.Name = "checkBox2";
-            this.checkBox2.Size = new System.Drawing.Size(183, 17);
-            this.checkBox2.TabIndex = 0;
-            this.checkBox2.Text = "Enable encrypted archive filtering";
-            this.checkBox2.UseVisualStyleBackColor = true;
             // 
             // SensitiveData
             // 
@@ -558,10 +554,10 @@
             this.groupRegex.ResumeLayout(false);
             this.groupRegex.PerformLayout();
             this.tabPage3.ResumeLayout(false);
-            this.groupBoxPredefined.ResumeLayout(false);
-            this.groupBoxPredefined.PerformLayout();
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
+            this.groupBoxPredefined.ResumeLayout(false);
+            this.groupBoxPredefined.PerformLayout();
             this.ResumeLayout(false);
 
         }

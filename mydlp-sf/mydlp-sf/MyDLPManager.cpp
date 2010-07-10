@@ -28,7 +28,6 @@
 #include "MyDLPSensFilePool.h"
 #include "MyDLPConfigurationUpdateListener.h"
 
-
 namespace mydlpsf
 {
 	MyDLPManager::MyDLPManager(void)

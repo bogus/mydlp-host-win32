@@ -19,20 +19,22 @@ namespace MydlpWinGui
 
         private void OnlineScan_Load(object sender, EventArgs e)
         {
+            Fill();
+            ReadRemovableLogFile();
+            timer1.Start();
 
+            Globalize();
+
+        }
+
+        public void Fill()
+        {
             checkBoxEnableScan.Checked = Form1.deviceConf.enableRemovableOnlineScanning;
             checkBoxJustLog.Checked = Form1.deviceConf.justLogRemovableOnlineScanning;
             checkBox1.Checked = Form1.deviceConf.filterPSD;
             checkBox2.Checked = Form1.deviceConf.filterPSP;
             checkBox3.Checked = Form1.deviceConf.filterDWG;
             checkBox4.Checked = Form1.deviceConf.filterCDR;
-
-
-            ReadRemovableLogFile();
-            timer1.Start();
-
-            Globalize();
-
         }
 
         public void Globalize()

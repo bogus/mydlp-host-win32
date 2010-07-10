@@ -239,6 +239,24 @@ namespace MydlpWinGui
             aboutUs.Globalize();
         }
 
+        public void ReloadConfiguration()
+        {
+            MyDLPRemoteSensFileConf.Deserialize();
+            MyDLPRemoteDeviceConf.Deserialize();
+            MyDLPRemoteScreenCaptureConf.Deserialize();
+            MyDLPRemoteServiceConf.Deserialize();
+            sensFileConf = MyDLPRemoteSensFileConf.GetInstance();
+            deviceConf = MyDLPRemoteDeviceConf.GetInstance();
+            screenCaptureConf = MyDLPRemoteScreenCaptureConf.GetInstance();
+            serviceConf = MyDLPRemoteServiceConf.GetInstance();
+
+            defineSensitiveData.Fill();
+            localScan.Fill();
+            onlineScan.Fill();
+            screenCapture.Fill();
+            options.Fill();
+        }
+
         private void openConfigurationMenuToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Show();

@@ -147,6 +147,12 @@ namespace MydlpWinGui
 
         private void SensitiveData_Load(object sender, EventArgs e)
         {
+            Fill();
+            Globalize();
+        }
+
+        public void Fill()
+        {
             openFileDialog1.FileName = "";
 
             FillMd5List();
@@ -162,9 +168,6 @@ namespace MydlpWinGui
             maskedTextBoxIBAN.Text = Form1.sensFileConf.maxIBANCount.ToString();
 
             checkBox2.Checked = Form1.sensFileConf.blockEncrypted;
-
-            Globalize();
-
         }
 
         public void Globalize()
@@ -214,6 +217,7 @@ namespace MydlpWinGui
 
         private void FillMd5List()
         {
+            listView1.Items.Clear();
             String[] md5List = Form1.sensFileConf.md5Val.Split(new char[] { '\n' });
 
             foreach (String str in md5List)
@@ -232,6 +236,7 @@ namespace MydlpWinGui
 
         private void FillRegexList()
         {
+            listViewRegex.Items.Clear();
             foreach (MyDLPClamRegex clamRegex in Form1.sensFileConf.regexVal)
             {
                 ListViewItem item = new ListViewItem();

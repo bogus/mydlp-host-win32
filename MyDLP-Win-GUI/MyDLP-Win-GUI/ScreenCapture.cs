@@ -22,15 +22,20 @@ namespace MydlpWinGui
         private void ScreenCapture_Load(object sender, EventArgs e)
         {
 
+            Fill();
+
+            Globalize();
+
+        }
+
+        public void Fill()
+        {
             checkBox1.Checked = Form1.screenCaptureConf.enableScreenCaptureFilter;
             checkBox2.Checked = Form1.screenCaptureConf.forbidMSOffice;
             checkBox3.Checked = Form1.screenCaptureConf.forbidOOOrg;
             checkBox4.Checked = Form1.screenCaptureConf.forbidAcrobatReader;
             checkBox5.Checked = Form1.screenCaptureConf.forbidPhotoshop;
             checkBox6.Checked = Form1.screenCaptureConf.forbidAutoCAD;
-
-            Globalize();
-
         }
 
         public void Globalize()
