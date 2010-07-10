@@ -105,7 +105,7 @@ namespace MydlpWinGui
         }
 
 
-        private void notifyIcon1_MouseDoubleClick(object sender, MouseEventArgs e)
+        private void notifyIcon1_MouseDoubleClick(object sender, System.Windows.Forms.MouseEventArgs e)
         {
             if (WindowState == FormWindowState.Minimized)
             {

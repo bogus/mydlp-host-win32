@@ -13,6 +13,9 @@ namespace MydlpWinGui
     {
         public ScreenCapture()
         {
+            if (MyDLPRemoteScreenCaptureConf.GetInstance().enableScreenCaptureFilter)
+                MyDLPScreenCaptureFilter.GetInstance().StartHook();
+
             InitializeComponent();
         }
 
@@ -55,6 +58,11 @@ namespace MydlpWinGui
                 MessageBox.Show(Form1.resM.GetString("save.text"),
                     Form1.resM.GetString("save.caption"),
                     MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+                if (MyDLPRemoteScreenCaptureConf.GetInstance().enableScreenCaptureFilter)
+                    MyDLPScreenCaptureFilter.GetInstance().StartHook();
+                else
+                    MyDLPScreenCaptureFilter.GetInstance().StopHook();
             }
             catch (Exception ex)
             {

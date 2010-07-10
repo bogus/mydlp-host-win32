@@ -25,6 +25,7 @@ using namespace System::Diagnostics;
 using namespace System::Runtime::InteropServices;
 using namespace System::Reflection;
 using namespace System::ComponentModel;
+using namespace System::Windows::Forms;
 
 namespace mydlpsf
 {
@@ -37,7 +38,6 @@ namespace mydlpsf
 		if(screenCaptureFilter == nullptr)
 		{
 			screenCaptureFilter = gcnew MyDLPScreenCaptureFilter();
-			screenCaptureFilter->hhookSysMsg = 0;
 		}
 
 		return screenCaptureFilter;
@@ -45,101 +45,95 @@ namespace mydlpsf
 
 	bool MyDLPScreenCaptureFilter::StartHook()
 	{	
-		if(hhookSysMsg == 0)
+		if(khook == nullptr)
 		{
-			hhookSysMsg = SetWindowsHookEx(
-				WH_KEYBOARD, &KeyboardProc, 
-				(HINSTANCE)Marshal::GetHINSTANCE(System::Reflection::Assembly::GetExecutingAssembly()->GetModules()[0]).ToPointer(), 
-				0);
-
-			if(hhookSysMsg == NULL) {
-				MyDLPEventLogger::GetInstance()->LogError(GetLastError().ToString());
-				return false;
-			}
+			khook = gcnew KeyboardHook();
+			khook->InstallHook();
+			khook->KeyDown += gcnew EventHandler<KeyboardEventArgs ^>(this,&MyDLPScreenCaptureFilter::CheckKeyboard);
 		}
 		return true;
 	}
 
 	void MyDLPScreenCaptureFilter::StopHook()
 	{
-		if(hhookSysMsg != 0) {
-			UnhookWindowsHookEx(hhookSysMsg);	
-			hhookSysMsg = 0;
-		}
-	}
-
-	HHOOK MyDLPScreenCaptureFilter::GetHook()
-	{
-		return hhookSysMsg;
-	}	
-}
-
-LRESULT CALLBACK KeyboardProc(int nCode, WPARAM wParam,LPARAM lParam)
-{	
-
-	if(wParam == VK_SNAPSHOT)
-	{
-		if(mydlpsf::MyDLPRemoteScreenCaptureConf::GetInstance()->enableScreenCaptureFilter.Equals(FALSE))
-			goto exit;
-
-		array<Process ^> ^arr = Process::GetProcesses();
-
-		for each(Process ^proc in arr)
+		if(khook != nullptr)
 		{
-			if(mydlpsf::MyDLPRemoteScreenCaptureConf::GetInstance()->forbidMSOffice &&
-				(proc->ProcessName->ToLower()->Contains("word") || 
-				proc->ProcessName->ToLower()->Contains("excel") ||
-				proc->ProcessName->ToLower()->Contains("powerpoint") ||
-				proc->ProcessName->ToLower()->Contains("outlook") ||
-				proc->ProcessName->ToLower()->Contains("visio") ||
-				proc->ProcessName->ToLower()->Contains("project")))
-			{
-				mydlpsf::MyDLPEventLogger::GetInstance()->LogScreenCapture("Print Screen filtered: MSOFFICE");
-				mydlpsf::MyDLPMessages::GetInstance()->AddMessage("Print Screen filtered: MSOFFICE");
-				return 1;
-			}
-
-			if(mydlpsf::MyDLPRemoteScreenCaptureConf::GetInstance()->forbidOOOrg &&
-				(proc->ProcessName->ToLower()->Contains("oowriter") || 
-				proc->ProcessName->ToLower()->Contains("oocalc") ||
-				proc->ProcessName->ToLower()->Contains("oopresent")))
-			{
-				mydlpsf::MyDLPEventLogger::GetInstance()->LogScreenCapture("Print Screen filtered: OPENOFFICE");
-				mydlpsf::MyDLPMessages::GetInstance()->AddMessage("Print Screen filtered: OPENOFFICE");
-				return 1;
-			}
-
-			if(mydlpsf::MyDLPRemoteScreenCaptureConf::GetInstance()->forbidAcrobatReader &&
-				(proc->ProcessName->ToLower()->Contains("acroread") ||
-				proc->ProcessName->ToLower()->Contains("acrobat")))
-			{
-				mydlpsf::MyDLPEventLogger::GetInstance()->LogScreenCapture("Print Screen filtered: ACROBAT READER");
-				mydlpsf::MyDLPMessages::GetInstance()->AddMessage("Print Screen filtered: ACROBAT READER");
-				return 1;
-			}
-
-			if(mydlpsf::MyDLPRemoteScreenCaptureConf::GetInstance()->forbidPhotoshop &&
-				proc->ProcessName->ToLower()->Contains("photoshop"))
-			{
-				mydlpsf::MyDLPEventLogger::GetInstance()->LogScreenCapture("Print Screen filtered: PHOTOSHOP");
-				mydlpsf::MyDLPMessages::GetInstance()->AddMessage("Print Screen filtered: PHOTOSHOP");
-				return 1;
-			}
-			
-			if(mydlpsf::MyDLPRemoteScreenCaptureConf::GetInstance()->forbidAutoCAD &&
-				proc->ProcessName->ToLower()->Contains("autocad"))
-			{
-				mydlpsf::MyDLPEventLogger::GetInstance()->LogScreenCapture("Print Screen filtered: AUTOCAD");
-				mydlpsf::MyDLPMessages::GetInstance()->AddMessage("Print Screen filtered: AUTOCAD");
-				return 1;
-			}
+			khook->RemoveHook();
+			khook = nullptr;	
 		}
 	}
 
-exit:
-	return CallNextHookEx(mydlpsf::MyDLPScreenCaptureFilter::GetInstance()->GetHook(), nCode, wParam, lParam);
-}
+	void MyDLPScreenCaptureFilter::CheckKeyboard(Object ^sender, WindowsHook::KeyboardEventArgs ^e)
+	{
+		if(e->KeyCode == Keys::PrintScreen)
+		{
+			if(!mydlpsf::MyDLPRemoteScreenCaptureConf::GetInstance()->enableScreenCaptureFilter)
+			{
+				e->Handled = false;
+				return;
+			}
 
+			array<Process ^> ^arr = Process::GetProcesses();
+
+			for each(Process ^proc in arr)
+			{
+				if(mydlpsf::MyDLPRemoteScreenCaptureConf::GetInstance()->forbidMSOffice &&
+					(proc->ProcessName->ToLower()->Contains("word") || 
+					proc->ProcessName->ToLower()->Contains("excel") ||
+					proc->ProcessName->ToLower()->Contains("powerpoint") ||
+					proc->ProcessName->ToLower()->Contains("outlook") ||
+					proc->ProcessName->ToLower()->Contains("visio") ||
+					proc->ProcessName->ToLower()->Contains("project")))
+				{
+					mydlpsf::MyDLPEventLogger::GetInstance()->LogScreenCapture("Print Screen filtered: MSOFFICE");
+					mydlpsf::MyDLPMessages::GetInstance()->AddMessage("Print Screen filtered: MSOFFICE");
+					e->Handled = true;
+					break;
+				}
+
+				if(mydlpsf::MyDLPRemoteScreenCaptureConf::GetInstance()->forbidOOOrg &&
+					(proc->ProcessName->ToLower()->Contains("oowriter") || 
+					proc->ProcessName->ToLower()->Contains("oocalc") ||
+					proc->ProcessName->ToLower()->Contains("oopresent")))
+				{
+					mydlpsf::MyDLPEventLogger::GetInstance()->LogScreenCapture("Print Screen filtered: OPENOFFICE");
+					mydlpsf::MyDLPMessages::GetInstance()->AddMessage("Print Screen filtered: OPENOFFICE");
+					e->Handled = true;
+					break;
+				}
+
+				if(mydlpsf::MyDLPRemoteScreenCaptureConf::GetInstance()->forbidAcrobatReader &&
+					(proc->ProcessName->ToLower()->Contains("acroread") ||
+					proc->ProcessName->ToLower()->Contains("acrobat")))
+				{
+					mydlpsf::MyDLPEventLogger::GetInstance()->LogScreenCapture("Print Screen filtered: ACROBAT READER");
+					mydlpsf::MyDLPMessages::GetInstance()->AddMessage("Print Screen filtered: ACROBAT READER");
+					e->Handled = true;
+					break;
+				}
+
+				if(mydlpsf::MyDLPRemoteScreenCaptureConf::GetInstance()->forbidPhotoshop &&
+					(proc->ProcessName->ToLower()->Contains("photoshop") || 
+					proc->ProcessName->ToLower()->Contains("imageready")))
+				{
+					mydlpsf::MyDLPEventLogger::GetInstance()->LogScreenCapture("Print Screen filtered: PHOTOSHOP");
+					mydlpsf::MyDLPMessages::GetInstance()->AddMessage("Print Screen filtered: PHOTOSHOP");
+					e->Handled = true;
+					break;
+				}
+				
+				if(mydlpsf::MyDLPRemoteScreenCaptureConf::GetInstance()->forbidAutoCAD &&
+					proc->ProcessName->ToLower()->Contains("autocad"))
+				{
+					mydlpsf::MyDLPEventLogger::GetInstance()->LogScreenCapture("Print Screen filtered: AUTOCAD");
+					mydlpsf::MyDLPMessages::GetInstance()->AddMessage("Print Screen filtered: AUTOCAD");
+					e->Handled = true;
+					break;
+				}
+			}
+		}
+	}
+}
 
 
 

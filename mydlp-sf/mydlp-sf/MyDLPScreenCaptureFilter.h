@@ -28,8 +28,7 @@ using namespace System::Diagnostics;
 using namespace System::Runtime::InteropServices;
 using namespace System::Reflection;
 using namespace System::ComponentModel;
-
-static LRESULT CALLBACK KeyboardProc(int nCode, WPARAM wParam,LPARAM lParam);
+using namespace WindowsHook;
 
 namespace mydlpsf
 {
@@ -38,12 +37,12 @@ namespace mydlpsf
 	private:
 		static MyDLPScreenCaptureFilter ^screenCaptureFilter;
 		MyDLPScreenCaptureFilter(void);
-		HHOOK hhookSysMsg; 
+		KeyboardHook ^khook;
+		void CheckKeyboard(Object ^sender, KeyboardEventArgs ^e);
 		
 	public:
 		static MyDLPScreenCaptureFilter ^GetInstance();
 		bool StartHook();
 		void StopHook();
-		HHOOK GetHook();
 	};
 }

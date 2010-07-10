@@ -69,11 +69,8 @@ namespace mydlpsf
 			//MyDLPWMIDeviceListener::GetInstance()->AddInsertLogicalDeviceHandler();
 
 			if(MyDLPRemoteDeviceConf::GetInstance()->enableRemovableOnlineScanning.Equals(TRUE))
-				MyDLPFSMFListener::RunFilter();
-
-			if(MyDLPRemoteScreenCaptureConf::GetInstance()->enableScreenCaptureFilter.Equals(TRUE))
-				MyDLPScreenCaptureFilter::GetInstance()->StartHook();	
-
+				MyDLPFSMFListener::RunFilter();			
+			
 		}
 		catch(Exception ^ex)
 		{
@@ -91,13 +88,7 @@ namespace mydlpsf
 				if(MyDLPRemoteDeviceConf::GetInstance()->enableRemovableOnlineScanning.Equals(TRUE))
 					MyDLPFSMFListener::RunFilter();
 			}
-
-			else if(filename->Equals((String ^)MyDLPRemoteScreenCaptureConf::confFileName)) {
-				MyDLPRemoteScreenCaptureConf::GetInstance()->Deserialize();
-				if(MyDLPRemoteScreenCaptureConf::GetInstance()->enableScreenCaptureFilter.Equals(TRUE))
-					MyDLPScreenCaptureFilter::GetInstance()->StartHook();
-			}
-
+			
 			else if(filename->Equals((String ^)MyDLPRemoteSensFileConf::confFileName)) {
 				MyDLPFSMFListener::StopFilter();
 				MyDLPRemoteSensFileConf::GetInstance()->Deserialize();
@@ -124,7 +115,6 @@ namespace mydlpsf
 			// TODO: Disabled until proper testing
 			//MyDLPWMIDeviceListener::GetInstance()->StopWatchers();
 			MyDLPConfigurationUpdateListener::GetInstance()->StopListener();
-			MyDLPScreenCaptureFilter::GetInstance()->StopHook();
 			MyDLPFSMFListener::StopFilter();
 			MyDLPDirectoryTraverse::StopAllScans();
 		}

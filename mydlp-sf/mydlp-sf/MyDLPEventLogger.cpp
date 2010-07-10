@@ -117,7 +117,8 @@ namespace mydlpsf
 		try
 		{
 			eventLogger->logError->Warn(log);
-		} catch (System::Exception ^ex) {
+		} catch (...) {
+			
 		}
 	}
 
