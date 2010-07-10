@@ -22,6 +22,7 @@
 #include "MyDLPFSMFListener.h"
 #include "MyDLPMessages.h"
 #include "MyDLPRemoteConf.h"
+#include "MyDLPTempFileManager.h"
 
 using namespace System::IO;
 using namespace System::Threading;
@@ -230,11 +231,7 @@ BOOL ScanFile (__in_bcount(BufferSize) PUCHAR Buffer, __in ULONG BufferSize,
 		if(Phase == 1) {
 			
 			if(!mydlpsf::MyDLPFSMFListener::tempFileMap->ContainsKey(filename)) {
-				String ^tempStr = System::IO::Path::GetTempFileName();
-				if(File::Exists(tempStr))
-					File::Delete(tempStr);
-				tempFileName = Path::GetDirectoryName(tempStr) + "\\mydlp-" + System::IO::Path::GetFileNameWithoutExtension(tempStr) + System::IO::Path::GetExtension(filename);				
-				mydlpsf::MyDLPEventLogger::GetInstance()->LogError(tempFileName);
+				tempFileName = mydlpsf::MyDLPTempFileManager::GetInstance()->GetTempFileName(System::IO::Path::GetExtension(filename));				
 				fs = gcnew FileStream(tempFileName, FileMode::CreateNew, FileAccess::Write);
 				mydlpsf::MyDLPFSMFListener::tempFileMap->Add(filename, tempFileName);
 			} else {
@@ -277,16 +274,17 @@ BOOL ScanFile (__in_bcount(BufferSize) PUCHAR Buffer, __in ULONG BufferSize,
 						mydlpsf::MyDLPEventLogger::GetInstance()->LogRemovable(filename + " -- " + recObj->GetLastResult());
 						mydlpsf::MyDLPMessages::GetInstance()->AddMessage(filename + " -- " + recObj->GetLastResult());
 					}
-
-					mydlpsf::MyDLPSensFilePool::GetInstance()->ReleaseObject(recObj);
 					
 					return retVal;
 				}	
 			} 
 		} else if(Phase == 2) {
-			if(!tempFileName->Equals(String::Empty)) {
-				if(File::Exists(tempFileName)) {
-					File::Delete(tempFileName);
+			if(mydlpsf::MyDLPFSMFListener::tempFileMap->ContainsKey(filename))
+			{
+				tempFileName = mydlpsf::MyDLPFSMFListener::tempFileMap[filename];
+				if(tempFileName->Length > 0)
+				{
+					mydlpsf::MyDLPTempFileManager::GetInstance()->DeleteFile(tempFileName);
 					mydlpsf::MyDLPFSMFListener::tempFileMap->Remove(filename);
 				}
 			}

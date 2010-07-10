@@ -12,7 +12,9 @@ namespace IFilterParser
         {
             PDDocument doc = PDDocument.load(input);
             PDFTextStripper stripper = new PDFTextStripper();
-            return stripper.getText(doc);
+            String str = stripper.getText(doc);
+            doc.close();
+            return str;
         }
     }
 }

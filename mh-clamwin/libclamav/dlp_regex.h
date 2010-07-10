@@ -27,11 +27,6 @@
 #include "others.h"
 #include <pcre.h>
 
-struct regex_st {
-	unsigned int id;
-	pcre *dlp_re;
-};
-
 struct regex_st *regexes;
 int regex_count;
 int found_regex_id;

@@ -87,6 +87,8 @@ namespace mydlpsf
 				MyDLPRemoteDeviceConf::GetInstance()->Deserialize();
 				if(MyDLPRemoteDeviceConf::GetInstance()->enableRemovableOnlineScanning.Equals(TRUE))
 					MyDLPFSMFListener::RunFilter();
+				else
+					MyDLPFSMFListener::StopFilter();
 			}
 			
 			else if(filename->Equals((String ^)MyDLPRemoteSensFileConf::confFileName)) {
@@ -102,7 +104,7 @@ namespace mydlpsf
 		}
 		catch(Exception ^ex)
 		{
-			MyDLPEventLogger::GetInstance()->LogError("MyDLPManager::Update" + ex->InnerException->StackTrace);
+			MyDLPEventLogger::GetInstance()->LogError("MyDLPManager::Update " + ex->InnerException->StackTrace);
 			throw gcnew Exception("MyDLPManager::Update", ex);
 		}
 		

@@ -1,21 +1,12 @@
 /*++
 
 Copyright (c) 1999-2002  Microsoft Corporation
+Copyright (C) 2010 Medra Teknoloji 
 
-Module Name:
+Authors: Burak OGUZ <burak@medra.com.tr>
 
-    scanner.c
+This file system minifilter is based on Microsoft WDK Scanner Example.
 
-Abstract:
-
-    This is the main module of the scanner filter.
-
-    This filter scans the data in a file before allowing an open to proceed.  This is similar
-    to what virus checkers do.
-
-Environment:
-
-    Kernel mode
 
 --*/
 #include <fltKernel.h>

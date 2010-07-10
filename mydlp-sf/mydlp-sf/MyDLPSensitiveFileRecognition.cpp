@@ -25,6 +25,8 @@
 #include "MyDLPSensitiveFileRecognition.h"
 #include "MyDLPEventLogger.h"
 #include "MyDLPPSParse.h"
+#include "MyDLPTempFileManager.h"
+#include <pcre.h>
 #using <mscorlib.dll>
 
 using namespace System;
@@ -34,6 +36,7 @@ using namespace System::IO;
 using namespace IFilterParser;
 using namespace System::Threading;
 using namespace System::Runtime::CompilerServices;
+using namespace System::Collections::Generic;
 
 namespace mydlpsf {
 
@@ -68,29 +71,13 @@ namespace mydlpsf {
 	int MyDLPSensitiveFileRecognition::AddRegex(array<System::UInt32> ^ids, array<System::String ^> ^regex, int count)
 	{
 		int i = 0;
-		unsigned char **regex_list;
-		unsigned int *id_list;
-		char **str;
+		const char *error;
+		int erroffset = 0;
+		array<pcre *> ^pcreArr = gcnew array<pcre *>(count);
+		List<UInt32> ^idsArr = gcnew List<UInt32>();
+		struct regex_st *regexes;
+
 		UTF8Encoding ^encoder = gcnew UTF8Encoding();
-		try
-		{
-			regex_list = (unsigned char **)malloc(sizeof(unsigned char *) * count);
-			id_list = (unsigned int *)malloc(sizeof(int) * count);
-			str = (char **)malloc(sizeof(int) * count);
-		}
-		catch(Exception ^ex)
-		{
-			MyDLPEventLogger::GetInstance()->LogError("AddRegex - init " + ex->StackTrace);
-			return 2;
-		}
-	
-		if(count == 0) 
-		{
-			if(cl_dlp_regex_init(NULL, NULL, count) != 0) {
-				return 2;
-			}
-			return 0;
-		}
 		
 		for(i = 0; i < count; i++)
 		{		
@@ -125,47 +112,63 @@ namespace mydlpsf {
 			{
 				MyDLPEventLogger::GetInstance()->LogError(ex->StackTrace);
 			}
-			try
-			{
-				char *tmpStr = (char *)malloc(sizeof(char) * (utf8Regex->Length + 1));
-				strcpy_s(tmpStr, utf8Regex->Length + 1,ManagedToSTL(utf8Regex).c_str());
-				
-				str[i] = tmpStr;
-				regex_list[i] = (unsigned char *)str[i];
-				id_list[i] = ids[i];
-			} 
-			catch(Exception ^ex)
-			{
-				MyDLPEventLogger::GetInstance()->LogError("AddRegex - tmpStr " + ex->StackTrace);
+		
+			pcre *temp_re = pcre_compile(ManagedToSTL(utf8Regex).c_str(), PCRE_CASELESS, &error, &erroffset, NULL);
+			if(erroffset == 0) {
+				pcreArr[i] = temp_re;
+				idsArr->Add(ids[i]);
 			}
 		}
+		
+		if(count == 0) 
+		{
+			if(cl_dlp_regex_init(NULL, NULL, count) != 0) {
+				return 2;
+			}
+			return 0;
+		} 
+		else
+		{
+			regexes = (struct regex_st *)malloc(sizeof(struct regex_st) * idsArr->Count);
+		}
+		
+		for(i =  0; i < idsArr->Count; i++)
+		{
+			regexes[i].dlp_re = pcreArr[i];
+			regexes[i].id = idsArr[i];
+		}
 
-		if(cl_dlp_regex_init(id_list, (const unsigned char **)regex_list, count) != 0) {
+		if(cl_dlp_regex_init2(regexes, idsArr->Count) != 0) {
 			return 2;
 		}
+		
 		return 0;
 	}
 
 	[MethodImpl(MethodImplOptions::Synchronized)]
-	int MyDLPSensitiveFileRecognition::AddMD5s(String^ md5)
+	int MyDLPSensitiveFileRecognition::AddMD5s()
 	{
 		unsigned int sigs, ret;
-		char *md5db_file;
+		String^ md5 = mydlpsf::MyDLPRemoteSensFileConf::GetInstance()->md5Val;
 
 		if(md5->Length == 0) {
 			return 0;
 		}
 
-		if((md5db_file = cl_dlp_md5db_init((const unsigned char *)ManagedToSTL(md5).c_str())) == NULL) {
-			cl_engine_free(engine);
-			return -2;
-		}
+		hdbFileName = MyDLPTempFileManager::GetInstance()->GetTempFileName(".hdb");
+		StreamWriter ^writer = gcnew StreamWriter(gcnew FileStream(hdbFileName, 
+			FileMode::CreateNew, FileAccess::Write));
+		writer->Write(md5);
+		writer->Flush();
+		writer->Close();
 
-		if((ret = cl_load(md5db_file, this->engine, &sigs, CL_DB_STDOPT)) != CL_SUCCESS) {
+		if((ret = cl_load(ManagedToSTL(hdbFileName).c_str(), this->engine, &sigs, CL_DB_STDOPT)) != CL_SUCCESS) {
 			cl_engine_free(engine);
 			cl_dlp_md5db_unlink();
 			return -2;
 		}
+
+		MyDLPTempFileManager::GetInstance()->DeleteFile(hdbFileName);
 
 		return sigs;
 	}
@@ -254,7 +257,7 @@ namespace mydlpsf {
 
 		this->result = "Clean";
 
-		filename = GetShortFileName(filename);
+		//filename = GetShortFileName(filename);
 
 		try 
 		{
@@ -266,11 +269,10 @@ namespace mydlpsf {
 			if (ret == CL_RESCAN_OLE2 || ret == CL_RESCAN_PDF || ret==CL_RESCAN_PS
 				|| ret==CL_RESCAN_RTF) {
 
-				String ^tempFilePath = System::IO::Path::GetTempFileName();
-				tempFilePath = GetShortFileName(tempFilePath);
+				String ^tempFilePath = MyDLPTempFileManager::GetInstance()->GetTempFileName();
+				//String ^tempFilePath = GetShortFileName(tempFilePath);
 				try
 				{
-					File::Delete(tempFilePath);
 					if(ret == CL_RESCAN_OLE2)
 					{
 						StreamWriter ^writer = gcnew StreamWriter(tempFilePath, false, System::Text::Encoding::UTF8);
@@ -304,20 +306,8 @@ namespace mydlpsf {
 						this->result = STLToManaged(virname);
 						ret = 1;
 					}
-					if(File::Exists(tempFilePath))
-					{
-						File::Delete(tempFilePath);
-						array<String ^> ^tmpFiles = Directory::GetFiles(System::IO::Path::GetDirectoryName(Path::GetTempFileName()), "pdfbox*");
-						for each (String ^file in tmpFiles) {
-							File::Delete(file);
-						}
-						/*
-						tmpFiles = Directory::GetFiles(System::IO::Path::GetDirectoryName(Path::GetTempFileName()), "tmp*.tmp");
-						for each (String ^file in tmpFiles) {
-							File::Delete(file);
-						}
-						*/
-					}
+
+					MyDLPTempFileManager::GetInstance()->DeleteFile(tempFilePath);
 
 					return ret;
 				}
@@ -347,8 +337,6 @@ namespace mydlpsf {
 
 	int MyDLPSensitiveFileRecognition::Close()
 	{
-		/* unlink temp hdb file */
-		cl_dlp_md5db_unlink();
 
 		/* free memory */
 		cl_engine_free(this->engine);

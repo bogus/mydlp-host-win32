@@ -113,6 +113,14 @@ int cl_dlp_regex_init(unsigned int ids[], const unsigned char **regex_list, int 
 	return 0;
 }
 
+int cl_dlp_regex_init2(struct regex_st *valid_regexes, int length) 
+{
+	regexes = valid_regexes;
+	regex_count = length;
+
+	return 0;
+}
+
 int dlp_get_regex_count(const unsigned char *buffer, int length)
 {
     return contains_regex(buffer, length, DETECT_MODE_COUNT);

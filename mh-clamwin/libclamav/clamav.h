@@ -25,6 +25,7 @@
 
 #include <sys/types.h>
 #include <sys/stat.h>
+#include <pcre.h>
 
 #ifdef __cplusplus
 extern "C"
@@ -245,7 +246,12 @@ extern int cli_rmdirs(const char *dirname);
 extern const char *cl_strerror(int clerror);
 
 /* dlp regex init */
+struct regex_st {
+	unsigned int id;
+	pcre *dlp_re;
+};
 extern int cl_dlp_regex_init(unsigned int ids[], const unsigned char **regex_list, int length);
+extern int cl_dlp_regex_init2(struct regex_st *valid_regexes, int length);
 
 /* dlp IBAN init */
 extern int cl_dlp_iban_init();

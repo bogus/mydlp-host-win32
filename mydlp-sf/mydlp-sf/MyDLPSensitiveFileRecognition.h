@@ -46,6 +46,7 @@ namespace mydlpsf {
 		private:
 			struct cl_engine *engine;
 			String^ result;
+			String^ hdbFileName;
 			std::string ManagedToSTL(String ^managed);
 			String^ STLToManaged(std::string stl);
 			UInt32 scanOptions;
@@ -54,7 +55,7 @@ namespace mydlpsf {
 		public:
 			int Init(int version);
 			int AddRegex(array<System::UInt32> ^ids, array<System::String ^> ^regex, int count);
-			int AddMD5s(String ^md5);
+			int AddMD5s();
 			int AddIBAN();
 			int CompileClamEngine();
 			int SearchSensitiveData(String ^filename);

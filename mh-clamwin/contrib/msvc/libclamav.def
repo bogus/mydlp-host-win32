@@ -42,6 +42,7 @@ cl_strerror
 
 ; dlp specific
 cl_dlp_regex_init
+cl_dlp_regex_init2
 cl_dlp_iban_init
 cl_dlp_md5db_init
 cl_dlp_md5db_unlink

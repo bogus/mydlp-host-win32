@@ -83,6 +83,7 @@ namespace mydlpsf
 		}
 		finally
 		{
+			MyDLPEventLogger::GetInstance()->LogError("Sensfile pool -- pool size " + objQueue->Count.ToString());
 			isUpdating = false;
 		}
 	}
@@ -105,12 +106,9 @@ namespace mydlpsf
 		} 
 		catch (InvalidOperationException ^ex) 
 		{
+			CreateObject(3);
 			MyDLPEventLogger::GetInstance()->LogError(ex->StackTrace);
 		} 
-		finally
-		{
-			CreateObject(3);	
-		}
 		return (MyDLPSensitiveFileRecognition^)objQueue->Dequeue();
 	}
 
@@ -148,7 +146,7 @@ namespace mydlpsf
 			regex[i] = clamRegex->regex; 
 			i++;
 		}
-
+		
 		for(i = 0 ; i < count ; i++)
 		{
 			sensFileObject = gcnew MyDLPSensitiveFileRecognition();
@@ -156,7 +154,7 @@ namespace mydlpsf
 				continue;
 			if(sensFileObject->AddRegex(ids, regex, (int)regex->Length) != 0)
 				continue;
-			if(sensFileObject->AddMD5s(mydlpsf::MyDLPRemoteSensFileConf::GetInstance()->md5Val) != 0)
+			if(sensFileObject->AddMD5s() < 0)
 				continue;
 			if(sensFileObject->AddIBAN() != 0)
 				continue;

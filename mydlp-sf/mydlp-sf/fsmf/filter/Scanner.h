@@ -1,23 +1,15 @@
 /*++
 
 Copyright (c) 1999-2002  Microsoft Corporation
+Copyright (C) 2010 Medra Teknoloji 
 
-Module Name:
+Authors: Burak OGUZ <burak@medra.com.tr>
 
-    scrubber.h
-
-Abstract:
-    Header file which contains the structures, type definitions,
-    constants, global variables and function prototypes that are
-    only visible within the kernel.
-
-Environment:
-
-    Kernel mode
+This file system minifilter is based on Microsoft WDK Scanner Example.
 
 --*/
-#ifndef __SCANNER_H__
-#define __SCANNER_H__
+#ifndef __MYDLPSCANNER_H__
+#define __MYDLPSCANNER_H__
 
 
 ///////////////////////////////////////////////////////////////////////////
@@ -149,5 +141,5 @@ ScannerInstanceSetup (
 #define OSR_MEMORY_SIZE 65536
 #define OSRMEMDRV_LEVEL_VERBOSE 1
 
-#endif /* __SCANNER_H__ */
+#endif
 

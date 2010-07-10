@@ -48,7 +48,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="C:\WinDDK\7600.16385.1\inc\ddk;&quot;..\..\mh-clamwin\libclamav&quot;"
+				AdditionalIncludeDirectories="C:\WinDDK\7600.16385.1\inc\ddk;&quot;..\..\mh-clamwin\contrib\msvc\pcre&quot;;&quot;..\..\mh-clamwin\libclamav&quot;"
 				PreprocessorDefinitions="WIN32;_DEBUG"
 				RuntimeLibrary="3"
 				UsePrecompiledHeader="2"
@@ -66,9 +66,9 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="libclamavd.lib fltlib.lib user32.lib $(NOINHERIT)"
+				AdditionalDependencies="libclamav.lib fltlib.lib user32.lib pcre.lib $(NOINHERIT)"
 				LinkIncremental="2"
-				AdditionalLibraryDirectories="C:\WinDDK\7600.16385.1\lib\wxp\i386;&quot;..\..\mh-clamwin\contrib\msvc\Debug\Win32&quot;"
+				AdditionalLibraryDirectories="C:\WinDDK\7600.16385.1\lib\wxp\i386;&quot;..\..\mh-clamwin\contrib\msvc\Release\Win32&quot;;&quot;..\..\mh-clamwin\contrib\msvc\pcre&quot;"
 				ModuleDefinitionFile=""
 				GenerateDebugInformation="true"
 				AssemblyDebug="1"
@@ -125,7 +125,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="C:\WinDDK\7600.16385.1\inc\ddk;&quot;..\..\mh-clamwin\libclamav&quot;"
+				AdditionalIncludeDirectories="C:\WinDDK\7600.16385.1\inc\ddk;&quot;..\..\mh-clamwin\contrib\msvc\pcre&quot;;&quot;..\..\mh-clamwin\libclamav&quot;"
 				PreprocessorDefinitions="WIN32; NDEBUG"
 				RuntimeLibrary="2"
 				UsePrecompiledHeader="2"
@@ -144,9 +144,9 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="libclamav.lib fltlib.lib user32.lib $(NOINHERIT)"
+				AdditionalDependencies="libclamav.lib fltlib.lib user32.lib pcre.lib $(NOINHERIT)"
 				LinkIncremental="1"
-				AdditionalLibraryDirectories="C:\WinDDK\7600.16385.1\lib\wxp\i386;&quot;..\..\mh-clamwin\contrib\msvc\Release\Win32&quot;"
+				AdditionalLibraryDirectories="C:\WinDDK\7600.16385.1\lib\wxp\i386;&quot;..\..\mh-clamwin\contrib\msvc\Release\Win32&quot;;&quot;..\..\mh-clamwin\contrib\msvc\pcre&quot;"
 				GenerateDebugInformation="false"
 			/>
 			<Tool
@@ -231,6 +231,10 @@
 			</File>
 			<File
 				RelativePath=".\MyDLPManager.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\MyDLPTempFileManager.cpp"
 				>
 			</File>
 			<File
@@ -337,6 +341,10 @@
 			</File>
 			<File
 				RelativePath=".\MyDLPScannerInc.h"
+				>
+			</File>
+			<File
+				RelativePath=".\MyDLPTempFileManager.h"
 				>
 			</File>
 			<File
