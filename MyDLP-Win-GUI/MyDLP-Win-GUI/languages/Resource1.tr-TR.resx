@@ -129,6 +129,12 @@
   <data name="app.title" xml:space="preserve">
     <value>MyDLP Uçbirim Bilgi Sızıntısı Engelleme</value>
   </data>
+  <data name="button.restart" xml:space="preserve">
+    <value>Yeniden başlat</value>
+  </data>
+  <data name="button.runasadmin" xml:space="preserve">
+    <value>Yönetici olarak çalıştır</value>
+  </data>
   <data name="def.tabmd5" xml:space="preserve">
     <value>MD5 Dosya Tanımlama</value>
   </data>

@@ -1,4 +1,23 @@
-﻿using System;
+﻿/* 
+ *  Copyright (C) 2010 Medra Teknoloji
+ *
+ *  Authors: Burak OGUZ <burak@medra.com.tr>
+ *
+ *  This program is free software; you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License version 2 as
+ *  published by the Free Software Foundation.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program; if not, write to the Free Software
+ *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
+ *  MA 02110-1301, USA.
+ */
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -71,7 +90,6 @@ namespace MydlpWinGui
             taskbarNotifier1.TitleRectangle = new Rectangle(40, 9, 70, 25);
             taskbarNotifier1.ContentRectangle = new Rectangle(8, 41, 133, 68);
 
-
             /*
             taskbarNotifier1.TitleClick += new EventHandler(TitleClick);
             taskbarNotifier1.ContentClick += new EventHandler(ContentClick);
@@ -81,6 +99,12 @@ namespace MydlpWinGui
             notifyIcon1.ContextMenuStrip = eventsMenuStrip;
 
             form1Instance = this;
+
+            //Get Operating system information.
+            OperatingSystem os = Environment.OSVersion;
+            //Get version information about the os.
+            Version vs = os.Version;
+
         }
 
         protected override void WndProc(ref Message m)
@@ -159,6 +183,8 @@ namespace MydlpWinGui
             panelTitle.Text = resM.GetString("menu.defsensdata");
             openConfigurationMenuToolStripMenuItem.Text = resM.GetString("rightclick.show");
             exitToolStripMenuItem.Text = resM.GetString("rightclick.exit");
+            button1.Text = resM.GetString("button.runasadmin");
+            button2.Text = resM.GetString("button.restart");
 
             panel2.Controls.Add(defineSensitiveData);
             currentPanelControl = defineSensitiveData;
@@ -230,6 +256,8 @@ namespace MydlpWinGui
 
             openConfigurationMenuToolStripMenuItem.Text = resM.GetString("rightclick.show");
             exitToolStripMenuItem.Text = resM.GetString("rightclick.exit");
+            button1.Text = resM.GetString("button.runasadmin");
+            button2.Text = resM.GetString("button.restart");
 
             defineSensitiveData.Globalize();
             localScan.Globalize();
@@ -278,7 +306,6 @@ namespace MydlpWinGui
             WindowsIdentity identity = WindowsIdentity.GetCurrent();
             WindowsPrincipal principal = new WindowsPrincipal(identity);
             return principal.IsInRole(WindowsBuiltInRole.Administrator);
-
         }
 
         private void exitToolStripMenuItem_Click(object sender, EventArgs e)
@@ -287,6 +314,22 @@ namespace MydlpWinGui
                     Form1.resM.GetString("exit.caption"),
                     MessageBoxButtons.YesNo, MessageBoxIcon.Question))
                 Application.Exit();
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            int processId = Process.GetCurrentProcess().Id;
+            String args = "--restart-admin " + Convert.ToString(processId);
+            Process.Start(Application.ExecutablePath, args);
+            Application.Exit();
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            int processId = Process.GetCurrentProcess().Id;
+            String args = "--restart " + Convert.ToString(processId);
+            Process.Start(Application.ExecutablePath, args);
+            Application.Exit();
         }
     }
 }

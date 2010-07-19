@@ -1,4 +1,23 @@
-﻿using CustomUIControls;
+﻿/* 
+ *  Copyright (C) 2010 Medra Teknoloji
+ *
+ *  Authors: Burak OGUZ <burak@medra.com.tr>
+ *
+ *  This program is free software; you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License version 2 as
+ *  published by the Free Software Foundation.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program; if not, write to the Free Software
+ *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
+ *  MA 02110-1301, USA.
+ */
+using CustomUIControls;
 using System.Windows.Forms;
 using System.Resources;
 using System.Threading;
@@ -53,13 +72,15 @@ namespace MydlpWinGui
             this.eventLogSensFile = new System.Diagnostics.EventLog();
             this.eventsMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.openConfigurationMenuToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.panel1 = new System.Windows.Forms.Panel();
             this.listView1 = new System.Windows.Forms.ListView();
             this.columnHeader1 = new System.Windows.Forms.ColumnHeader();
             this.imageList1 = new System.Windows.Forms.ImageList(this.components);
             this.panel2 = new System.Windows.Forms.Panel();
             this.panelTitle = new System.Windows.Forms.Label();
-            this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.button1 = new System.Windows.Forms.Button();
+            this.button2 = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.eventLogSensFile)).BeginInit();
             this.eventsMenuStrip.SuspendLayout();
             this.panel1.SuspendLayout();
@@ -87,7 +108,7 @@ namespace MydlpWinGui
             this.exitToolStripMenuItem});
             this.eventsMenuStrip.Name = "contextMenuStrip1";
             this.eventsMenuStrip.ShowImageMargin = false;
-            this.eventsMenuStrip.Size = new System.Drawing.Size(184, 70);
+            this.eventsMenuStrip.Size = new System.Drawing.Size(184, 48);
             // 
             // openConfigurationMenuToolStripMenuItem
             // 
@@ -96,10 +117,19 @@ namespace MydlpWinGui
             this.openConfigurationMenuToolStripMenuItem.Text = "Open Configuration Menu";
             this.openConfigurationMenuToolStripMenuItem.Click += new System.EventHandler(this.openConfigurationMenuToolStripMenuItem_Click);
             // 
+            // exitToolStripMenuItem
+            // 
+            this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
+            this.exitToolStripMenuItem.Size = new System.Drawing.Size(183, 22);
+            this.exitToolStripMenuItem.Text = "Exit";
+            this.exitToolStripMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
+            // 
             // panel1
             // 
             this.panel1.BackColor = System.Drawing.SystemColors.Window;
             this.panel1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.panel1.Controls.Add(this.button2);
+            this.panel1.Controls.Add(this.button1);
             this.panel1.Controls.Add(this.listView1);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Left;
             this.panel1.Location = new System.Drawing.Point(0, 0);
@@ -170,12 +200,25 @@ namespace MydlpWinGui
             this.panelTitle.TabIndex = 3;
             this.panelTitle.Text = "label1";
             // 
-            // exitToolStripMenuItem
+            // button1
             // 
-            this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
-            this.exitToolStripMenuItem.Size = new System.Drawing.Size(183, 22);
-            this.exitToolStripMenuItem.Text = "Exit";
-            this.exitToolStripMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
+            this.button1.Location = new System.Drawing.Point(12, 393);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(156, 23);
+            this.button1.TabIndex = 6;
+            this.button1.Text = "Run as Administrator";
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
+            // 
+            // button2
+            // 
+            this.button2.Location = new System.Drawing.Point(12, 425);
+            this.button2.Name = "button2";
+            this.button2.Size = new System.Drawing.Size(156, 23);
+            this.button2.TabIndex = 7;
+            this.button2.Text = "Restart";
+            this.button2.UseVisualStyleBackColor = true;
+            this.button2.Click += new System.EventHandler(this.button2_Click);
             // 
             // Form1
             // 
@@ -216,6 +259,8 @@ namespace MydlpWinGui
         private ImageList imageList1;
         private ColumnHeader columnHeader1;
         private ToolStripMenuItem exitToolStripMenuItem;
+        private Button button1;
+        private Button button2;
     }
 }
 

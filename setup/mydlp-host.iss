@@ -45,7 +45,7 @@
 ; (To generate a new GUID, click Tools | Generate GUID inside the IDE.)
 AppId={{8DBCE471-786E-4970-87A8-776B1357C7BA}
 AppName=MyDLP
-AppVersion=1.0
+AppVersion=0.2
 ;AppVerName=MyDLP 1.0
 AppPublisher=MedraTech
 AppPublisherURL=http://www.medratech.com/
@@ -56,7 +56,7 @@ DefaultGroupName=MyDLP
 DisableProgramGroupPage=yes
 LicenseFile=other\license.txt
 OutputDir=.
-OutputBaseFilename=mydlp-setup
+OutputBaseFilename=mydlp-setup-0.2
 Compression=lzma
 SolidCompression=yes
 PrivilegesRequired=admin
@@ -97,11 +97,9 @@ Source: other\conf\device.conf; DestDir: {app}\conf; Flags: onlyifdoesntexist
 Source: other\conf\screencapture.conf; DestDir: {app}\conf; Flags: onlyifdoesntexist
 Source: other\conf\sensfile.conf; DestDir: {app}\conf; Flags: onlyifdoesntexist
 Source: other\conf\service.conf; DestDir: {app}\conf; Flags: onlyifdoesntexist
-;Source: other\redist\vcredist_x86.exe; DestDir: {app}\temp
 Source: other\redist\msjava.dll; DestDir: {sys}; Flags: onlyifdoesntexist
 Source: ..\mydlp-sf\dependency\WindowsHookLib.dll; DestDir: {app}\bin
 Source: ..\MyDLP-Win-GUI\dependency\ICSharpCode.SharpZipLib.dll; DestDir: {app}\bin
-
 
 [Icons]
 Name: {group}\MyDLP; Filename: {app}\bin\MyDLP-Win-GUI.exe
@@ -110,18 +108,17 @@ Name: {commonstartup}\MyDLP; Filename: {app}\bin\MyDLP-Win-GUI.exe
 Name: {commondesktop}\MyDLP; Filename: {app}\bin\MyDLP-Win-GUI.exe; Tasks: desktopicon
 
 [Run]
-;Filename: {app}\temp\vcredist_x86.exe
 Filename: {sys}\rundll32.exe; Parameters: syssetup,SetupInfObjectInstallAction DefaultInstall 128 .\MyDLPScanner.inf; WorkingDir: {app}\bin; Flags: 32bit
 Filename: net.exe; Parameters: start mydlp-scanner
 Filename: {app}\bin\MyDLP-Host.exe; Parameters: --install
 Filename: {app}\bin\MyDLP-Host.exe; Parameters: --start
 Filename: {app}\bin\MyDLP-Win-GUI.exe; Description: {cm:LaunchProgram,MyDLP}; Flags: nowait postinstall skipifsilent
-;Filename: rundll32.exe {app}\MyDLPScanner.inf; Description: Install drivers automatically; StatusMsg: Installing drivers...; Flags: runascurrentuser postinstall
-;Filename: {sys}\rundll32.exe; Parameters: "setupapi,InstallHinfSection DefaultInstall 132 MyDLPScanner.inf"; WorkingDir: {app}; Flags: 32bit; Check: IsX86;
 
 [UninstallRun]
+Filename: {app}\bin\MyDLP-Host.exe; Parameters: --stop
 Filename: {app}\bin\MyDLP-Host.exe; Parameters: --uninstall
 Filename: net.exe; Parameters: stop mydlp-scanner
+Filename: cmd; parameters: /c taskkill /f /im mydlp-win-gui.exe; Flags: runhidden
 
 [Registry]
 Root: HKLM; Subkey: SOFTWARE\MyDLP; ValueType: string; ValueName: Install_Dir; ValueData: {app}; Tasks: ; Languages: ; Flags: uninsdeletekey createvalueifdoesntexist

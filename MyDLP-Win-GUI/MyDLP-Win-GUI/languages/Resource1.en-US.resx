@@ -129,6 +129,12 @@
   <data name="app.title" xml:space="preserve">
     <value>MyDLP Terminal Leakage Prevention</value>
   </data>
+  <data name="button.restart" xml:space="preserve">
+    <value>Restart</value>
+  </data>
+  <data name="button.runasadmin" xml:space="preserve">
+    <value>Run as Administrator</value>
+  </data>
   <data name="def.tabmd5" xml:space="preserve">
     <value>Define MD5 File</value>
   </data>
