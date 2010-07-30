@@ -184,3 +184,6 @@ function Isx86: Boolean;
 begin
 	Result := not IsWin64;
 end;
+
+[INI]
+Filename: mydlp-setup.ini; Section: Network; Key: ManagementServer; String: http://mydlp.company.com; Tasks: ; Languages: 

@@ -22,6 +22,7 @@ using System.Collections;
 using System.ComponentModel;
 using System.Data;
 using System.Diagnostics;
+using Microsoft.Win32;
 using System.ServiceProcess;
 using System.Management;
 using mydlpsf;
@@ -57,6 +58,7 @@ namespace MyDLPHost
 		// The main entry point for the process
 		static void Main()
 		{
+
 			System.ServiceProcess.ServiceBase[] ServicesToRun;
 	   
 			// More than one user Service may run within the same process. To add
@@ -111,7 +113,7 @@ namespace MyDLPHost
 		/// </summary>
 		protected override void OnStart(string[] args)
 		{
-            eventLogService.WriteEntry("MyDLP-Host Service Started");
+            //eventLogService.WriteEntry("MyDLP-Host Service Started");
             try
             {
                 MyDLPManager.GetInstance().Start();
@@ -127,7 +129,7 @@ namespace MyDLPHost
 		/// </summary>
 		protected override void OnStop()
 		{
-			eventLogService.WriteEntry("MyDLP-Host Service Stopped");
+			//eventLogService.WriteEntry("MyDLP-Host Service Stopped");
             try
             {
                 MyDLPManager.GetInstance().Stop();

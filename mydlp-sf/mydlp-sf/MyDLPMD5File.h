@@ -17,8 +17,8 @@
  *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  *  MA 02110-1301, USA.
  */
-#ifndef __MYDLP_CLAM_REGEX__
-#define __MYDLP_CLAM_REGEX__
+#ifndef __MYDLP_MD5_FILE__
+#define __MYDLP_MD5_FILE__
 
 #pragma once
 #pragma managed
@@ -37,15 +37,16 @@ using namespace System;
 
 namespace mydlpsf
 {
-	public ref class MyDLPClamRegex
+	public ref class MyDLPMD5File
 	{
 	public:
-		MyDLPClamRegex(void);
+		MyDLPMD5File(void);
 
 		UInt32 id;
+		String ^md5Val;
 		String ^name;
-		String ^regex;
 		String ^rule_id;
+		String ^size;
 	};
 }
 #endif

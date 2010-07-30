@@ -30,6 +30,7 @@ using System.Globalization;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Security.Principal;
+using System.ServiceProcess;
 using CustomUIControls;
 using mydlpsf;
 using Microsoft.Win32;
@@ -53,9 +54,12 @@ namespace MydlpWinGui
         private Options options;
         private About aboutUs;
         private Control currentPanelControl;
+        private Button saveButton;
 
         public Form1()
         {
+            form1Instance = this;
+
             // Load sensitive data configuration
             MyDLPRemoteSensFileConf.Deserialize();
             MyDLPRemoteDeviceConf.Deserialize();
@@ -65,12 +69,17 @@ namespace MydlpWinGui
             deviceConf = MyDLPRemoteDeviceConf.GetInstance();
             screenCaptureConf = MyDLPRemoteScreenCaptureConf.GetInstance();
             serviceConf = MyDLPRemoteServiceConf.GetInstance();
-
+            
             localScan = new LocalScan();
             onlineScan = new OnlineScan();
             screenCapture = new ScreenCapture();
             options = new Options();
             aboutUs = new About();
+
+            if(!EventLog.SourceExists("MyDLPLogs-Warnings"))
+			{
+				EventLog.CreateEventSource("MyDLPLogs-Warnings", "MyDLPLog");
+			}
 
             InitializeComponent();
 
@@ -98,13 +107,10 @@ namespace MydlpWinGui
 
             notifyIcon1.ContextMenuStrip = eventsMenuStrip;
 
-            form1Instance = this;
-
-            //Get Operating system information.
-            OperatingSystem os = Environment.OSVersion;
-            //Get version information about the os.
-            Version vs = os.Version;
-
+            button1.Enabled = false;
+            button1.Visible = false;
+            button2.Enabled = false;
+            button2.Visible = false;
         }
 
         protected override void WndProc(ref Message m)
@@ -330,6 +336,29 @@ namespace MydlpWinGui
             String args = "--restart " + Convert.ToString(processId);
             Process.Start(Application.ExecutablePath, args);
             Application.Exit();
+        }
+
+        public void checkServiceStatus(Button button)
+        {
+            timer1.Enabled = true;
+            timer1.Start();
+            saveButton = button;
+            saveButton.Enabled = false;
+        }
+
+        private void timer1_Tick(object sender, EventArgs e)
+        {
+            timer1.Stop();
+            timer1.Enabled = false;
+            foreach (ServiceController sc in ServiceController.GetServices())
+            {
+                if (sc.ServiceName.Contains("MyDLP"))
+                {
+                    if (sc.Status != ServiceControllerStatus.Running)
+                        sc.Start();
+                }
+            }
+            saveButton.Enabled = true;
         }
     }
 }

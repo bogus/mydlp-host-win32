@@ -218,6 +218,11 @@
 			AssemblyName="WindowsHookLib, Version=1.1.1.0, processorArchitecture=MSIL"
 			MinFrameworkVersion="131072"
 		/>
+		<AssemblyReference
+			RelativePath="System.Web.Services.dll"
+			AssemblyName="System.Web.Services, Version=2.0.0.0, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL"
+			MinFrameworkVersion="131072"
+		/>
 	</References>
 	<Files>
 		<Filter
@@ -231,10 +236,6 @@
 			</File>
 			<File
 				RelativePath=".\MyDLPManager.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\MyDLPTempFileManager.cpp"
 				>
 			</File>
 			<File
@@ -296,6 +297,14 @@
 					RelativePath=".\MyDLPMessages.cpp"
 					>
 				</File>
+				<File
+					RelativePath=".\MyDLPSOAPUpdater.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\MyDLPTempFileManager.cpp"
+					>
+				</File>
 			</Filter>
 			<Filter
 				Name="sens-file"
@@ -306,6 +315,10 @@
 				</File>
 				<File
 					RelativePath=".\MyDLPFSMFListener.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\MyDLPMD5File.cpp"
 					>
 				</File>
 				<File
@@ -341,10 +354,6 @@
 			</File>
 			<File
 				RelativePath=".\MyDLPScannerInc.h"
-				>
-			</File>
-			<File
-				RelativePath=".\MyDLPTempFileManager.h"
 				>
 			</File>
 			<File
@@ -398,6 +407,14 @@
 					RelativePath=".\MyDLPMessages.h"
 					>
 				</File>
+				<File
+					RelativePath=".\MyDLPSOAPUpdater.h"
+					>
+				</File>
+				<File
+					RelativePath=".\MyDLPTempFileManager.h"
+					>
+				</File>
 			</Filter>
 			<Filter
 				Name="device"
@@ -423,6 +440,10 @@
 					>
 				</File>
 				<File
+					RelativePath=".\MyDLPMD5File.h"
+					>
+				</File>
+				<File
 					RelativePath=".\MyDLPPSParse.h"
 					>
 				</File>
@@ -432,6 +453,14 @@
 				</File>
 				<File
 					RelativePath=".\MyDLPSensitiveFileRecognition.h"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="soap"
+				>
+				<File
+					RelativePath=".\MyDLPRuleManager.h"
 					>
 				</File>
 			</Filter>

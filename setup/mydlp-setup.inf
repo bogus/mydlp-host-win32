@@ -1,0 +1,8 @@
+[Setup]
+Lang=en
+Dir=C:\Program Files\MyDLP
+Group=MyDLP
+NoIcons=0
+Tasks=
+Network=False
+NetworkServer=http://mydlp.internal.com

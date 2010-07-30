@@ -47,11 +47,18 @@ namespace mydlpsf
 		static void Deserialize();
 
 		Boolean enableScreenCaptureFilter;
+		String ^enableScreenCaptureFilter_ruleid;
 		Boolean forbidMSOffice;
+		String ^forbidMSOffice_ruleid;
 		Boolean forbidOOOrg;
+		String ^forbidOOOrg_ruleid;
 		Boolean forbidAcrobatReader;
+		String ^forbidAcrobatReader_ruleid;
 		Boolean forbidPhotoshop;
+		String ^forbidPhotoshop_ruleid;
 		Boolean forbidAutoCAD;
+		String ^forbidAutoCAD_ruleid;
+		
 
 		static const String ^confFileName = "screencapture.conf";
 	};

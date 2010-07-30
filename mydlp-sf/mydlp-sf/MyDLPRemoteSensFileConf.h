@@ -34,6 +34,7 @@
 #include <fcntl.h>
 #include <iostream>
 #include "MyDLPClamRegex.h"
+#include "MyDLPMD5File.h"
 
 #using <System.Xml.dll>
 
@@ -60,27 +61,35 @@ namespace mydlpsf {
 		static void Deserialize();
 
 		System::Collections::Generic::List<MyDLPClamRegex ^> ^regexVal;
-        String^ md5Val;
+		System::Collections::Generic::List<MyDLPMD5File ^> ^md5Val;
         
 		Boolean blockEncrypted;
+		String ^blockEncrypted_ruleid;
+
 		Boolean blockBroken;
+		String ^blockBroken_ruleid;
 
 		System::Collections::Generic::List<String^> ^fileGroups;
+		String ^fileGroups_ruleid;
 
 		Boolean enableCC;
 		UInt32 maxCCCount;
+		String ^enableCC_ruleid;
 		
 		Boolean enableRegex;
 		UInt32 maxRegexCount;
 		
 		Boolean enableTRId;
 		UInt32 maxTRIdCount;
+		String ^enableTRId_ruleid;
 		
 		Boolean enableIBAN;
 		UInt32 maxIBANCount;
+		String ^enableIBAN_ruleid;
 		
 		Boolean enableSSN;
 		UInt32 maxSSNCount;
+		String ^enableSSN_ruleid;
 
 		static const String ^confFileName = "sensfile.conf";
 	};

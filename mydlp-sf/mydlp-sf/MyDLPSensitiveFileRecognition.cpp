@@ -149,16 +149,19 @@ namespace mydlpsf {
 	int MyDLPSensitiveFileRecognition::AddMD5s()
 	{
 		unsigned int sigs, ret;
-		String^ md5 = mydlpsf::MyDLPRemoteSensFileConf::GetInstance()->md5Val;
+		StringBuilder ^md5Str = gcnew StringBuilder();
 
-		if(md5->Length == 0) {
+		for each(MyDLPMD5File ^file in mydlpsf::MyDLPRemoteSensFileConf::GetInstance()->md5Val)
+			md5Str->Append(file->md5Val+":"+file->size+":"+file->name+"__"+file->id.ToString()+"\n");
+			
+		if(md5Str->Length == 0) {
 			return 0;
 		}
 
 		hdbFileName = MyDLPTempFileManager::GetInstance()->GetTempFileName(".hdb");
 		StreamWriter ^writer = gcnew StreamWriter(gcnew FileStream(hdbFileName, 
 			FileMode::CreateNew, FileAccess::Write));
-		writer->Write(md5);
+		writer->Write(md5Str->ToString());
 		writer->Flush();
 		writer->Close();
 
@@ -167,7 +170,7 @@ namespace mydlpsf {
 			cl_dlp_md5db_unlink();
 			return -2;
 		}
-
+		
 		MyDLPTempFileManager::GetInstance()->DeleteFile(hdbFileName);
 
 		return sigs;

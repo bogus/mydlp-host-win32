@@ -51,7 +51,7 @@ namespace mydlpsf
 			RegistryKey ^key = Registry::LocalMachine->OpenSubKey( "Software\\MyDLP" );
 			String ^filename = key->GetValue("Config_Dir") + "\\" + confFileName;
 			XmlSerializer ^serializer = gcnew XmlSerializer(MyDLPRemoteServiceConf::GetInstance()->GetType());
-			FileStream ^fs = gcnew FileStream(filename, FileMode::Open);
+			FileStream ^fs = gcnew FileStream(filename, FileMode::Open, FileAccess::ReadWrite);
 			XmlReader ^reader = gcnew XmlTextReader(fs);
 			MyDLPRemoteServiceConf::SetInstance(dynamic_cast<MyDLPRemoteServiceConf ^> (serializer->Deserialize(reader)));
 			fs->Close();

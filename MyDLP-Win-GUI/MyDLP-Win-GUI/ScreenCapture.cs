@@ -34,7 +34,7 @@ namespace MydlpWinGui
         {
             if (MyDLPRemoteScreenCaptureConf.GetInstance().enableScreenCaptureFilter)
                 MyDLPScreenCaptureFilter.GetInstance().StartHook();
-
+            
             InitializeComponent();
         }
 
@@ -44,7 +44,6 @@ namespace MydlpWinGui
             Fill();
 
             Globalize();
-
         }
 
         public void Fill()
@@ -78,6 +77,8 @@ namespace MydlpWinGui
                 MyDLPRemoteScreenCaptureConf.GetInstance().forbidAcrobatReader = checkBox6.Checked;
 
                 MyDLPRemoteScreenCaptureConf.Serialize();
+
+                Form1.form1Instance.checkServiceStatus(button1);
 
                 MessageBox.Show(Form1.resM.GetString("save.text"),
                     Form1.resM.GetString("save.caption"),

@@ -43,7 +43,6 @@ namespace MydlpWinGui
             timer1.Start();
 
             Globalize();
-
         }
 
         public void Fill()
@@ -85,6 +84,8 @@ namespace MydlpWinGui
                 MyDLPRemoteDeviceConf.GetInstance().filterDWG = checkBox3.Checked;
 
                 MyDLPRemoteDeviceConf.Serialize();
+
+                Form1.form1Instance.checkServiceStatus(button1);
 
                 MessageBox.Show(Form1.resM.GetString("save.text"),
                     Form1.resM.GetString("save.caption"),

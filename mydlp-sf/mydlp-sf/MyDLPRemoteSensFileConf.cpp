@@ -32,20 +32,27 @@ namespace mydlpsf {
 	MyDLPRemoteSensFileConf::MyDLPRemoteSensFileConf(void)
 	{
 		regexVal = gcnew System::Collections::Generic::List<MyDLPClamRegex ^>();
-		md5Val = "";
+		md5Val = gcnew System::Collections::Generic::List<MyDLPMD5File ^>();;
 		blockEncrypted = true;
+		blockEncrypted_ruleid = "0";
 		blockBroken = true;
+		blockBroken_ruleid = "0";
 		fileGroups = gcnew System::Collections::Generic::List<String ^>();
+		fileGroups_ruleid = "0";
 		enableCC = true;
 		maxCCCount = 1;
+		enableCC_ruleid = "0";
 		enableRegex = true;
 		maxRegexCount = 1;
 		enableTRId = true;
 		maxTRIdCount = 1;
+		enableTRId_ruleid = "0";
 		enableIBAN = true;
 		maxIBANCount = 1;
+		enableIBAN_ruleid = "0";
 		enableSSN = true;
 		maxSSNCount = 1;	
+		enableSSN_ruleid = "0";
 		
 	}
 
@@ -88,7 +95,7 @@ namespace mydlpsf {
 			RegistryKey ^key = Registry::LocalMachine->OpenSubKey( "Software\\MyDLP" );
 			String ^filename = key->GetValue("Config_Dir") + "\\" + confFileName;
 			XmlSerializer ^serializer = gcnew XmlSerializer(MyDLPRemoteSensFileConf::GetInstance()->GetType());
-			FileStream ^fs = gcnew FileStream(filename, FileMode::Open);
+			FileStream ^fs = gcnew FileStream(filename, FileMode::Open, FileAccess::ReadWrite);
 			XmlReader ^reader = gcnew XmlTextReader(fs);
 			MyDLPRemoteSensFileConf::SetInstance(dynamic_cast<MyDLPRemoteSensFileConf ^> (serializer->Deserialize(reader)));
 			fs->Close();

@@ -217,6 +217,8 @@ namespace MydlpWinGui
 
                 MyDLPRemoteDeviceConf.Serialize();
 
+                Form1.form1Instance.checkServiceStatus(buttonSave);
+
                 MessageBox.Show(Form1.resM.GetString("save.text"),
                     Form1.resM.GetString("save.caption"),
                     MessageBoxButtons.OK, MessageBoxIcon.Information);

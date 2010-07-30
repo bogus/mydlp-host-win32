@@ -17,35 +17,14 @@
  *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  *  MA 02110-1301, USA.
  */
-#ifndef __MYDLP_CLAM_REGEX__
-#define __MYDLP_CLAM_REGEX__
 
-#pragma once
-#pragma managed
+#include "StdAfx.h"
+#include "MyDLPMD5File.h"
 
-#include "stdafx.h"
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <io.h>
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <fcntl.h>
-#include <iostream>
-
-using namespace System;
 
 namespace mydlpsf
 {
-	public ref class MyDLPClamRegex
+	MyDLPMD5File::MyDLPMD5File(void)
 	{
-	public:
-		MyDLPClamRegex(void);
-
-		UInt32 id;
-		String ^name;
-		String ^regex;
-		String ^rule_id;
-	};
+	}
 }
-#endif

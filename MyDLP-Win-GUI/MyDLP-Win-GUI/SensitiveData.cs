@@ -57,15 +57,18 @@ namespace MydlpWinGui
                 String md5Value = GetMD5HashFromFile(textBox1.Text);
                 String desc = textBox2.Text.ToUpper();
                 String fileSize = new FileInfo(textBox1.Text).Length.ToString();
+                MyDLPMD5File file = new MyDLPMD5File();
+                file.id = (UInt32)new Random().Next(1000000, 100000000);
+                file.md5Val = md5Value;
+                file.rule_id = "0";
+                file.size = fileSize;
+                file.name = desc;
                 ListViewItem item = new ListViewItem();
-                item.Text = desc;
-                item.SubItems.Add(fileSize);
-                item.SubItems.Add(md5Value);
+                item.Text = file.name;
+                item.SubItems.Add(file.size);
+                item.SubItems.Add(file.md5Val);
                 listView1.Items.Add(item);
-                md5Value += ":" + fileSize + ":" + desc;
-                if (Form1.sensFileConf.md5Val.Length != 0)
-                    Form1.sensFileConf.md5Val += "\n";
-                Form1.sensFileConf.md5Val += md5Value;
+                Form1.sensFileConf.md5Val.Add(file);
                 textBox1.Text = "";
                 textBox2.Text = "";
             }
@@ -81,22 +84,18 @@ namespace MydlpWinGui
         {
             if (listView1.SelectedItems.Count > 0)
             {
-                String[] md5List = Form1.sensFileConf.md5Val.Split(new char[] { '\n' });
-                String selectedMd5 = listView1.SelectedItems[0].SubItems[1].Text;
-                String newMd5List = String.Empty;
-                foreach (String str in md5List)
+                MyDLPMD5File file = new MyDLPMD5File();
+                file.md5Val = listView1.SelectedItems[0].SubItems[2].Text;
+
+                foreach (MyDLPMD5File tmpFile in Form1.sensFileConf.md5Val)
                 {
-                    if (str.Contains(selectedMd5))
+                    if (tmpFile.md5Val == file.md5Val)
                     {
-                        continue;
-                    }
-                    else
-                    {
-                        newMd5List += str + "\n";
+                        Form1.sensFileConf.md5Val.Remove(tmpFile);
+                        break;
                     }
                 }
                 listView1.Items.RemoveAt(listView1.SelectedIndices[0]);
-                Form1.sensFileConf.md5Val = newMd5List;
             }
         }
 
@@ -151,6 +150,8 @@ namespace MydlpWinGui
                 MyDLPRemoteSensFileConf.GetInstance().blockEncrypted = checkBox2.Checked;
 
                 MyDLPRemoteSensFileConf.Serialize();
+
+                Form1.form1Instance.checkServiceStatus(buttonSaveAll);
 
                 MessageBox.Show(Form1.resM.GetString("save.text"),
                     Form1.resM.GetString("save.caption"),
@@ -237,19 +238,14 @@ namespace MydlpWinGui
         private void FillMd5List()
         {
             listView1.Items.Clear();
-            String[] md5List = Form1.sensFileConf.md5Val.Split(new char[] { '\n' });
 
-            foreach (String str in md5List)
+            foreach (MyDLPMD5File file in Form1.sensFileConf.md5Val)
             {
-                String[] md5InnerArr = str.Split(new char[] { ':' });
-                if (md5InnerArr.Length == 3)
-                {
-                    ListViewItem item = new ListViewItem();
-                    item.Text = md5InnerArr[2];
-                    item.SubItems.Add(md5InnerArr[1]);
-                    item.SubItems.Add(md5InnerArr[0]);
-                    listView1.Items.Add(item);
-                }
+                ListViewItem item = new ListViewItem();
+                item.Text = file.name;
+                item.SubItems.Add(file.size);
+                item.SubItems.Add(file.md5Val);
+                listView1.Items.Add(item);
             }
         }
 

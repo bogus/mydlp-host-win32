@@ -25,6 +25,7 @@ Scanner.DriverFiles     = 12            ;%windir%\system32\drivers
 [DefaultInstall]
 OptionDesc          = %ServiceDescription%
 CopyFiles           = Scanner.DriverFiles 
+DriverPackageType = ClassFilter 
 
 [DefaultInstall.Services]
 AddService          = %ServiceName%,,Scanner.Service

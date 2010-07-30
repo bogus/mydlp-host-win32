@@ -27,15 +27,23 @@ namespace mydlpsf {
 	{
 		excludedDirs = gcnew System::Collections::Generic::List<String ^>();
 		enableRemovableOnlineScanning = true;
+		enableRemovableOnlineScanning_ruleid = "0";
 		justLogRemovableOnlineScanning = false;
+		justLogRemovableOnlineScanning_ruleid = "0";
 		
 		scanInsertedLogical = true;
+		scanInsertedLogical_ruleid = "0";
 		scanPluggedInRemovableDevices = true;
+		scanPluggedInRemovableDevices_ruleid = "0";
 		
 		filterPSD = true;
+		filterPSD_ruleid = "0";
 		filterPSP = true;
+		filterPSP_ruleid = "0";
 		filterCDR = true;
+		filterCDR_ruleid = "0";
 		filterDWG = true;
+		filterDWG_ruleid = "0";
 	}
 
 	MyDLPRemoteDeviceConf ^MyDLPRemoteDeviceConf::GetInstance()
@@ -77,7 +85,7 @@ namespace mydlpsf {
 			RegistryKey ^key = Registry::LocalMachine->OpenSubKey( "Software\\MyDLP" );
 			String ^filename = key->GetValue("Config_Dir") + "\\" + confFileName;
 			XmlSerializer ^serializer = gcnew XmlSerializer(MyDLPRemoteDeviceConf::GetInstance()->GetType());
-			FileStream ^fs = gcnew FileStream(filename, FileMode::Open);
+			FileStream ^fs = gcnew FileStream(filename, FileMode::Open, FileAccess::ReadWrite);
 			XmlReader ^reader = gcnew XmlTextReader(fs);
 			MyDLPRemoteDeviceConf::SetInstance(dynamic_cast<MyDLPRemoteDeviceConf ^> (serializer->Deserialize(reader)));
 			fs->Close();
