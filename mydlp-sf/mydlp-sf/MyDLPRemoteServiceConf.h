@@ -23,7 +23,9 @@ namespace mydlpsf
 
 		String ^language;
 		String ^remoteServer;
+		Boolean isRemoteConfigUpdate;
 		Boolean showPopupNotification;
+		Int32 remoteRuleVersion;
 
 		static const String ^confFileName = "service.conf";
 	};

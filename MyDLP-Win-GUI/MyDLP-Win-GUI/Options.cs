@@ -40,6 +40,7 @@ namespace MydlpWinGui
 
         private void Options_Load(object sender, EventArgs e)
         {
+            textBox3.Enabled = checkBox2.Checked;
             Fill();
             Globalize();
         }
@@ -55,6 +56,13 @@ namespace MydlpWinGui
                 checkBox1.Checked = true;
             else
                 checkBox1.Checked = false;
+
+            if (Form1.serviceConf.isRemoteConfigUpdate)
+                checkBox2.Checked = true;
+            else
+                checkBox2.Checked = false;
+
+            textBox3.Text = Form1.serviceConf.remoteServer;
         }
 
         public void Globalize()
@@ -66,10 +74,12 @@ namespace MydlpWinGui
             groupBox1.Text = Form1.resM.GetString("options.taboptions.003");
             label4.Text = Form1.resM.GetString("options.taboptions.004");
             checkBox1.Text = Form1.resM.GetString("options.taboptions.005");
+            checkBox2.Text = Form1.resM.GetString("options.taboptions.005");
 
             groupBox2.Text = Form1.resM.GetString("options.taboptions.006");
             label5.Text = Form1.resM.GetString("options.taboptions.007");
             label6.Text = Form1.resM.GetString("options.taboptions.008");
+            label7.Text = Form1.resM.GetString("options.taboptions.016");
             button2.Text = Form1.resM.GetString("options.taboptions.009");
             button4.Text =  Form1.resM.GetString("options.taboptions.009");
             button3.Text = Form1.resM.GetString("options.taboptions.011");
@@ -165,6 +175,26 @@ namespace MydlpWinGui
                     Form1.resM.GetString("options.taboptions.012"),
                     MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
+        }
+
+        private void checkBox2_CheckedChanged(object sender, EventArgs e)
+        {
+            if (checkBox2.Checked)
+            {
+                MyDLPRemoteServiceConf.GetInstance().isRemoteConfigUpdate = true;
+            }
+            else
+            {
+                MyDLPRemoteServiceConf.GetInstance().isRemoteConfigUpdate = false;
+            }
+            textBox3.Enabled = checkBox2.Checked;
+            MyDLPRemoteServiceConf.Serialize();
+        }
+
+        private void button5_Click(object sender, EventArgs e)
+        {
+            MyDLPRemoteServiceConf.GetInstance().remoteServer = textBox3.Text;
+            MyDLPRemoteServiceConf.Serialize();
         }
     }
 }

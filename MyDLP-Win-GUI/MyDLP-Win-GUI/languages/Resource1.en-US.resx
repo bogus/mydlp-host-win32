@@ -234,6 +234,9 @@
   <data name="def.tabregex.007" xml:space="preserve">
     <value>Enable Searching Regular Expressions</value>
   </data>
+  <data name="def.tabregex.008" xml:space="preserve">
+    <value>Name</value>
+  </data>
   <data name="def.tabregex.definition" xml:space="preserve">
     <value>Enter Rules For PCRE Compatible Regular Expressions And Specified Sentences</value>
   </data>
@@ -347,6 +350,9 @@
   </data>
   <data name="options.taboptions.015" xml:space="preserve">
     <value>Import / Export operation unsuccessful</value>
+  </data>
+  <data name="options.taboptions.016" xml:space="preserve">
+    <value>Remote configuration server</value>
   </data>
   <data name="options.taboptions.definition" xml:space="preserve">
     <value>Adjustments for the application and service settings</value>

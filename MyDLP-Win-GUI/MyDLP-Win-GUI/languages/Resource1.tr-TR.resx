@@ -234,6 +234,9 @@
   <data name="def.tabregex.007" xml:space="preserve">
     <value>Düzenli ifade aramayı etkinleştir</value>
   </data>
+  <data name="def.tabregex.008" xml:space="preserve">
+    <value>İsim</value>
+  </data>
   <data name="def.tabregex.definition" xml:space="preserve">
     <value>Belirlediğiniz cümleler ve PCRE uyumlu düzenli ifadeler için kurallar girin</value>
   </data>
@@ -347,6 +350,9 @@
   </data>
   <data name="options.taboptions.015" xml:space="preserve">
     <value>Aktarma işlemi başarısız</value>
+  </data>
+  <data name="options.taboptions.016" xml:space="preserve">
+    <value>Uzak ayar sunucusu</value>
   </data>
   <data name="options.taboptions.definition" xml:space="preserve">
     <value>Uygulama ve servis ayarları ile ilgili ayarlamaları yapabilirsiniz.</value>

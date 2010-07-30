@@ -26,6 +26,7 @@
 #include "MyDLPManager.h"
 #include "MyDLPRemoteConf.h"
 #include "MyDLPSensFilePool.h"
+#include "MyDLPSOAPUpdater.h"
 #include "MyDLPConfigurationUpdateListener.h"
 
 namespace mydlpsf
@@ -68,7 +69,9 @@ namespace mydlpsf
 			//MyDLPWMIDeviceListener::GetInstance()->AddInsertLogicalDeviceHandler();
 
 			if(MyDLPRemoteDeviceConf::GetInstance()->enableRemovableOnlineScanning.Equals(TRUE))
-				MyDLPFSMFListener::RunFilter();			
+				MyDLPFSMFListener::RunFilter();
+
+			MyDLPSOAPUpdater::GetInstance()->StartUpdater();
 			
 		}
 		catch(Exception ^ex)
@@ -99,6 +102,9 @@ namespace mydlpsf
 
 			else if(filename->Equals((String ^)MyDLPRemoteServiceConf::confFileName)) 
 				MyDLPRemoteServiceConf::GetInstance()->Deserialize();
+
+			else if(filename->Equals((String ^)MyDLPRemoteScreenCaptureConf::confFileName)) 
+				MyDLPRemoteScreenCaptureConf::GetInstance()->Deserialize();
 		
 		}
 		catch(Exception ^ex)
@@ -118,6 +124,7 @@ namespace mydlpsf
 			MyDLPConfigurationUpdateListener::GetInstance()->StopListener();
 			MyDLPFSMFListener::StopFilter();
 			MyDLPDirectoryTraverse::StopAllScans();
+			MyDLPSOAPUpdater::GetInstance()->StopUpdater();
 		}
 		catch(Exception ^ex)
 		{

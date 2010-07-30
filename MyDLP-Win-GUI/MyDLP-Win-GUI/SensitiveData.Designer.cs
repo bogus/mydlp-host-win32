@@ -94,6 +94,9 @@ namespace MydlpWinGui
             this.checkBoxCC = new System.Windows.Forms.CheckBox();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.buttonSaveAll = new System.Windows.Forms.Button();
+            this.label13 = new System.Windows.Forms.Label();
+            this.textBox4 = new System.Windows.Forms.TextBox();
+            this.columnName = new System.Windows.Forms.ColumnHeader();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.groupAddMd5.SuspendLayout();
@@ -305,6 +308,7 @@ namespace MydlpWinGui
             // listViewRegex
             // 
             this.listViewRegex.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.columnName,
             this.columnRegex,
             this.columnRegexId});
             this.listViewRegex.FullRowSelect = true;
@@ -320,7 +324,7 @@ namespace MydlpWinGui
             // columnRegex
             // 
             this.columnRegex.Text = "Regular Expression";
-            this.columnRegex.Width = 500;
+            this.columnRegex.Width = 395;
             // 
             // columnRegexId
             // 
@@ -328,6 +332,8 @@ namespace MydlpWinGui
             // 
             // groupRegex
             // 
+            this.groupRegex.Controls.Add(this.textBox4);
+            this.groupRegex.Controls.Add(this.label13);
             this.groupRegex.Controls.Add(this.button4);
             this.groupRegex.Controls.Add(this.textBox3);
             this.groupRegex.Controls.Add(this.label6);
@@ -340,7 +346,7 @@ namespace MydlpWinGui
             // 
             // button4
             // 
-            this.button4.Location = new System.Drawing.Point(319, 20);
+            this.button4.Location = new System.Drawing.Point(438, 71);
             this.button4.Name = "button4";
             this.button4.Size = new System.Drawing.Size(75, 23);
             this.button4.TabIndex = 2;
@@ -350,16 +356,16 @@ namespace MydlpWinGui
             // 
             // textBox3
             // 
-            this.textBox3.Location = new System.Drawing.Point(69, 20);
+            this.textBox3.Location = new System.Drawing.Point(69, 46);
             this.textBox3.Multiline = true;
             this.textBox3.Name = "textBox3";
-            this.textBox3.Size = new System.Drawing.Size(243, 74);
+            this.textBox3.Size = new System.Drawing.Size(363, 48);
             this.textBox3.TabIndex = 1;
             // 
             // label6
             // 
             this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(16, 20);
+            this.label6.Location = new System.Drawing.Point(12, 46);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(35, 13);
             this.label6.TabIndex = 0;
@@ -553,6 +559,26 @@ namespace MydlpWinGui
             this.buttonSaveAll.UseVisualStyleBackColor = true;
             this.buttonSaveAll.Click += new System.EventHandler(this.buttonSaveAll_Click);
             // 
+            // label13
+            // 
+            this.label13.AutoSize = true;
+            this.label13.Location = new System.Drawing.Point(12, 20);
+            this.label13.Name = "label13";
+            this.label13.Size = new System.Drawing.Size(41, 13);
+            this.label13.TabIndex = 3;
+            this.label13.Text = "label13";
+            // 
+            // textBox4
+            // 
+            this.textBox4.Location = new System.Drawing.Point(69, 17);
+            this.textBox4.Name = "textBox4";
+            this.textBox4.Size = new System.Drawing.Size(243, 20);
+            this.textBox4.TabIndex = 4;
+            // 
+            // columnName
+            // 
+            this.columnName.Width = 100;
+            // 
             // SensitiveData
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -630,5 +656,8 @@ namespace MydlpWinGui
         private System.Windows.Forms.CheckBox checkBox1;
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.CheckBox checkBox2;
+        private System.Windows.Forms.TextBox textBox4;
+        private System.Windows.Forms.Label label13;
+        private System.Windows.Forms.ColumnHeader columnName;
     }
 }

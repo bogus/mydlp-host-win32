@@ -1,7 +1,7 @@
 #include "StdAfx.h"
 #include "MyDLPSOAPUpdater.h"
 #include "MyDLPRemoteConf.h"
-
+#include "MyDLPEventLogger.h"
 
 using namespace System::Text;
 using namespace System::Collections::Generic;
@@ -12,89 +12,138 @@ namespace mydlpsf
 	{
 	}
 
+	MyDLPSOAPUpdater ^MyDLPSOAPUpdater::GetInstance()
+	{
+		if(obj == nullptr)
+		{
+			obj = gcnew MyDLPSOAPUpdater();
+
+			obj->timer = gcnew System::Timers::Timer();
+			obj->timer->Elapsed += gcnew ElapsedEventHandler(obj, &Update);
+			obj->timer->Interval = 300000;
+		}
+		
+		return obj;
+	}
+
+	void MyDLPSOAPUpdater::Update( Object ^source, ElapsedEventArgs ^e )
+	{
+		UpdateRules();
+	}
+
+	void MyDLPSOAPUpdater::StartUpdater()
+	{
+		UpdateRules();
+		timer->Start();
+	}
+	
+	void MyDLPSOAPUpdater::StopUpdater()
+	{
+		timer->Stop();
+	}
+
 	void MyDLPSOAPUpdater::UpdateRules()
 	{
-		soap::MyDLPRuleManager ^manager = gcnew soap::MyDLPRuleManager();
-		soap::MyDLPRule ^rules =  manager->getRules();
-		
-		MyDLPRemoteDeviceConf ^deviceConf = MyDLPRemoteDeviceConf::GetInstance();
-		deviceConf->excludedDirs = gcnew List<String ^>(rules->remoteDeviceConf->excludedDirs);
-		deviceConf->enableRemovableOnlineScanning = rules->remoteDeviceConf->enableRemovableOnlineScanning;
-		deviceConf->enableRemovableOnlineScanning_ruleid = rules->remoteDeviceConf->enableRemovableOnlineScanning_ruleid;
-		deviceConf->justLogRemovableOnlineScanning = rules->remoteDeviceConf->justLogRemovableOnlineScanning;
-		deviceConf->justLogRemovableOnlineScanning_ruleid = rules->remoteDeviceConf->justLogRemovableOnlineScanning_ruleid;
-		deviceConf->scanInsertedLogical = rules->remoteDeviceConf->scanInsertedLogical;
-		deviceConf->scanInsertedLogical_ruleid = rules->remoteDeviceConf->scanInsertedLogical_ruleid;
-		deviceConf->scanPluggedInRemovableDevices = rules->remoteDeviceConf->scanPluggedInRemovableDevices;
-		deviceConf->scanPluggedInRemovableDevices_ruleid = rules->remoteDeviceConf->scanPluggedInRemovableDevices_ruleid;
-		deviceConf->filterCDR = rules->remoteDeviceConf->filterCDR;
-		deviceConf->filterCDR_ruleid = rules->remoteDeviceConf->filterCDR_ruleid;
-		deviceConf->filterDWG = rules->remoteDeviceConf->filterDWG;
-		deviceConf->filterDWG_ruleid = rules->remoteDeviceConf->filterDWG_ruleid;
-		deviceConf->filterPSD = rules->remoteDeviceConf->filterPSD;
-		deviceConf->filterPSD_ruleid = rules->remoteDeviceConf->filterPSD_ruleid;
-		deviceConf->filterPSP = rules->remoteDeviceConf->filterPSP;
-		deviceConf->filterPSP_ruleid = rules->remoteDeviceConf->filterPSP_ruleid;
-		MyDLPRemoteDeviceConf::Serialize();
-
-		MyDLPRemoteScreenCaptureConf ^scCapt = MyDLPRemoteScreenCaptureConf::GetInstance();
-		scCapt->enableScreenCaptureFilter = rules->screenCaptureConf->enableScreenCaptureFilter;
-		scCapt->enableScreenCaptureFilter_ruleid = rules->screenCaptureConf->enableScreenCaptureFilter_ruleid;
-		scCapt->forbidAcrobatReader = rules->screenCaptureConf->forbidAcrobatReader;
-		scCapt->forbidAcrobatReader_ruleid = rules->screenCaptureConf->forbidAcrobatReader_ruleid;
-		scCapt->forbidAutoCAD = rules->screenCaptureConf->forbidAutoCAD;
-		scCapt->forbidAutoCAD_ruleid = rules->screenCaptureConf->forbidAutoCAD_ruleid;
-		scCapt->forbidMSOffice = rules->screenCaptureConf->forbidMSOffice;
-		scCapt->forbidMSOffice_ruleid = rules->screenCaptureConf->forbidMSOffice_ruleid;
-		scCapt->forbidOOOrg = rules->screenCaptureConf->forbidOOOrg;
-		scCapt->forbidOOOrg_ruleid = rules->screenCaptureConf->forbidOOOrg_ruleid;
-		scCapt->forbidPhotoshop = rules->screenCaptureConf->forbidPhotoshop;
-		scCapt->forbidPhotoshop_ruleid = rules->screenCaptureConf->forbidPhotoshop_ruleid;
-		MyDLPRemoteScreenCaptureConf::Serialize();
-
-		MyDLPRemoteSensFileConf ^sensFile = MyDLPRemoteSensFileConf::GetInstance();
-		sensFile->blockBroken = rules->sensFileConf->blockBroken;
-		sensFile->blockBroken_ruleid = rules->sensFileConf->blockBroken_ruleid;
-		sensFile->blockEncrypted = rules->sensFileConf->blockEncrypted;
-		sensFile->blockEncrypted_ruleid = rules->sensFileConf->blockEncrypted_ruleid;
-		sensFile->enableCC = rules->sensFileConf->enableCC;
-		sensFile->enableCC_ruleid = rules->sensFileConf->enableCC_ruleid;
-		sensFile->maxCCCount = rules->sensFileConf->maxCCCount;
-		sensFile->enableTRId = rules->sensFileConf->enableTRId;
-		sensFile->enableTRId_ruleid = rules->sensFileConf->enableTRId_ruleid;
-		sensFile->maxTRIdCount = rules->sensFileConf->maxTRIdCount;
-		sensFile->enableIBAN = rules->sensFileConf->enableIBAN;
-		sensFile->enableIBAN_ruleid = rules->sensFileConf->enableIBAN_ruleid;
-		sensFile->maxIBANCount = rules->sensFileConf->maxIBANCount;
-		sensFile->enableSSN = rules->sensFileConf->enableSSN;
-		sensFile->enableSSN_ruleid = rules->sensFileConf->enableSSN_ruleid;
-		sensFile->maxSSNCount = rules->sensFileConf->maxSSNCount;
-		
-		sensFile->regexVal = gcnew List<MyDLPClamRegex ^>();
-		for each (soap::MyDLPClamRegex ^regex in rules->sensFileConf->regexVal)
+		try
 		{
-			MyDLPClamRegex ^tmpRegex = gcnew MyDLPClamRegex();
-			tmpRegex->id = regex->id;
-			tmpRegex->name = regex->name;
-			tmpRegex->regex = regex->regex;
-			tmpRegex->rule_id = regex->rule_id;
-			sensFile->regexVal->Add(tmpRegex);
-		}
+			if(MyDLPRemoteServiceConf::GetInstance()->isRemoteConfigUpdate.Equals(false))
+				return;
 
-		sensFile->md5Val = gcnew List<MyDLPMD5File ^>();
-		for each (soap::MyDLPMD5File ^file in rules->sensFileConf->md5Val)
-		{
-			MyDLPMD5File ^tmpFile = gcnew MyDLPMD5File();
-			tmpFile->id = file->id;
-			tmpFile->name = file->name;
-			tmpFile->md5Val = file->md5Val;
-			tmpFile->size = file->size;
-			tmpFile->rule_id = file->rule_id;
-			sensFile->md5Val->Add(tmpFile);
-		}
-		MyDLPRemoteSensFileConf::Serialize();
+			soap::MyDLPRuleVersion ^version = gcnew soap::MyDLPRuleVersion();
+			version->Url = "http://"+MyDLPRemoteServiceConf::GetInstance()->remoteServer+"/mydlp-web-manager/service.php\?class=MyDLPRuleVersion";
+			int ruleVer = version->getRuleVersion();
 
-		Console::WriteLine(RuleToString(rules));
+			if(ruleVer <= MyDLPRemoteServiceConf::GetInstance()->remoteRuleVersion)
+				return;
+
+			soap::MyDLPRuleManager ^manager = gcnew soap::MyDLPRuleManager();
+			manager->Url = "http://"+MyDLPRemoteServiceConf::GetInstance()->remoteServer+"/mydlp-web-manager/service.php\?class=MyDLPRuleManager";
+			soap::MyDLPRule ^rules =  manager->getRules();
+			
+			MyDLPRemoteDeviceConf ^deviceConf = MyDLPRemoteDeviceConf::GetInstance();
+			deviceConf->excludedDirs = gcnew List<String ^>(rules->remoteDeviceConf->excludedDirs);
+			deviceConf->enableRemovableOnlineScanning = rules->remoteDeviceConf->enableRemovableOnlineScanning;
+			deviceConf->enableRemovableOnlineScanning_ruleid = rules->remoteDeviceConf->enableRemovableOnlineScanning_ruleid;
+			deviceConf->justLogRemovableOnlineScanning = rules->remoteDeviceConf->justLogRemovableOnlineScanning;
+			deviceConf->justLogRemovableOnlineScanning_ruleid = rules->remoteDeviceConf->justLogRemovableOnlineScanning_ruleid;
+			deviceConf->scanInsertedLogical = rules->remoteDeviceConf->scanInsertedLogical;
+			deviceConf->scanInsertedLogical_ruleid = rules->remoteDeviceConf->scanInsertedLogical_ruleid;
+			deviceConf->scanPluggedInRemovableDevices = rules->remoteDeviceConf->scanPluggedInRemovableDevices;
+			deviceConf->scanPluggedInRemovableDevices_ruleid = rules->remoteDeviceConf->scanPluggedInRemovableDevices_ruleid;
+			deviceConf->filterCDR = rules->remoteDeviceConf->filterCDR;
+			deviceConf->filterCDR_ruleid = rules->remoteDeviceConf->filterCDR_ruleid;
+			deviceConf->filterDWG = rules->remoteDeviceConf->filterDWG;
+			deviceConf->filterDWG_ruleid = rules->remoteDeviceConf->filterDWG_ruleid;
+			deviceConf->filterPSD = rules->remoteDeviceConf->filterPSD;
+			deviceConf->filterPSD_ruleid = rules->remoteDeviceConf->filterPSD_ruleid;
+			deviceConf->filterPSP = rules->remoteDeviceConf->filterPSP;
+			deviceConf->filterPSP_ruleid = rules->remoteDeviceConf->filterPSP_ruleid;
+
+			MyDLPRemoteScreenCaptureConf ^scCapt = MyDLPRemoteScreenCaptureConf::GetInstance();
+			scCapt->enableScreenCaptureFilter = rules->screenCaptureConf->enableScreenCaptureFilter;
+			scCapt->enableScreenCaptureFilter_ruleid = rules->screenCaptureConf->enableScreenCaptureFilter_ruleid;
+			scCapt->forbidAcrobatReader = rules->screenCaptureConf->forbidAcrobatReader;
+			scCapt->forbidAcrobatReader_ruleid = rules->screenCaptureConf->forbidAcrobatReader_ruleid;
+			scCapt->forbidAutoCAD = rules->screenCaptureConf->forbidAutoCAD;
+			scCapt->forbidAutoCAD_ruleid = rules->screenCaptureConf->forbidAutoCAD_ruleid;
+			scCapt->forbidMSOffice = rules->screenCaptureConf->forbidMSOffice;
+			scCapt->forbidMSOffice_ruleid = rules->screenCaptureConf->forbidMSOffice_ruleid;
+			scCapt->forbidOOOrg = rules->screenCaptureConf->forbidOOOrg;
+			scCapt->forbidOOOrg_ruleid = rules->screenCaptureConf->forbidOOOrg_ruleid;
+			scCapt->forbidPhotoshop = rules->screenCaptureConf->forbidPhotoshop;
+			scCapt->forbidPhotoshop_ruleid = rules->screenCaptureConf->forbidPhotoshop_ruleid;
+
+			MyDLPRemoteSensFileConf ^sensFile = MyDLPRemoteSensFileConf::GetInstance();
+			sensFile->blockBroken = rules->sensFileConf->blockBroken;
+			sensFile->blockBroken_ruleid = rules->sensFileConf->blockBroken_ruleid;
+			sensFile->blockEncrypted = rules->sensFileConf->blockEncrypted;
+			sensFile->blockEncrypted_ruleid = rules->sensFileConf->blockEncrypted_ruleid;
+			sensFile->enableCC = rules->sensFileConf->enableCC;
+			sensFile->enableCC_ruleid = rules->sensFileConf->enableCC_ruleid;
+			sensFile->maxCCCount = rules->sensFileConf->maxCCCount;
+			sensFile->enableTRId = rules->sensFileConf->enableTRId;
+			sensFile->enableTRId_ruleid = rules->sensFileConf->enableTRId_ruleid;
+			sensFile->maxTRIdCount = rules->sensFileConf->maxTRIdCount;
+			sensFile->enableIBAN = rules->sensFileConf->enableIBAN;
+			sensFile->enableIBAN_ruleid = rules->sensFileConf->enableIBAN_ruleid;
+			sensFile->maxIBANCount = rules->sensFileConf->maxIBANCount;
+			sensFile->enableSSN = rules->sensFileConf->enableSSN;
+			sensFile->enableSSN_ruleid = rules->sensFileConf->enableSSN_ruleid;
+			sensFile->maxSSNCount = rules->sensFileConf->maxSSNCount;
+			
+			sensFile->regexVal = gcnew List<MyDLPClamRegex ^>();
+			for each (soap::MyDLPClamRegex ^regex in rules->sensFileConf->regexVal)
+			{
+				MyDLPClamRegex ^tmpRegex = gcnew MyDLPClamRegex();
+				tmpRegex->id = regex->id;
+				tmpRegex->name = regex->name;
+				tmpRegex->regex = regex->regex;
+				tmpRegex->rule_id = regex->rule_id;
+				sensFile->regexVal->Add(tmpRegex);
+			}
+
+			sensFile->md5Val = gcnew List<MyDLPMD5File ^>();
+			for each (soap::MyDLPMD5File ^file in rules->sensFileConf->md5Val)
+			{
+				MyDLPMD5File ^tmpFile = gcnew MyDLPMD5File();
+				tmpFile->id = file->id;
+				tmpFile->name = file->name;
+				tmpFile->md5Val = file->md5Val;
+				tmpFile->size = file->size;
+				tmpFile->rule_id = file->rule_id;
+				sensFile->md5Val->Add(tmpFile);
+			}
+			
+
+			MyDLPRemoteScreenCaptureConf::Serialize();
+			MyDLPRemoteSensFileConf::Serialize();
+			MyDLPRemoteDeviceConf::Serialize();
+			MyDLPRemoteServiceConf::GetInstance()->remoteRuleVersion = ruleVer;
+			MyDLPRemoteServiceConf::Serialize();
+			
+		} catch(Exception ^ex) {
+			MyDLPEventLogger::GetInstance()->LogError("MyDLPSOAPUpdater::UpdateRule " + ex->InnerException->StackTrace);
+		}
 	}
 
 	String ^MyDLPSOAPUpdater::RuleToString(soap::MyDLPRule ^rule)

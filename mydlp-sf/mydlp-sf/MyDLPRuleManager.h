@@ -18,6 +18,7 @@ using namespace System::Web::Services::Protocols;
 using namespace System;
 using namespace System::Xml::Serialization;
 using namespace System;
+
 namespace mydlpsf {
 	namespace soap {
 
@@ -52,7 +53,7 @@ public ref class MyDLPRuleManager : public System::Web::Services::Protocols::Soa
     /// <remarks/>
     public: MyDLPRuleManager();
     /// <remarks/>
-    public: [System::Web::Services::Protocols::SoapRpcMethodAttribute(L"http://10.0.0.105/mydlp-web-manager/service.php\?class=MyDLPRuleManager&method=getR" 
+    public: [System::Web::Services::Protocols::SoapRpcMethodAttribute(L"http://localhost/mydlp-web-manager/service.php\?class=MyDLPRuleManager&method=getR" 
 L"ules", 
         RequestNamespace=L"http://schema.mydlp.org", ResponseNamespace=L"http://schema.mydlp.org")]
     [returnvalue: System::Xml::Serialization::SoapElementAttribute(L"getRulesReturn")]
@@ -652,7 +653,7 @@ public ref class getRulesCompletedEventArgs : public System::ComponentModel::Asy
 
 
 inline MyDLPRuleManager::MyDLPRuleManager() {
-    this->Url = L"http://10.0.0.105/mydlp-web-manager/service.php\?class=MyDLPRuleManager";
+    this->Url = L"http://localhost/mydlp-web-manager/service.php\?class=MyDLPRuleManager";
 }
 
 inline MyDLPRule^  MyDLPRuleManager::getRules() {

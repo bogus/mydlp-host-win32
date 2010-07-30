@@ -101,14 +101,17 @@ namespace MydlpWinGui
 
         private void button4_Click(object sender, EventArgs e)
         {
-            if (textBox3.Text.Length != 0)
+            if (textBox3.Text.Length != 0 && textBox4.Text.Length != 0)
             {
                 MyDLPClamRegex clamRegex = new MyDLPClamRegex();
+                clamRegex.name = textBox4.Text;
                 clamRegex.regex = textBox3.Text;
                 clamRegex.id = (uint)new Random().Next();
+                clamRegex.rule_id = "0";
                 Form1.sensFileConf.regexVal.Add(clamRegex);
                 ListViewItem item = new ListViewItem();
-                item.Text = clamRegex.regex;
+                item.Text = clamRegex.name;
+                item.SubItems.Add(clamRegex.regex);
                 item.SubItems.Add(clamRegex.id.ToString());
                 listViewRegex.Items.Add(item);
                 textBox3.Text = "";
@@ -120,7 +123,7 @@ namespace MydlpWinGui
             if (listViewRegex.SelectedItems.Count > 0)
             {
                 MyDLPClamRegex clamRegex = new MyDLPClamRegex();
-                clamRegex.id = UInt32.Parse(listViewRegex.SelectedItems[0].SubItems[1].Text);
+                clamRegex.id = UInt32.Parse(listViewRegex.SelectedItems[0].SubItems[2].Text);
                 
                 foreach (MyDLPClamRegex tmpClamRegex in Form1.sensFileConf.regexVal)
                 {
@@ -215,9 +218,11 @@ namespace MydlpWinGui
             label5.Text = Form1.resM.GetString("def.tabregex.definition");
             label6.Text = Form1.resM.GetString("def.tabregex.001");
             label7.Text = Form1.resM.GetString("def.tabregex.004");
+            label13.Text = Form1.resM.GetString("def.tabregex.008");
             button4.Text = Form1.resM.GetString("def.tabregex.002");
             button5.Text = Form1.resM.GetString("def.tabregex.003");
-            listViewRegex.Columns[0].Text = Form1.resM.GetString("def.tabregex.005");
+            listViewRegex.Columns[0].Text = Form1.resM.GetString("def.tabregex.008");
+            listViewRegex.Columns[1].Text = Form1.resM.GetString("def.tabregex.005");
             checkBox1.Text = Form1.resM.GetString("def.tabregex.007");
 
             // third tab
@@ -255,7 +260,8 @@ namespace MydlpWinGui
             foreach (MyDLPClamRegex clamRegex in Form1.sensFileConf.regexVal)
             {
                 ListViewItem item = new ListViewItem();
-                item.Text = clamRegex.regex;
+                item.Text = clamRegex.name;
+                item.SubItems.Add(clamRegex.regex);
                 item.SubItems.Add(clamRegex.id.ToString());
                 listViewRegex.Items.Add(item);
             }

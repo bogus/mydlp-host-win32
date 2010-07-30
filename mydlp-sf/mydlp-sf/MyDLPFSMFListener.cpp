@@ -115,7 +115,7 @@ namespace mydlpsf
 
 	void MyDLPFSMFListener::RunFilter()
 	{
-		if(!isRunning)
+		if(!isRunning && MyDLPRemoteDeviceConf::GetInstance()->enableRemovableOnlineScanning.Equals(TRUE))
 		{
 			Thread ^thread = gcnew Thread(gcnew ThreadStart(MyDLPFSMFListener::StartCommunicationPort));
 			thread->Start();

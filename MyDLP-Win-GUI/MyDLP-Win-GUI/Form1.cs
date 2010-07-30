@@ -111,6 +111,8 @@ namespace MydlpWinGui
             button1.Visible = false;
             button2.Enabled = false;
             button2.Visible = false;
+
+            timer2.Start();
         }
 
         protected override void WndProc(ref Message m)
@@ -350,15 +352,19 @@ namespace MydlpWinGui
         {
             timer1.Stop();
             timer1.Enabled = false;
-            foreach (ServiceController sc in ServiceController.GetServices())
+            saveButton.Enabled = true;
+        }
+
+        private void timer2_Tick(object sender, EventArgs e)
+        {
+            /*foreach (ServiceController sc in ServiceController.GetServices())
             {
                 if (sc.ServiceName.Contains("MyDLP"))
                 {
                     if (sc.Status != ServiceControllerStatus.Running)
                         sc.Start();
                 }
-            }
-            saveButton.Enabled = true;
+            }*/
         }
     }
 }
