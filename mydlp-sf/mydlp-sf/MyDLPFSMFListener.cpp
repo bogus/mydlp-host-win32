@@ -23,6 +23,7 @@
 #include "MyDLPMessages.h"
 #include "MyDLPRemoteConf.h"
 #include "MyDLPTempFileManager.h"
+#include "MyDLPLog.h"
 
 using namespace System::IO;
 using namespace System::Threading;
@@ -272,9 +273,65 @@ BOOL ScanFile (__in_bcount(BufferSize) PUCHAR Buffer, __in ULONG BufferSize,
 				
 					if(retVal) {
 						mydlpsf::MyDLPEventLogger::GetInstance()->LogRemovable(filename + " -- " + recObj->GetLastResult());
-						mydlpsf::MyDLPMessages::GetInstance()->AddMessage(filename + " -- " + recObj->GetLastResult());
+						mydlpsf::soap::MyDLPLogIncedent ^log = gcnew mydlpsf::soap::MyDLPLogIncedent();
+						log->matcher = "removable";
+						if(recObj->GetLastResult()->ToLower()->Contains("creditcard")) {
+							log->rule_id = mydlpsf::MyDLPRemoteSensFileConf::GetInstance()->enableCC_ruleid;
+						} else if(recObj->GetLastResult()->ToLower()->Contains("ssn")) {
+							log->rule_id = mydlpsf::MyDLPRemoteSensFileConf::GetInstance()->enableSSN_ruleid;
+						} else if(recObj->GetLastResult()->ToLower()->Contains("trid")) {
+							log->rule_id = mydlpsf::MyDLPRemoteSensFileConf::GetInstance()->enableTRId_ruleid;
+						} else if(recObj->GetLastResult()->ToLower()->Contains("iban")) {
+							log->rule_id = mydlpsf::MyDLPRemoteSensFileConf::GetInstance()->enableIBAN_ruleid;
+						} else if(recObj->GetLastResult()->ToLower()->Contains("photoshop")) {
+							log->rule_id = mydlpsf::MyDLPRemoteDeviceConf::GetInstance()->filterPSD_ruleid;
+						} else if(recObj->GetLastResult()->ToLower()->Contains("autocad")) {
+							log->rule_id = mydlpsf::MyDLPRemoteDeviceConf::GetInstance()->filterDWG_ruleid;
+						} else if(recObj->GetLastResult()->ToLower()->Contains("paintshop")) {
+							log->rule_id = mydlpsf::MyDLPRemoteDeviceConf::GetInstance()->filterPSP_ruleid;
+						} else if(recObj->GetLastResult()->ToLower()->Contains("corel")) {
+							log->rule_id = mydlpsf::MyDLPRemoteDeviceConf::GetInstance()->filterCDR_ruleid;
+						} else if(recObj->GetLastResult()->ToLower()->Contains("regex")) {
+							String ^split = "-";
+							array<String ^> ^arr = recObj->GetLastResult()->Split(split->ToCharArray());
+							UInt32 regexId = UInt32::Parse(arr[1]);
+							for each(mydlpsf::MyDLPClamRegex ^regex in 
+								mydlpsf::MyDLPRemoteSensFileConf::GetInstance()->regexVal)
+							{
+								if(regex->id == regexId)
+								{
+									log->rule_id = regex->rule_id;
+									break;
+								}
+							}
+						} else if(recObj->GetLastResult()->ToLower()->Contains("__")) {
+							String ^split = "__";
+							array<String ^> ^arr = recObj->GetLastResult()->Split(split->ToCharArray());
+							UInt32 fileId = UInt32::Parse(arr[1]);
+							for each(mydlpsf::MyDLPMD5File ^file in 
+								mydlpsf::MyDLPRemoteSensFileConf::GetInstance()->md5Val)
+							{
+								if(file->id == fileId)
+								{
+									log->rule_id = file->rule_id;
+									break;
+								}
+							}
+						}
+						log->destination = "USB / 1394";
+						log->protocol = "LOCAL";
+						log->filename = filename;
+						log->misc = "File transfer to USB fitlered";
+						mydlpsf::MyDLPMessages::GetInstance()->AddMessage(filename + " -- " + recObj->GetLastResult(), log);
+						for each(mydlpsf::MyDLPRule ^rule in mydlpsf::MyDLPRemoteRules::GetInstance()->rules)
+						{
+							if(Convert::ToString(rule->id) == log->rule_id) {
+								if(rule->action == "log")
+									retVal = FALSE;
+								break;
+							}
+						}
 					}
-					
 					return retVal;
 				}	
 			} 

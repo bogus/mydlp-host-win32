@@ -1,5 +1,7 @@
 #pragma once
 
+#include "MyDLPLog.h"
+
 using namespace System;
 using namespace System::Diagnostics;
 
@@ -18,7 +20,7 @@ namespace mydlpsf
 
 	public:
 		static MyDLPMessages ^GetInstance();
-		void AddMessage(String ^message);
+		void AddMessage(String ^message, soap::MyDLPLogIncedent ^log);
 		String ^GetLastMessage();
 
 		event EventHandler ^NewMessageArrived;

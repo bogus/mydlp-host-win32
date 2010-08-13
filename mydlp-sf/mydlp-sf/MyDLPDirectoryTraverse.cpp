@@ -198,7 +198,7 @@ namespace mydlpsf {
 
 		if(path == originalPath) {
 			OnCompleted(EventArgs::Empty);
-			MyDLPMessages::GetInstance()->AddMessage("Scan completed - " + path);
+			MyDLPMessages::GetInstance()->AddMessage("Scan completed - " + path, nullptr);
 			if(traverseList->Contains(this))
 				traverseList->Remove(this);
 		}

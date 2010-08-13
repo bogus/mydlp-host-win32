@@ -18,13 +18,13 @@
  *  MA 02110-1301, USA.
  */
 
-#ifndef __MYDLP_REMOTECONF_H_
-#define __MYDLP_REMOTECONF_H_
+#include "StdAfx.h"
+#include "MyDLPRule.h"
 
-#include "MyDLPRemoteSensFileConf.h"
-#include "MyDLPRemoteDeviceConf.h"
-#include "MyDLPRemoteServiceConf.h"
-#include "MyDLPRemoteScreenCaptureConf.h"
-#include "MyDLPRemoteRules.h"
 
-#endif
+namespace mydlpsf
+{
+	MyDLPRule::MyDLPRule(void)
+	{
+	}
+}

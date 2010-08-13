@@ -17,14 +17,23 @@
  *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  *  MA 02110-1301, USA.
  */
+#ifndef __MYDLP_RULE__
+#define __MYDLP_RULE__
 
-#ifndef __MYDLP_REMOTECONF_H_
-#define __MYDLP_REMOTECONF_H_
+#pragma once
+#pragma managed
 
-#include "MyDLPRemoteSensFileConf.h"
-#include "MyDLPRemoteDeviceConf.h"
-#include "MyDLPRemoteServiceConf.h"
-#include "MyDLPRemoteScreenCaptureConf.h"
-#include "MyDLPRemoteRules.h"
+using namespace System;
 
+namespace mydlpsf
+{
+	public ref class MyDLPRule
+	{
+	public:
+		MyDLPRule(void);
+
+		UInt32 id;
+		String ^action;
+	};
+}
 #endif

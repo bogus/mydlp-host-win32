@@ -270,6 +270,10 @@
 					>
 				</File>
 				<File
+					RelativePath=".\MyDLPRemoteRules.cpp"
+					>
+				</File>
+				<File
 					RelativePath=".\MyDLPRemoteScreenCaptureConf.cpp"
 					>
 				</File>
@@ -279,6 +283,10 @@
 				</File>
 				<File
 					RelativePath=".\MyDLPRemoteServiceConf.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\MyDLPRule.cpp"
 					>
 				</File>
 			</Filter>
@@ -303,6 +311,10 @@
 				</File>
 				<File
 					RelativePath=".\MyDLPTempFileManager.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\MyDLPTrustAllCertificatePolicy.cpp"
 					>
 				</File>
 			</Filter>
@@ -380,6 +392,10 @@
 					>
 				</File>
 				<File
+					RelativePath=".\MyDLPRemoteRules.h"
+					>
+				</File>
+				<File
 					RelativePath=".\MyDLPRemoteScreenCaptureConf.h"
 					>
 				</File>
@@ -389,6 +405,10 @@
 				</File>
 				<File
 					RelativePath=".\MyDLPRemoteServiceConf.h"
+					>
+				</File>
+				<File
+					RelativePath=".\MyDLPRule.h"
 					>
 				</File>
 			</Filter>
@@ -413,6 +433,10 @@
 				</File>
 				<File
 					RelativePath=".\MyDLPTempFileManager.h"
+					>
+				</File>
+				<File
+					RelativePath=".\MyDLPTrustAllCertificatePolicy.h"
 					>
 				</File>
 			</Filter>
@@ -459,6 +483,10 @@
 			<Filter
 				Name="soap"
 				>
+				<File
+					RelativePath=".\MyDLPLog.h"
+					>
+				</File>
 				<File
 					RelativePath=".\MyDLPRuleManager.h"
 					>

@@ -2,9 +2,11 @@
 #include "MyDLPSOAPUpdater.h"
 #include "MyDLPRemoteConf.h"
 #include "MyDLPEventLogger.h"
+#include "MyDLPTrustAllCertificatePolicy.h"
 
 using namespace System::Text;
 using namespace System::Collections::Generic;
+using namespace Microsoft::Win32;
 
 namespace mydlpsf
 {
@@ -46,20 +48,28 @@ namespace mydlpsf
 	{
 		try
 		{
+			System::Net::ServicePointManager::CertificatePolicy = gcnew MyDLPTrustAllCertificatePolicy();
+			RegistryKey ^key = Registry::LocalMachine->OpenSubKey( "Software\\MyDLP" );
+			String ^username = dynamic_cast<String ^>(key->GetValue("remote_user"));
+			String ^password = dynamic_cast<String ^>(key->GetValue("remote_pass"));
+			String ^server = dynamic_cast<String ^>(key->GetValue("remote_server"));
+			Console::WriteLine(username + " " + password + " " + server);
 			if(MyDLPRemoteServiceConf::GetInstance()->isRemoteConfigUpdate.Equals(false))
 				return;
 
 			soap::MyDLPRuleVersion ^version = gcnew soap::MyDLPRuleVersion();
-			version->Url = "http://"+MyDLPRemoteServiceConf::GetInstance()->remoteServer+"/mydlp-web-manager/service.php\?class=MyDLPRuleVersion";
-			int ruleVer = version->getRuleVersion();
+			version->Url = "https://"+server+"/mydlp-web-manager/service.php\?class=MyDLPRuleVersion";
+			int ruleVer = version->getRuleVersion(username, password);
 
-			if(ruleVer <= MyDLPRemoteServiceConf::GetInstance()->remoteRuleVersion)
-				return;
+			//if(ruleVer <= MyDLPRemoteServiceConf::GetInstance()->remoteRuleVersion)
+			//	return;
 
 			soap::MyDLPRuleManager ^manager = gcnew soap::MyDLPRuleManager();
-			manager->Url = "http://"+MyDLPRemoteServiceConf::GetInstance()->remoteServer+"/mydlp-web-manager/service.php\?class=MyDLPRuleManager";
-			soap::MyDLPRule ^rules =  manager->getRules();
-			
+			if(manager == nullptr)
+				return;
+			manager->Url = "https://"+server+"/mydlp-web-manager/service.php\?class=MyDLPRuleManager";
+			soap::MyDLPRule ^rules =  manager->getRules(username, password);
+
 			MyDLPRemoteDeviceConf ^deviceConf = MyDLPRemoteDeviceConf::GetInstance();
 			deviceConf->excludedDirs = gcnew List<String ^>(rules->remoteDeviceConf->excludedDirs);
 			deviceConf->enableRemovableOnlineScanning = rules->remoteDeviceConf->enableRemovableOnlineScanning;
@@ -112,29 +122,44 @@ namespace mydlpsf
 			sensFile->maxSSNCount = rules->sensFileConf->maxSSNCount;
 			
 			sensFile->regexVal = gcnew List<MyDLPClamRegex ^>();
-			for each (soap::MyDLPClamRegex ^regex in rules->sensFileConf->regexVal)
+			if(rules->sensFileConf->regexVal != nullptr)
 			{
-				MyDLPClamRegex ^tmpRegex = gcnew MyDLPClamRegex();
-				tmpRegex->id = regex->id;
-				tmpRegex->name = regex->name;
-				tmpRegex->regex = regex->regex;
-				tmpRegex->rule_id = regex->rule_id;
-				sensFile->regexVal->Add(tmpRegex);
-			}
-
-			sensFile->md5Val = gcnew List<MyDLPMD5File ^>();
-			for each (soap::MyDLPMD5File ^file in rules->sensFileConf->md5Val)
-			{
-				MyDLPMD5File ^tmpFile = gcnew MyDLPMD5File();
-				tmpFile->id = file->id;
-				tmpFile->name = file->name;
-				tmpFile->md5Val = file->md5Val;
-				tmpFile->size = file->size;
-				tmpFile->rule_id = file->rule_id;
-				sensFile->md5Val->Add(tmpFile);
+				for each (soap::MyDLPClamRegex ^regex in rules->sensFileConf->regexVal)
+				{
+					MyDLPClamRegex ^tmpRegex = gcnew MyDLPClamRegex();
+					tmpRegex->id = regex->id;
+					tmpRegex->name = regex->name;
+					tmpRegex->regex = regex->regex;
+					tmpRegex->rule_id = regex->rule_id;
+					sensFile->regexVal->Add(tmpRegex);
+				}
 			}
 			
-
+			sensFile->md5Val = gcnew List<MyDLPMD5File ^>();
+			if(rules->sensFileConf->md5Val != nullptr)
+			{
+				for each (soap::MyDLPMD5File ^file in rules->sensFileConf->md5Val)
+				{
+					MyDLPMD5File ^tmpFile = gcnew MyDLPMD5File();
+					tmpFile->id = file->id;
+					tmpFile->name = file->name;
+					tmpFile->md5Val = file->md5Val;
+					tmpFile->size = file->size;
+					tmpFile->rule_id = file->rule_id;
+					sensFile->md5Val->Add(tmpFile);
+				}
+			}
+			if(rules->ruleInfo != nullptr)
+			{
+				for each(soap::MyDLPRuleInfo ^ruleInfo in rules->ruleInfo) {
+					MyDLPRule ^rule = gcnew MyDLPRule();
+					rule->id = ruleInfo->rule_id;
+					rule->action = ruleInfo->action;
+					MyDLPRemoteRules::GetInstance()->rules->Add(rule);
+				}
+			}
+			
+			MyDLPRemoteRules::Serialize();
 			MyDLPRemoteScreenCaptureConf::Serialize();
 			MyDLPRemoteSensFileConf::Serialize();
 			MyDLPRemoteDeviceConf::Serialize();

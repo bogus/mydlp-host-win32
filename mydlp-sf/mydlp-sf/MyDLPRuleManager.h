@@ -18,10 +18,8 @@ using namespace System::Web::Services::Protocols;
 using namespace System;
 using namespace System::Xml::Serialization;
 using namespace System;
-
 namespace mydlpsf {
 	namespace soap {
-
 ref class MyDLPRuleManager;
 ref class MyDLPRule;
 ref class MyDLPRemoteDeviceConf;
@@ -29,6 +27,7 @@ ref class MyDLPClamRegex;
 ref class MyDLPMD5File;
 ref class MyDLPRemoteSensFileConf;
 ref class MyDLPRemoteScreenCaptureConf;
+ref class MyDLPRuleInfo;
 ref class getRulesCompletedEventArgs;
 
 
@@ -42,7 +41,8 @@ System::Diagnostics::DebuggerStepThroughAttribute,
 System::ComponentModel::DesignerCategoryAttribute(L"code"), 
 System::Web::Services::WebServiceBindingAttribute(Name=L"MyDLPRuleManagerBinding", Namespace=L"http://schema.mydlp.org"), 
 System::Xml::Serialization::SoapIncludeAttribute(MyDLPClamRegex::typeid), 
-System::Xml::Serialization::SoapIncludeAttribute(MyDLPMD5File::typeid)]
+System::Xml::Serialization::SoapIncludeAttribute(MyDLPMD5File::typeid), 
+System::Xml::Serialization::SoapIncludeAttribute(MyDLPRuleInfo::typeid)]
 public ref class MyDLPRuleManager : public System::Web::Services::Protocols::SoapHttpClientProtocol {
     
     private: System::Threading::SendOrPostCallback^  getRulesOperationCompleted;
@@ -57,19 +57,20 @@ public ref class MyDLPRuleManager : public System::Web::Services::Protocols::Soa
 L"ules", 
         RequestNamespace=L"http://schema.mydlp.org", ResponseNamespace=L"http://schema.mydlp.org")]
     [returnvalue: System::Xml::Serialization::SoapElementAttribute(L"getRulesReturn")]
-    MyDLPRule^  getRules();
+    MyDLPRule^  getRules(System::String^  user, System::String^  pass);
     
     /// <remarks/>
-    public: System::IAsyncResult^  BegingetRules(System::AsyncCallback^  callback, System::Object^  asyncState);
+    public: System::IAsyncResult^  BegingetRules(System::String^  user, System::String^  pass, System::AsyncCallback^  callback, 
+                System::Object^  asyncState);
     
     /// <remarks/>
     public: MyDLPRule^  EndgetRules(System::IAsyncResult^  asyncResult);
     
     /// <remarks/>
-    public: System::Void getRulesAsync();
+    public: System::Void getRulesAsync(System::String^  user, System::String^  pass);
     
     /// <remarks/>
-    public: System::Void getRulesAsync(System::Object^  userState);
+    public: System::Void getRulesAsync(System::String^  user, System::String^  pass, System::Object^  userState);
     
     private: System::Void OngetRulesOperationCompleted(System::Object^  arg);
     
@@ -87,6 +88,8 @@ public ref class MyDLPRule {
     
     private: MyDLPRemoteDeviceConf^  remoteDeviceConfField;
     
+    private: cli::array< MyDLPRuleInfo^  >^  ruleInfoField;
+    
     private: MyDLPRemoteScreenCaptureConf^  screenCaptureConfField;
     
     private: MyDLPRemoteSensFileConf^  sensFileConfField;
@@ -95,6 +98,12 @@ public ref class MyDLPRule {
     public: property MyDLPRemoteDeviceConf^  remoteDeviceConf {
         MyDLPRemoteDeviceConf^  get();
         System::Void set(MyDLPRemoteDeviceConf^  value);
+    }
+    
+    /// <remarks/>
+    public: property cli::array< MyDLPRuleInfo^  >^  ruleInfo {
+        cli::array< MyDLPRuleInfo^  >^  get();
+        System::Void set(cli::array< MyDLPRuleInfo^  >^  value);
     }
     
     /// <remarks/>
@@ -637,6 +646,31 @@ public ref class MyDLPRemoteScreenCaptureConf {
 
 /// <remarks/>
 [System::CodeDom::Compiler::GeneratedCodeAttribute(L"wsdl", L"2.0.50727.1432"), 
+System::SerializableAttribute, 
+System::Diagnostics::DebuggerStepThroughAttribute, 
+System::ComponentModel::DesignerCategoryAttribute(L"code"), 
+System::Xml::Serialization::SoapTypeAttribute(Namespace=L"http://schema.mydlp.org")]
+public ref class MyDLPRuleInfo {
+    
+    private: System::String^  actionField;
+    
+    private: System::Int32 rule_idField;
+    
+    /// <remarks/>
+    public: property System::String^  action {
+        System::String^  get();
+        System::Void set(System::String^  value);
+    }
+    
+    /// <remarks/>
+    public: property System::Int32 rule_id {
+        System::Int32 get();
+        System::Void set(System::Int32 value);
+    }
+};
+
+/// <remarks/>
+[System::CodeDom::Compiler::GeneratedCodeAttribute(L"wsdl", L"2.0.50727.1432"), 
 System::Diagnostics::DebuggerStepThroughAttribute, 
 System::ComponentModel::DesignerCategoryAttribute(L"code")]
 public ref class getRulesCompletedEventArgs : public System::ComponentModel::AsyncCompletedEventArgs {
@@ -656,13 +690,14 @@ inline MyDLPRuleManager::MyDLPRuleManager() {
     this->Url = L"http://localhost/mydlp-web-manager/service.php\?class=MyDLPRuleManager";
 }
 
-inline MyDLPRule^  MyDLPRuleManager::getRules() {
-    cli::array< System::Object^  >^  results = this->Invoke(L"getRules", gcnew cli::array< System::Object^  >(0));
+inline MyDLPRule^  MyDLPRuleManager::getRules(System::String^  user, System::String^  pass) {
+    cli::array< System::Object^  >^  results = this->Invoke(L"getRules", gcnew cli::array< System::Object^  >(2) {user, pass});
     return (cli::safe_cast<MyDLPRule^  >(results[0]));
 }
 
-inline System::IAsyncResult^  MyDLPRuleManager::BegingetRules(System::AsyncCallback^  callback, System::Object^  asyncState) {
-    return this->BeginInvoke(L"getRules", gcnew cli::array< System::Object^  >(0), callback, asyncState);
+inline System::IAsyncResult^  MyDLPRuleManager::BegingetRules(System::String^  user, System::String^  pass, System::AsyncCallback^  callback, 
+            System::Object^  asyncState) {
+    return this->BeginInvoke(L"getRules", gcnew cli::array< System::Object^  >(2) {user, pass}, callback, asyncState);
 }
 
 inline MyDLPRule^  MyDLPRuleManager::EndgetRules(System::IAsyncResult^  asyncResult) {
@@ -670,15 +705,15 @@ inline MyDLPRule^  MyDLPRuleManager::EndgetRules(System::IAsyncResult^  asyncRes
     return (cli::safe_cast<MyDLPRule^  >(results[0]));
 }
 
-inline System::Void MyDLPRuleManager::getRulesAsync() {
-    this->getRulesAsync(nullptr);
+inline System::Void MyDLPRuleManager::getRulesAsync(System::String^  user, System::String^  pass) {
+    this->getRulesAsync(user, pass, nullptr);
 }
 
-inline System::Void MyDLPRuleManager::getRulesAsync(System::Object^  userState) {
+inline System::Void MyDLPRuleManager::getRulesAsync(System::String^  user, System::String^  pass, System::Object^  userState) {
     if (this->getRulesOperationCompleted == nullptr) {
         this->getRulesOperationCompleted = gcnew System::Threading::SendOrPostCallback(this, &MyDLPRuleManager::OngetRulesOperationCompleted);
     }
-    this->InvokeAsync(L"getRules", gcnew cli::array< System::Object^  >(0), this->getRulesOperationCompleted, userState);
+    this->InvokeAsync(L"getRules", gcnew cli::array< System::Object^  >(2) {user, pass}, this->getRulesOperationCompleted, userState);
 }
 
 inline System::Void MyDLPRuleManager::OngetRulesOperationCompleted(System::Object^  arg) {
@@ -699,6 +734,13 @@ inline MyDLPRemoteDeviceConf^  MyDLPRule::remoteDeviceConf::get() {
 }
 inline System::Void MyDLPRule::remoteDeviceConf::set(MyDLPRemoteDeviceConf^  value) {
     this->remoteDeviceConfField = value;
+}
+
+inline cli::array< MyDLPRuleInfo^  >^  MyDLPRule::ruleInfo::get() {
+    return this->ruleInfoField;
+}
+inline System::Void MyDLPRule::ruleInfo::set(cli::array< MyDLPRuleInfo^  >^  value) {
+    this->ruleInfoField = value;
 }
 
 inline MyDLPRemoteScreenCaptureConf^  MyDLPRule::screenCaptureConf::get() {
@@ -1138,6 +1180,21 @@ inline System::String^  MyDLPRemoteScreenCaptureConf::forbidPhotoshop_ruleid::ge
 }
 inline System::Void MyDLPRemoteScreenCaptureConf::forbidPhotoshop_ruleid::set(System::String^  value) {
     this->forbidPhotoshop_ruleidField = value;
+}
+
+
+inline System::String^  MyDLPRuleInfo::action::get() {
+    return this->actionField;
+}
+inline System::Void MyDLPRuleInfo::action::set(System::String^  value) {
+    this->actionField = value;
+}
+
+inline System::Int32 MyDLPRuleInfo::rule_id::get() {
+    return this->rule_idField;
+}
+inline System::Void MyDLPRuleInfo::rule_id::set(System::Int32 value) {
+    this->rule_idField = value;
 }
 
 

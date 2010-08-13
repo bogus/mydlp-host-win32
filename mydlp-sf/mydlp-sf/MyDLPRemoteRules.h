@@ -18,13 +18,35 @@
  *  MA 02110-1301, USA.
  */
 
-#ifndef __MYDLP_REMOTECONF_H_
-#define __MYDLP_REMOTECONF_H_
+#pragma once
+#pragma managed
 
-#include "MyDLPRemoteSensFileConf.h"
-#include "MyDLPRemoteDeviceConf.h"
-#include "MyDLPRemoteServiceConf.h"
-#include "MyDLPRemoteScreenCaptureConf.h"
-#include "MyDLPRemoteRules.h"
+#ifndef __MYDLP_REM_RULES_CONF__
+#define __MYDLP_REM_RULES_CONF__
+
+#include "MyDLPRule.h"
+
+using namespace System;
+
+namespace mydlpsf {
+
+	public ref class MyDLPRemoteRules
+	{
+	private:
+		static MyDLPRemoteRules ^rulesConf;
+		static void SetInstance(MyDLPRemoteRules ^rulesConf);
+		MyDLPRemoteRules(void);
+
+	public:
+		static MyDLPRemoteRules ^GetInstance();
+		static void Serialize();
+		static void Deserialize();
+
+		Collections::Generic::List<MyDLPRule ^> ^rules;
+
+		static const String ^confFileName = "rules.conf";
+	};
+
+}
 
 #endif

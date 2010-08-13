@@ -20,6 +20,7 @@
 #include "StdAfx.h"
 #include "MyDLPScreenCaptureFilter.h"
 #include "MyDLPMessages.h"
+#include "MyDLPLog.h"
 
 using namespace System::Diagnostics;
 using namespace System::Runtime::InteropServices;
@@ -74,6 +75,13 @@ namespace mydlpsf
 			}
 
 			array<Process ^> ^arr = Process::GetProcesses();
+		
+			soap::MyDLPLogIncedent ^log = gcnew soap::MyDLPLogIncedent();
+			log->matcher = "screen_capt";
+			log->rule_id = mydlpsf::MyDLPRemoteScreenCaptureConf::GetInstance()->enableScreenCaptureFilter_ruleid;
+			log->protocol = "LOCAL";
+			log->filename = String::Empty;
+			log->misc = "Screen capture filtered ";
 
 			for each(Process ^proc in arr)
 			{
@@ -86,7 +94,8 @@ namespace mydlpsf
 					proc->ProcessName->ToLower()->Contains("project")))
 				{
 					mydlpsf::MyDLPEventLogger::GetInstance()->LogScreenCapture("Print Screen filtered: MSOFFICE");
-					mydlpsf::MyDLPMessages::GetInstance()->AddMessage("Print Screen filtered: MSOFFICE");
+					log->destination = "MS Office";
+					mydlpsf::MyDLPMessages::GetInstance()->AddMessage("Print Screen filtered: MSOFFICE", log);
 					e->Handled = true;
 					break;
 				}
@@ -97,7 +106,8 @@ namespace mydlpsf
 					proc->ProcessName->ToLower()->Contains("oopresent")))
 				{
 					mydlpsf::MyDLPEventLogger::GetInstance()->LogScreenCapture("Print Screen filtered: OPENOFFICE");
-					mydlpsf::MyDLPMessages::GetInstance()->AddMessage("Print Screen filtered: OPENOFFICE");
+					log->destination = "Open Office";
+					mydlpsf::MyDLPMessages::GetInstance()->AddMessage("Print Screen filtered: OPENOFFICE", log);
 					e->Handled = true;
 					break;
 				}
@@ -107,7 +117,8 @@ namespace mydlpsf
 					proc->ProcessName->ToLower()->Contains("acrobat")))
 				{
 					mydlpsf::MyDLPEventLogger::GetInstance()->LogScreenCapture("Print Screen filtered: ACROBAT READER");
-					mydlpsf::MyDLPMessages::GetInstance()->AddMessage("Print Screen filtered: ACROBAT READER");
+					log->destination = "Acrobat Reader";
+					mydlpsf::MyDLPMessages::GetInstance()->AddMessage("Print Screen filtered: ACROBAT READER", log);
 					e->Handled = true;
 					break;
 				}
@@ -117,7 +128,8 @@ namespace mydlpsf
 					proc->ProcessName->ToLower()->Contains("imageready")))
 				{
 					mydlpsf::MyDLPEventLogger::GetInstance()->LogScreenCapture("Print Screen filtered: PHOTOSHOP");
-					mydlpsf::MyDLPMessages::GetInstance()->AddMessage("Print Screen filtered: PHOTOSHOP");
+					log->destination = "Adobe Photoshop";
+					mydlpsf::MyDLPMessages::GetInstance()->AddMessage("Print Screen filtered: PHOTOSHOP", log);
 					e->Handled = true;
 					break;
 				}
@@ -126,7 +138,8 @@ namespace mydlpsf
 					proc->ProcessName->ToLower()->Contains("autocad"))
 				{
 					mydlpsf::MyDLPEventLogger::GetInstance()->LogScreenCapture("Print Screen filtered: AUTOCAD");
-					mydlpsf::MyDLPMessages::GetInstance()->AddMessage("Print Screen filtered: AUTOCAD");
+					log->destination = "Autocad";
+					mydlpsf::MyDLPMessages::GetInstance()->AddMessage("Print Screen filtered: AUTOCAD", log);
 					e->Handled = true;
 					break;
 				}

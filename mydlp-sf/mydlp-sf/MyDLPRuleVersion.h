@@ -18,10 +18,8 @@ using namespace System::Web::Services::Protocols;
 using namespace System;
 using namespace System::Xml::Serialization;
 using namespace System;
-
 namespace mydlpsf {
 	namespace soap {
-
 ref class MyDLPRuleVersion;
 ref class getRuleVersionCompletedEventArgs;
 
@@ -49,19 +47,20 @@ public ref class MyDLPRuleVersion : public System::Web::Services::Protocols::Soa
 L"uleVersion", 
         RequestNamespace=L"http://schema.mydlp.org", ResponseNamespace=L"http://schema.mydlp.org")]
     [returnvalue: System::Xml::Serialization::SoapElementAttribute(L"getRuleVersionReturn")]
-    System::Int32 getRuleVersion();
+    System::Int32 getRuleVersion(System::String^  user, System::String^  pass);
     
     /// <remarks/>
-    public: System::IAsyncResult^  BegingetRuleVersion(System::AsyncCallback^  callback, System::Object^  asyncState);
+    public: System::IAsyncResult^  BegingetRuleVersion(System::String^  user, System::String^  pass, System::AsyncCallback^  callback, 
+                System::Object^  asyncState);
     
     /// <remarks/>
     public: System::Int32 EndgetRuleVersion(System::IAsyncResult^  asyncResult);
     
     /// <remarks/>
-    public: System::Void getRuleVersionAsync();
+    public: System::Void getRuleVersionAsync(System::String^  user, System::String^  pass);
     
     /// <remarks/>
-    public: System::Void getRuleVersionAsync(System::Object^  userState);
+    public: System::Void getRuleVersionAsync(System::String^  user, System::String^  pass, System::Object^  userState);
     
     private: System::Void OngetRuleVersionOperationCompleted(System::Object^  arg);
     
@@ -90,13 +89,15 @@ inline MyDLPRuleVersion::MyDLPRuleVersion() {
     this->Url = L"http://localhost/mydlp-web-manager/service.php\?class=MyDLPRuleVersion";
 }
 
-inline System::Int32 MyDLPRuleVersion::getRuleVersion() {
-    cli::array< System::Object^  >^  results = this->Invoke(L"getRuleVersion", gcnew cli::array< System::Object^  >(0));
+inline System::Int32 MyDLPRuleVersion::getRuleVersion(System::String^  user, System::String^  pass) {
+    cli::array< System::Object^  >^  results = this->Invoke(L"getRuleVersion", gcnew cli::array< System::Object^  >(2) {user, 
+            pass});
     return (cli::safe_cast<System::Int32 >(results[0]));
 }
 
-inline System::IAsyncResult^  MyDLPRuleVersion::BegingetRuleVersion(System::AsyncCallback^  callback, System::Object^  asyncState) {
-    return this->BeginInvoke(L"getRuleVersion", gcnew cli::array< System::Object^  >(0), callback, asyncState);
+inline System::IAsyncResult^  MyDLPRuleVersion::BegingetRuleVersion(System::String^  user, System::String^  pass, System::AsyncCallback^  callback, 
+            System::Object^  asyncState) {
+    return this->BeginInvoke(L"getRuleVersion", gcnew cli::array< System::Object^  >(2) {user, pass}, callback, asyncState);
 }
 
 inline System::Int32 MyDLPRuleVersion::EndgetRuleVersion(System::IAsyncResult^  asyncResult) {
@@ -104,15 +105,16 @@ inline System::Int32 MyDLPRuleVersion::EndgetRuleVersion(System::IAsyncResult^  
     return (cli::safe_cast<System::Int32 >(results[0]));
 }
 
-inline System::Void MyDLPRuleVersion::getRuleVersionAsync() {
-    this->getRuleVersionAsync(nullptr);
+inline System::Void MyDLPRuleVersion::getRuleVersionAsync(System::String^  user, System::String^  pass) {
+    this->getRuleVersionAsync(user, pass, nullptr);
 }
 
-inline System::Void MyDLPRuleVersion::getRuleVersionAsync(System::Object^  userState) {
+inline System::Void MyDLPRuleVersion::getRuleVersionAsync(System::String^  user, System::String^  pass, System::Object^  userState) {
     if (this->getRuleVersionOperationCompleted == nullptr) {
         this->getRuleVersionOperationCompleted = gcnew System::Threading::SendOrPostCallback(this, &MyDLPRuleVersion::OngetRuleVersionOperationCompleted);
     }
-    this->InvokeAsync(L"getRuleVersion", gcnew cli::array< System::Object^  >(0), this->getRuleVersionOperationCompleted, userState);
+    this->InvokeAsync(L"getRuleVersion", gcnew cli::array< System::Object^  >(2) {user, pass}, this->getRuleVersionOperationCompleted, 
+        userState);
 }
 
 inline System::Void MyDLPRuleVersion::OngetRuleVersionOperationCompleted(System::Object^  arg) {

@@ -16,13 +16,13 @@ namespace mydlpsf
 		static MyDLPSOAPUpdater ^obj;
 		System::Timers::Timer ^timer;
 		void Update( Object ^source, ElapsedEventArgs ^e );
-		void UpdateRules();
+		
 		String ^RuleToString(soap::MyDLPRule ^rule);
 
 	public:
 		static MyDLPSOAPUpdater ^GetInstance();
 		void StartUpdater();
 		void StopUpdater();
-		
+		void UpdateRules();
 	};
 }
